@@ -29,7 +29,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Script kecil untuk efek navbar saat scroll */}
+      {/* efek navbar saat scroll */}
       <NavbarScroll />
 
       <main>
@@ -114,7 +114,7 @@ export default function HomePage() {
         </section>
 
         {/* ================================
-           SECTION: Paket Simulasi
+           SECTION: Paket Simulasi (versi premium)
         ================================= */}
         <section id="paket" className="container section">
           <div className="section-header">
@@ -127,60 +127,84 @@ export default function HomePage() {
           </div>
 
           <div className="package-grid">
+            {/* Paket 1 */}
             <article className="card">
-              <div>
-                <div className="chip">Konservatif</div>
-                <h3 className="card-title">Stabil Elegan</h3>
-                <p className="card-text">
-                  Fokus kestabilan nilai. Cocok dana darurat / rencana 1–3 tahun
-                  dengan fluktuasi relatif kecil.
-                </p>
-                <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 100.000</strong>
-                  <br />
-                  Horizon waktu: 1–3 tahun
-                </div>
+              <div className="chip">Konservatif</div>
+              <h3 className="card-title">Stabil Elegan</h3>
+              <p className="card-text">
+                Fokus pada kestabilan nilai. Cocok untuk dana darurat atau
+                rencana 1–3 tahun dengan fluktuasi relatif kecil.
+              </p>
+
+              <ul className="card-bullets">
+                <li>Fokus menjaga nilai pokok</li>
+                <li>Cocok untuk pemula yang ingin terasa aman</li>
+                <li>Simulasi pergerakan nilai yang lembut</li>
+              </ul>
+
+              <div className="card-meta">
+                Minimal simulasi: <strong>Rp 100.000</strong>
+                <br />
+                Horizon waktu: 1–3 tahun
               </div>
+
               <div className="package-footer">
                 <div className="price">Rp 100.000+</div>
                 <button className="btn-small">Lihat detail</button>
               </div>
             </article>
 
-            <article className="card">
-              <div>
-                <div className="chip">Moderate</div>
-                <h3 className="card-title">Rencana Pendidikan</h3>
-                <p className="card-text">
-                  Seimbang antara pertumbuhan & risiko. Cocok biaya sekolah /
-                  kuliah beberapa tahun lagi.
-                </p>
-                <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 250.000</strong>
-                  <br />
-                  Horizon waktu: 5–10 tahun
-                </div>
+            {/* Paket 2 (paling populer) */}
+            <article className="card card-highlight">
+              <div className="card-ribbon">Paling dipakai</div>
+              <div className="chip">Moderate</div>
+              <h3 className="card-title">Rencana Pendidikan</h3>
+              <p className="card-text">
+                Menjaga keseimbangan antara pertumbuhan dan risiko. Cocok untuk
+                biaya sekolah atau kuliah beberapa tahun ke depan.
+              </p>
+
+              <ul className="card-bullets">
+                <li>Kombinasi stabilitas dan peluang tumbuh</li>
+                <li>Visual simulasi yang mudah dijelaskan ke keluarga</li>
+                <li>Horizon menengah dengan kontrol risiko</li>
+              </ul>
+
+              <div className="card-meta">
+                Minimal simulasi: <strong>Rp 250.000</strong>
+                <br />
+                Horizon waktu: 5–10 tahun
               </div>
+
               <div className="package-footer">
                 <div className="price">Rp 250.000+</div>
-                <button className="btn-small">Lihat detail</button>
+                <button className="btn-small btn-main-small">
+                  Lihat detail
+                </button>
               </div>
             </article>
 
+            {/* Paket 3 */}
             <article className="card">
-              <div>
-                <div className="chip">Agresif elegan</div>
-                <h3 className="card-title">Pensiun Mandiri</h3>
-                <p className="card-text">
-                  Untuk kamu yang siap fluktuasi lebih besar demi potensi
-                  pertumbuhan jangka panjang.
-                </p>
-                <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 500.000</strong>
-                  <br />
-                  Horizon waktu: 10+ tahun
-                </div>
+              <div className="chip">Agresif elegan</div>
+              <h3 className="card-title">Pensiun Mandiri</h3>
+              <p className="card-text">
+                Untuk kamu yang siap dengan fluktuasi lebih besar demi potensi
+                pertumbuhan jangka panjang dan kebebasan finansial.
+              </p>
+
+              <ul className="card-bullets">
+                <li>Simulasi skenario pertumbuhan jangka panjang</li>
+                <li>Cocok untuk target pensiun dan warisan</li>
+                <li>Membiasakan diri dengan pergerakan nilai yang dinamis</li>
+              </ul>
+
+              <div className="card-meta">
+                Minimal simulasi: <strong>Rp 500.000</strong>
+                <br />
+                Horizon waktu: 10+ tahun
               </div>
+
               <div className="package-footer">
                 <div className="price">Rp 500.000+</div>
                 <button className="btn-small">Lihat detail</button>
