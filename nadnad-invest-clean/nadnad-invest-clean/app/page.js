@@ -47,7 +47,6 @@ export default function HomePage() {
                 </a>
               </div>
 
-              {/* DIGANTI SESUAI PERMINTAAN */}
               <div className="hero-meta">
                 <span>
                   <strong>Elegance Powered by Intelligence.</strong>
@@ -66,7 +65,8 @@ export default function HomePage() {
 
               <div className="hero-card-amount">Rp 185.000.000</div>
               <p className="hero-card-caption">
-                Contoh ilustrasi nilai rencana dengan setoran rutin dan asumsi pertumbuhan stabil.
+                Contoh ilustrasi nilai rencana dengan setoran rutin dan asumsi
+                pertumbuhan stabil. Bukan janji hasil, hanya contoh visual yang rapi.
               </p>
 
               <div
@@ -119,10 +119,12 @@ export default function HomePage() {
                 <div className="chip">Konservatif</div>
                 <h3 className="card-title">Stabil Elegan</h3>
                 <p className="card-text">
-                  Fokus kestabilan nilai. Cocok dana darurat / rencana 1–3 tahun.
+                  Fokus kestabilan nilai. Cocok dana darurat / rencana 1–3 tahun
+                  dengan fluktuasi relatif kecil.
                 </p>
                 <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 100.000</strong><br />
+                  Minimal simulasi: <strong>Rp 100.000</strong>
+                  <br />
                   Horizon waktu: 1–3 tahun
                 </div>
               </div>
@@ -137,10 +139,12 @@ export default function HomePage() {
                 <div className="chip">Moderate</div>
                 <h3 className="card-title">Rencana Pendidikan</h3>
                 <p className="card-text">
-                  Seimbang antara pertumbuhan & risiko. Cocok biaya sekolah/kuliah.
+                  Seimbang antara pertumbuhan & risiko. Cocok biaya sekolah /
+                  kuliah beberapa tahun lagi.
                 </p>
                 <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 250.000</strong><br />
+                  Minimal simulasi: <strong>Rp 250.000</strong>
+                  <br />
                   Horizon waktu: 5–10 tahun
                 </div>
               </div>
@@ -152,13 +156,15 @@ export default function HomePage() {
 
             <article className="card">
               <div>
-                <div className="chip">Agresif Elegan</div>
+                <div className="chip">Agresif elegan</div>
                 <h3 className="card-title">Pensiun Mandiri</h3>
                 <p className="card-text">
-                  Untuk kamu yang siap fluktuasi lebih besar demi pertumbuhan jangka panjang.
+                  Untuk kamu yang siap fluktuasi lebih besar demi potensi
+                  pertumbuhan jangka panjang.
                 </p>
                 <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 500.000</strong><br />
+                  Minimal simulasi: <strong>Rp 500.000</strong>
+                  <br />
                   Horizon waktu: 10+ tahun
                 </div>
               </div>
@@ -171,7 +177,7 @@ export default function HomePage() {
         </section>
 
         {/* ================================
-           SECTION: Cara Kerja (dipindah ke posisi benar)
+           SECTION: Cara Kerja
         ================================= */}
         <section id="cara-kerja" className="container section">
           <div className="section-header">
@@ -194,7 +200,8 @@ export default function HomePage() {
               <div className="chip">Langkah 1</div>
               <h3 className="card-title">Tentukan tujuanmu</h3>
               <p className="card-text">
-                Pilih fokus: dana darurat, pendidikan, atau pensiun.
+                Pilih fokus: dana darurat, pendidikan, atau pensiun sebagai dasar
+                gaya simulasi.
               </p>
             </div>
 
@@ -202,7 +209,8 @@ export default function HomePage() {
               <div className="chip">Langkah 2</div>
               <h3 className="card-title">Pilih paket simulasi</h3>
               <p className="card-text">
-                Bandingkan paket sesuai horizon waktu dan profil risiko.
+                Sesuaikan paket dengan horizon waktu dan profil risiko yang kamu
+                rasa paling nyaman.
               </p>
             </div>
 
@@ -210,8 +218,91 @@ export default function HomePage() {
               <div className="chip">Langkah 3</div>
               <h3 className="card-title">Bangun kebiasaan</h3>
               <p className="card-text">
-                Gunakan simulasi untuk memahami pola sebelum masuk instrumen nyata.
+                Gunakan simulasi untuk memahami pola. Setelah nyaman, terapkan
+                pola yang sama di instrumen keuangan nyata.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================
+           SECTION: Testimoni
+        ================================= */}
+        <section id="testimoni" className="container section">
+          <div className="section-header">
+            <div className="section-eyebrow">Testimoni</div>
+            <h2 className="section-title">Suara dari para pengguna awal</h2>
+            <p className="section-subtitle">
+              Mereka bukan mencari “cepat kaya”, tapi ingin hubungan yang lebih
+              sehat dengan uang dan rencana keuangan.
+            </p>
+          </div>
+
+          <div className="testimonials">
+            <article className="testimonial-card">
+              <p className="testimonial-text">
+                “Sebelumnya aku selalu panik kalau bicara soal investasi. Di
+                Nadnad Invest, semuanya terasa pelan, elegan, dan masuk akal.
+                Aku jadi sadar kalau kuncinya adalah konsistensi, bukan kejar
+                angka instan.”
+              </p>
+              <div className="testimonial-footer">
+                <div>
+                  <div className="testimonial-name">Dita</div>
+                  <div className="testimonial-role">Karyawan swasta, 28 tahun</div>
+                </div>
+              </div>
+            </article>
+
+            <article className="testimonial-card">
+              <p className="testimonial-text">
+                “Tampilan Nadnad Invest bikin aku betah ngulik. Rasanya seperti
+                lihat dashboard butik finansial, bukan aplikasi trading yang
+                bising. Bantu banget buat mikir jernih sebelum ambil keputusan.”
+              </p>
+              <div className="testimonial-footer">
+                <div>
+                  <div className="testimonial-name">Rendy</div>
+                  <div className="testimonial-role">Freelancer, 32 tahun</div>
+                </div>
+              </div>
+            </article>
+
+            <article className="testimonial-card">
+              <p className="testimonial-text">
+                “Sebagai orang yang visual, aku suka cara Nadnad menyajikan
+                rencana. Tenang, rapi, tapi tetap tegas. Rasanya kayak diajak
+                mikir bareng, bukan disuruh spekulasi.”
+              </p>
+              <div className="testimonial-footer">
+                <div>
+                  <div className="testimonial-name">Maya</div>
+                  <div className="testimonial-role">Wirausaha kecil, 30 tahun</div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {/* ================================
+           SECTION: CTA
+        ================================= */}
+        <section className="container section">
+          <div className="cta">
+            <div>
+              <div className="cta-title">
+                Siap memulai perjalanan investasimu dengan lebih elegan?
+              </div>
+              <div className="cta-sub">
+                Buat akun, pilih paket simulasi, lalu lihat bagaimana kebiasaan
+                kecil yang konsisten bisa mengubah arah keuanganmu.
+              </div>
+            </div>
+            <div className="cta-actions">
+              <button className="btn-main">Daftar sekarang</button>
+              <a href="/dashboard" className="btn-ghost">
+                Lihat demo dashboard
+              </a>
             </div>
           </div>
         </section>
@@ -224,7 +315,7 @@ export default function HomePage() {
           </div>
           <div className="footer-links">
             <a href="#">Kebijakan Privasi</a>
-            <a href="#">Syarat & Ketentuan</a>
+            <a href="#">Syarat &amp; Ketentuan</a>
             <a href="#">Kontak</a>
           </div>
         </div>
