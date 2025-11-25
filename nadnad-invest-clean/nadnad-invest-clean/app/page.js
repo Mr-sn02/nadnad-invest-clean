@@ -1,3 +1,5 @@
+import NavbarScroll from "./navbar";
+
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
@@ -5,13 +7,20 @@ export default function HomePage() {
     <>
       <header className="navbar">
         <div className="container navbar-inner">
-          <div className="brand">
-            <div className="brand-icon">Ni</div>
-            <div>
-              <div className="brand-text">Nadnad Invest</div>
-              <div className="brand-sub">Elegance Powered by Intelligence.</div>
+          {/* Brand + tagline */}
+          <div className="brand-block">
+            <div className="brand">
+              <div className="brand-icon">Ni</div>
+              <div>
+                <div className="brand-text">Nadnad Invest</div>
+              </div>
+            </div>
+            <div className="brand-tagline">
+              Elegance Powered by Intelligence.
             </div>
           </div>
+
+          {/* Tombol kanan */}
           <div>
             <a href="/dashboard" className="btn-ghost">
               Demo Dashboard
@@ -19,6 +28,9 @@ export default function HomePage() {
           </div>
         </div>
       </header>
+
+      {/* Script kecil untuk efek navbar saat scroll */}
+      <NavbarScroll />
 
       <main>
         {/* HERO SECTION */}
@@ -66,7 +78,8 @@ export default function HomePage() {
               <div className="hero-card-amount">Rp 185.000.000</div>
               <p className="hero-card-caption">
                 Contoh ilustrasi nilai rencana dengan setoran rutin dan asumsi
-                pertumbuhan stabil. Bukan janji hasil, hanya contoh visual yang rapi.
+                pertumbuhan stabil. Bukan janji hasil, hanya contoh visual yang
+                rapi.
               </p>
 
               <div
@@ -249,7 +262,9 @@ export default function HomePage() {
               <div className="testimonial-footer">
                 <div>
                   <div className="testimonial-name">Dita</div>
-                  <div className="testimonial-role">Karyawan swasta, 28 tahun</div>
+                  <div className="testimonial-role">
+                    Karyawan swasta, 28 tahun
+                  </div>
                 </div>
               </div>
             </article>
@@ -258,7 +273,7 @@ export default function HomePage() {
               <p className="testimonial-text">
                 “Tampilan Nadnad Invest bikin aku betah ngulik. Rasanya seperti
                 lihat dashboard butik finansial, bukan aplikasi trading yang
-                bising. Bantu banget buat mikir jernih sebelum ambil keputusan.”
+                bising.”
               </p>
               <div className="testimonial-footer">
                 <div>
@@ -277,7 +292,9 @@ export default function HomePage() {
               <div className="testimonial-footer">
                 <div>
                   <div className="testimonial-name">Maya</div>
-                  <div className="testimonial-role">Wirausaha kecil, 30 tahun</div>
+                  <div className="testimonial-role">
+                    Wirausaha kecil, 30 tahun
+                  </div>
                 </div>
               </div>
             </article>
