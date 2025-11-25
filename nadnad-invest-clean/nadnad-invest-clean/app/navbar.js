@@ -5,6 +5,7 @@ import { useEffect } from "react";
 export default function NavbarScroll() {
   useEffect(() => {
     const nav = document.querySelector(".navbar");
+    if (!nav) return;
 
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -14,6 +15,7 @@ export default function NavbarScroll() {
       }
     };
 
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
