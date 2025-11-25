@@ -947,3 +947,154 @@ body {
     flex-direction: column;
   }
 }
+
+/* =========================================
+   ABOUT NADNAD INVEST
+========================================= */
+
+.about-shell {
+  padding-top: 1.6rem;
+  padding-bottom: 3rem;
+}
+
+.about-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.8rem;
+}
+
+.about-eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--nad-silver-soft);
+  margin-bottom: 0.3rem;
+}
+
+.about-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.about-sub {
+  font-size: 0.9rem;
+  color: var(--nad-silver);
+  max-width: 36rem;
+}
+
+.about-tag {
+  font-size: 0.78rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.7);
+  background: radial-gradient(circle at top, rgba(212, 175, 55, 0.25), #020617);
+  color: var(--nad-gold-soft);
+  align-self: flex-start;
+}
+
+/* GRID ATAS */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+  margin-bottom: 1.8rem;
+}
+
+.about-block {
+  border-radius: 1rem;
+  padding: 1.1rem 1.1rem;
+  background: radial-gradient(circle at top, #020617, #020617);
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.96);
+  font-size: 0.88rem;
+  color: var(--nad-silver);
+}
+
+.about-block-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+/* SECTION GENERIC */
+.about-section {
+  margin-bottom: 1.9rem;
+}
+
+/* PILAR */
+.about-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.about-pillar-card {
+  border-radius: 1rem;
+  padding: 1rem 1rem 0.9rem;
+  background: radial-gradient(circle at top, #020617, #020617);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.9);
+  font-size: 0.85rem;
+  color: var(--nad-silver);
+}
+
+.about-pillar-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+/* LISTS */
+.about-list {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.86rem;
+  color: var(--nad-silver);
+}
+
+.about-list li + li {
+  margin-top: 0.25rem;
+}
+
+/* UNTUK SIAPA */
+.about-forwho {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.2rem;
+}
+
+.about-forwho-col.note {
+  font-size: 0.86rem;
+  color: var(--nad-silver-soft);
+  border-radius: 0.9rem;
+  padding: 0.9rem 0.95rem;
+  border: 1px dashed rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.85);
+}
+
+/* BACKLINK */
+.about-backlink {
+  margin-top: 1rem;
+}
+
+/* RESPONSIVE ABOUT */
+@media (max-width: 900px) {
+  .about-header {
+    flex-direction: column;
+  }
+
+  .about-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .about-pillars {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .about-forwho {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
