@@ -40,54 +40,47 @@ body {
   padding: 1.5rem 1.25rem 3rem;
 }
 
-/* ===== NAVBAR ===== */
+/* ===== NAVBAR PREMIUM ===== */
 
 .navbar {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  background: linear-gradient(to right, #020617dd, #030712f0);
-  backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 50;
+  padding: 0.7rem 0;
+  background: rgba(2, 6, 23, 0.55); /* dark glass */
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25); /* gold line */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.navbar.scrolled {
+  background: rgba(2, 6, 23, 0.85);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.45);
 }
 
 .navbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+/* Branding improvement */
 .brand-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
   background: radial-gradient(circle at 30% 0%, var(--nad-gold-soft), #4b2e00);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #111827;
-  border: 1px solid rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
 }
 
-.brand-text {
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
+/* Hover animasi untuk link kanan */
+.btn-ghost {
+  transition: all 0.25s ease;
 }
 
-.brand-sub {
-  font-size: 0.75rem;
-  color: var(--nad-silver-soft);
+.btn-ghost:hover {
+  border-color: var(--nad-gold-soft);
+  color: var(--nad-gold-soft);
+  transform: translateY(-1px);
 }
 
 /* ===== BUTTONS ===== */
