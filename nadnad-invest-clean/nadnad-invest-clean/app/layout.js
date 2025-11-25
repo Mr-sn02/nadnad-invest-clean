@@ -1,16 +1,14 @@
+import "./globals.css";
+
 export const metadata = {
   title: "Nadnad Invest",
-  description: "Landing page sederhana Nadnad Invest",
+  description: "Landing page elegan Nadnad Invest",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <body style={{
-        margin: 0,
-        backgroundColor: "#020617",
-        color: "white"
-      }}>
+      <body className="page">
         {children}
       </body>
     </html>
