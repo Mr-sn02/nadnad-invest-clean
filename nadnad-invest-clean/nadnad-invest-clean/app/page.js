@@ -34,7 +34,7 @@ export default function HomePage() {
 
       <main>
         {/* HERO SECTION */}
-        <section className="container hero">
+        <section className="container hero animate-fade-up animate-delay-1">
           <div className="hero-grid">
             {/* Kiri: teks */}
             <section>
@@ -67,7 +67,7 @@ export default function HomePage() {
             </section>
 
             {/* Kanan: kartu simulasi */}
-            <aside className="hero-card">
+            <aside className="hero-card animate-fade-up animate-delay-2">
               <div className="hero-card-header">
                 <div className="hero-card-title">
                   Simulasi paket “Stabil Elegan”
@@ -116,7 +116,10 @@ export default function HomePage() {
         {/* ================================
            SECTION: Paket Simulasi (versi premium)
         ================================= */}
-        <section id="paket" className="container section">
+        <section
+          id="paket"
+          className="container section animate-fade-up animate-delay-1"
+        >
           <div className="section-header">
             <div className="section-eyebrow">Paket simulasi</div>
             <h2 className="section-title">Pilih gaya investasimu</h2>
@@ -128,7 +131,7 @@ export default function HomePage() {
 
           <div className="package-grid">
             {/* Paket 1 */}
-            <article className="card">
+            <article className="card animate-fade-up animate-delay-1">
               <div className="chip">Konservatif</div>
               <h3 className="card-title">Stabil Elegan</h3>
               <p className="card-text">
@@ -155,7 +158,7 @@ export default function HomePage() {
             </article>
 
             {/* Paket 2 (paling populer) */}
-            <article className="card card-highlight">
+            <article className="card card-highlight animate-fade-up animate-delay-2">
               <div className="card-ribbon">Paling dipakai</div>
               <div className="chip">Moderate</div>
               <h3 className="card-title">Rencana Pendidikan</h3>
@@ -185,7 +188,7 @@ export default function HomePage() {
             </article>
 
             {/* Paket 3 */}
-            <article className="card">
+            <article className="card animate-fade-up animate-delay-3">
               <div className="chip">Agresif elegan</div>
               <h3 className="card-title">Pensiun Mandiri</h3>
               <p className="card-text">
@@ -216,7 +219,10 @@ export default function HomePage() {
         {/* ================================
            SECTION: Cara Kerja
         ================================= */}
-        <section id="cara-kerja" className="container section">
+        <section
+          id="cara-kerja"
+          className="container section animate-fade-up animate-delay-1"
+        >
           <div className="section-header">
             <div className="section-eyebrow">Cara kerja</div>
             <h2 className="section-title">Bagaimana Nadnad Invest membantumu</h2>
@@ -233,7 +239,7 @@ export default function HomePage() {
               gap: "1.2rem",
             }}
           >
-            <div className="card">
+            <div className="card animate-fade-up animate-delay-1">
               <div className="chip">Langkah 1</div>
               <h3 className="card-title">Tentukan tujuanmu</h3>
               <p className="card-text">
@@ -242,7 +248,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="card">
+            <div className="card animate-fade-up animate-delay-2">
               <div className="chip">Langkah 2</div>
               <h3 className="card-title">Pilih paket simulasi</h3>
               <p className="card-text">
@@ -251,7 +257,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="card">
+            <div className="card animate-fade-up animate-delay-3">
               <div className="chip">Langkah 3</div>
               <h3 className="card-title">Bangun kebiasaan</h3>
               <p className="card-text">
@@ -265,7 +271,10 @@ export default function HomePage() {
         {/* ================================
            SECTION: Testimoni
         ================================= */}
-        <section id="testimoni" className="container section">
+        <section
+          id="testimoni"
+          className="container section animate-fade-up animate-delay-1"
+        >
           <div className="section-header">
             <div className="section-eyebrow">Testimoni</div>
             <h2 className="section-title">Suara dari para pengguna awal</h2>
@@ -276,7 +285,7 @@ export default function HomePage() {
           </div>
 
           <div className="testimonials">
-            <article className="testimonial-card">
+            <article className="testimonial-card animate-fade-up animate-delay-1">
               <p className="testimonial-text">
                 “Sebelumnya aku selalu panik kalau bicara soal investasi. Di
                 Nadnad Invest, semuanya terasa pelan, elegan, dan masuk akal.
@@ -293,7 +302,7 @@ export default function HomePage() {
               </div>
             </article>
 
-            <article className="testimonial-card">
+            <article className="testimonial-card animate-fade-up animate-delay-2">
               <p className="testimonial-text">
                 “Tampilan Nadnad Invest bikin aku betah ngulik. Rasanya seperti
                 lihat dashboard butik finansial, bukan aplikasi trading yang
@@ -307,7 +316,7 @@ export default function HomePage() {
               </div>
             </article>
 
-            <article className="testimonial-card">
+            <article className="testimonial-card animate-fade-up animate-delay-3">
               <p className="testimonial-text">
                 “Sebagai orang yang visual, aku suka cara Nadnad menyajikan
                 rencana. Tenang, rapi, tapi tetap tegas. Rasanya kayak diajak
@@ -329,7 +338,7 @@ export default function HomePage() {
            SECTION: CTA
         ================================= */}
         <section className="container section">
-          <div className="cta">
+          <div className="cta animate-fade-up animate-delay-1">
             <div>
               <div className="cta-title">
                 Siap memulai perjalanan investasimu dengan lebih elegan?
@@ -358,9 +367,9 @@ export default function HomePage() {
             <a href="#">Kebijakan Privasi</a>
             <a href="#">Syarat &amp; Ketentuan</a>
             <a href="/about">Tentang Nadnad Invest</a>
-           </div>
-         </div>
-       </footer>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
