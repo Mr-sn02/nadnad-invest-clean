@@ -1098,3 +1098,47 @@ body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* =========================================
+   ANIMASI HALUS NADNAD INVEST
+========================================= */
+
+@keyframes nad-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(14px);
+  animation-name: nad-fade-up;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.animate-delay-1 {
+  animation-delay: 0.08s;
+}
+
+.animate-delay-2 {
+  animation-delay: 0.16s;
+}
+
+.animate-delay-3 {
+  animation-delay: 0.24s;
+}
+
+.animate-delay-4 {
+  animation-delay: 0.32s;
+}
+
+.animate-delay-5 {
+  animation-delay: 0.4s;
+}
