@@ -5,7 +5,7 @@ export default function DashboardPage() {
     <main className="dashboard-shell">
       <div className="container">
         {/* Breadcrumb / judul atas */}
-        <header className="dash-header">
+        <header className="dash-header animate-fade-up animate-delay-1">
           <div>
             <div className="dash-eyebrow">Nadnad Invest · Demo Dashboard</div>
             <h1 className="dash-title">Gambaran rencana investasimu</h1>
@@ -22,13 +22,13 @@ export default function DashboardPage() {
 
         {/* Kartu ringkasan utama */}
         <section className="dash-cards">
-          <article className="dash-card">
+          <article className="dash-card animate-fade-up animate-delay-1">
             <div className="dash-card-label">Total nilai rencana (simulasi)</div>
             <div className="dash-card-value">Rp 185.000.000</div>
             <div className="dash-card-hint">Dengan setoran konsisten setiap bulan</div>
           </article>
 
-          <article className="dash-card">
+          <article className="dash-card animate-fade-up animate-delay-2">
             <div className="dash-card-label">Setoran bulanan simulasi</div>
             <div className="dash-card-value">Rp 750.000</div>
             <div className="dash-card-hint">
@@ -36,7 +36,7 @@ export default function DashboardPage() {
             </div>
           </article>
 
-          <article className="dash-card">
+          <article className="dash-card animate-fade-up animate-delay-3">
             <div className="dash-card-label">Horisontal waktu simulasi</div>
             <div className="dash-card-value">8 tahun</div>
             <div className="dash-card-hint">
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         {/* Grid utama: grafik + profil */}
         <section className="dash-main-grid">
           {/* “Grafik” perjalanan nilai (ilustrasi visual) */}
-          <div className="dash-panel">
+          <div className="dash-panel animate-fade-up animate-delay-1">
             <div className="dash-panel-header">
               <div>
                 <div className="dash-panel-title">Perjalanan nilai rencana</div>
@@ -84,7 +84,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Panel profil rencana */}
-          <div className="dash-panel">
+          <div className="dash-panel animate-fade-up animate-delay-2">
             <div className="dash-panel-header">
               <div className="dash-panel-title">Profil rencana simulasi</div>
               <div className="dash-panel-sub">
@@ -132,7 +132,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Tabel riwayat simulasi */}
-        <section className="dash-table-section">
+        <section className="dash-table-section animate-fade-up animate-delay-1">
           <div className="dash-table-header">
             <div>
               <div className="dash-panel-title">Ringkasan riwayat simulasi</div>
