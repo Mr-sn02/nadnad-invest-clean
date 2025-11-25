@@ -6,7 +6,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn("Supabase env vars belum di-set di Vercel.");
+  console.warn("⚠️ Supabase URL atau ANON KEY belum di-set di Vercel.");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
