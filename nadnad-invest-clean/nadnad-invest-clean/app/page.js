@@ -40,28 +40,29 @@ export default function HomePage() {
             <section>
               <div className="hero-badge">
                 <span>✨</span>
-                <span>Simulasi investasi dengan nuansa elegan</span>
+                <span>Distraction-free financial planning</span>
               </div>
               <h1 className="hero-title">
-                Rancang masa depanmu
-                <span> dengan sentuhan Nadnad Invest.</span>
+                Where Intelligent Planning
+                <span> Meets Timeless Elegance.</span>
               </h1>
               <p className="hero-sub">
-                Platform simulasi yang tenang, rapi, dan terasa mewah. Nuansa
-                gold–black–silver–white untuk menemani perjalananmu merapikan
-                rencana keuangan sebelum benar-benar menaruh dana.
+                Nadnad Invest adalah platform perencanaan keuangan modern yang
+                mengubah cara Anda merancang masa depan—lebih tenang, lebih
+                terukur, dan lebih elegan. Bukan ruang spekulasi, tetapi ruang
+                latihan untuk pola pikir finansial yang dewasa.
               </p>
 
               <div className="hero-actions">
-                <button className="btn-main">Mulai simulasi</button>
+                <button className="btn-main">Start Your Intelligent Journey</button>
                 <a href="#paket" className="btn-ghost">
-                  Lihat paket simulasi
+                  Experience the Simulation
                 </a>
               </div>
 
               <div className="hero-meta">
                 <span>
-                  <strong>Elegance Powered by Intelligence.</strong>
+                  <strong>Designed for those who value clarity over noise.</strong>
                 </span>
               </div>
             </section>
@@ -70,16 +71,16 @@ export default function HomePage() {
             <aside className="hero-card animate-fade-up animate-delay-2">
               <div className="hero-card-header">
                 <div className="hero-card-title">
-                  Simulasi paket “Stabil Elegan”
+                  Simulation: “Stabil Elegan”
                 </div>
-                <span className="pill-safe">Profil konservatif</span>
+                <span className="pill-safe">Conservative precision</span>
               </div>
 
               <div className="hero-card-amount">Rp 185.000.000</div>
               <p className="hero-card-caption">
-                Contoh ilustrasi nilai rencana dengan setoran rutin dan asumsi
-                pertumbuhan stabil. Bukan janji hasil, hanya contoh visual yang
-                rapi.
+                Ilustrasi nilai rencana dengan setoran konsisten dan asumsi
+                pertumbuhan stabil. Bukan proyeksi resmi atau janji hasil—hanya
+                visual yang membantu Anda melihat gambaran besar.
               </p>
 
               <div
@@ -91,21 +92,21 @@ export default function HomePage() {
                 }}
               >
                 <div>
-                  <div style={{ color: "#9ca3af" }}>Setoran bulanan</div>
+                  <div style={{ color: "#9ca3af" }}>Monthly simulated deposit</div>
                   <div style={{ fontWeight: 600 }}>Rp 750.000</div>
                 </div>
                 <div>
-                  <div style={{ color: "#9ca3af" }}>Durasi rencana</div>
-                  <div style={{ fontWeight: 600 }}>8 tahun</div>
+                  <div style={{ color: "#9ca3af" }}>Plan horizon</div>
+                  <div style={{ fontWeight: 600 }}>8 years</div>
                 </div>
                 <div>
-                  <div style={{ color: "#9ca3af" }}>Profil risiko</div>
-                  <div style={{ fontWeight: 600 }}>Konservatif</div>
+                  <div style={{ color: "#9ca3af" }}>Risk profile</div>
+                  <div style={{ fontWeight: 600 }}>Conservative · stability first</div>
                 </div>
                 <div>
-                  <div style={{ color: "#9ca3af" }}>Tema</div>
+                  <div style={{ color: "#9ca3af" }}>Visual theme</div>
                   <div style={{ fontWeight: 600 }}>
-                    Elegance Powered by Intelligence
+                    Gold · Black · Silver · White
                   </div>
                 </div>
               </div>
@@ -121,114 +122,117 @@ export default function HomePage() {
           className="container section animate-fade-up animate-delay-1"
         >
           <div className="section-header">
-            <div className="section-eyebrow">Paket simulasi</div>
-            <h2 className="section-title">Pilih gaya investasimu</h2>
+            <div className="section-eyebrow">Simulation packages</div>
+            <h2 className="section-title">Choose your simulation style</h2>
             <p className="section-subtitle">
-              Semua paket di bawah ini masih berbentuk simulasi. Cocok untuk
-              belajar menyusun rencana sebelum masuk instrumen nyata.
+              Setiap paket dirancang untuk mewakili karakter berbeda: stabil,
+              seimbang, hingga agresif elegan. Semuanya masih berupa simulasi—
+              ruang aman untuk belajar sebelum memasuki instrumen nyata.
             </p>
           </div>
 
           <div className="package-grid">
             {/* Paket 1 */}
             <article className="card animate-fade-up animate-delay-1">
-              <div className="chip">Konservatif</div>
+              <div className="chip">Conservative</div>
               <h3 className="card-title">Stabil Elegan</h3>
               <p className="card-text">
-                Fokus pada kestabilan nilai. Cocok untuk dana darurat atau
-                rencana 1–3 tahun dengan fluktuasi relatif kecil.
+                Stabilitas adalah bentuk kemewahan tertinggi. Paket ini cocok
+                untuk Anda yang mengutamakan rasa aman dan kestabilan nilai.
               </p>
 
               <ul className="card-bullets">
-                <li>Fokus menjaga nilai pokok</li>
-                <li>Cocok untuk pemula yang ingin terasa aman</li>
-                <li>Simulasi pergerakan nilai yang lembut</li>
+                <li>Pergerakan simulasi yang halus dan terkendali</li>
+                <li>Cocok untuk dana darurat dan rencana jangka pendek</li>
+                <li>Membangun fondasi kebiasaan menabung yang konsisten</li>
               </ul>
 
               <div className="card-meta">
-                Minimal simulasi: <strong>Rp 100.000</strong>
+                Minimal simulated plan: <strong>Rp 100.000</strong>
                 <br />
-                Horizon waktu: 1–3 tahun
+                Recommended horizon: 1–3 years
               </div>
 
               <div className="package-footer">
                 <div className="price">Rp 100.000+</div>
-                <button className="btn-small">Lihat detail</button>
+                <button className="btn-small">View details</button>
               </div>
             </article>
 
             {/* Paket 2 (paling populer) */}
             <article className="card card-highlight animate-fade-up animate-delay-2">
-              <div className="card-ribbon">Paling dipakai</div>
+              <div className="card-ribbon">Most selected</div>
               <div className="chip">Moderate</div>
               <h3 className="card-title">Rencana Pendidikan</h3>
               <p className="card-text">
-                Menjaga keseimbangan antara pertumbuhan dan risiko. Cocok untuk
-                biaya sekolah atau kuliah beberapa tahun ke depan.
+                Seimbang antara pertumbuhan dan ketenangan. Cocok untuk orang
+                tua dan keluarga yang ingin menyiapkan masa depan anak dengan
+                ritme yang realistis.
               </p>
 
               <ul className="card-bullets">
-                <li>Kombinasi stabilitas dan peluang tumbuh</li>
-                <li>Visual simulasi yang mudah dijelaskan ke keluarga</li>
-                <li>Horizon menengah dengan kontrol risiko</li>
+                <li>Pertumbuhan simulasi yang terukur namun tetap stabil</li>
+                <li>Mudah dijadikan bahan diskusi dengan pasangan & keluarga</li>
+                <li>Ideal untuk rencana 5–10 tahun</li>
               </ul>
 
               <div className="card-meta">
-                Minimal simulasi: <strong>Rp 250.000</strong>
+                Minimal simulated plan: <strong>Rp 250.000</strong>
                 <br />
-                Horizon waktu: 5–10 tahun
+                Recommended horizon: 5–10 years
               </div>
 
               <div className="package-footer">
                 <div className="price">Rp 250.000+</div>
                 <button className="btn-small btn-main-small">
-                  Lihat detail
+                  View details
                 </button>
               </div>
             </article>
 
             {/* Paket 3 */}
             <article className="card animate-fade-up animate-delay-3">
-              <div className="chip">Agresif elegan</div>
+              <div className="chip">Elegant aggressive</div>
               <h3 className="card-title">Pensiun Mandiri</h3>
               <p className="card-text">
-                Untuk kamu yang siap dengan fluktuasi lebih besar demi potensi
-                pertumbuhan jangka panjang dan kebebasan finansial.
+                Untuk Anda yang melihat jauh ke depan. Simulasi dengan potensi
+                pertumbuhan lebih besar, disajikan dengan visual yang tetap
+                tenang dan elegan.
               </p>
 
               <ul className="card-bullets">
-                <li>Simulasi skenario pertumbuhan jangka panjang</li>
-                <li>Cocok untuk target pensiun dan warisan</li>
-                <li>Membiasakan diri dengan pergerakan nilai yang dinamis</li>
+                <li>Fokus pada horizon panjang dan akumulasi bertahap</li>
+                <li>Cocok untuk rencana pensiun dan legacy planning</li>
+                <li>Membiasakan diri dengan dinamika naik-turun yang sehat</li>
               </ul>
 
               <div className="card-meta">
-                Minimal simulasi: <strong>Rp 500.000</strong>
+                Minimal simulated plan: <strong>Rp 500.000</strong>
                 <br />
-                Horizon waktu: 10+ tahun
+                Recommended horizon: 10+ years
               </div>
 
               <div className="package-footer">
                 <div className="price">Rp 500.000+</div>
-                <button className="btn-small">Lihat detail</button>
+                <button className="btn-small">View details</button>
               </div>
             </article>
           </div>
         </section>
 
         {/* ================================
-           SECTION: Cara Kerja
+           SECTION: Cara Kerja (premium)
         ================================= */}
         <section
           id="cara-kerja"
           className="container section animate-fade-up animate-delay-1"
         >
           <div className="section-header">
-            <div className="section-eyebrow">Cara kerja</div>
-            <h2 className="section-title">Bagaimana Nadnad Invest membantumu</h2>
+            <div className="section-eyebrow">How it works</div>
+            <h2 className="section-title">A calm, structured way to plan</h2>
             <p className="section-subtitle">
-              Dibuat sederhana agar kamu bisa fokus membangun kebiasaan sehat,
-              bukan pusing dengan istilah teknis.
+              Prosesnya dibuat sesederhana mungkin. Fokusnya bukan pada “cepat
+              kaya”, melainkan pada membangun ritme dan pola pikir yang dewasa.
             </p>
           </div>
 
@@ -240,29 +244,31 @@ export default function HomePage() {
             }}
           >
             <div className="card animate-fade-up animate-delay-1">
-              <div className="chip">Langkah 1</div>
-              <h3 className="card-title">Tentukan tujuanmu</h3>
+              <div className="chip">Step 1</div>
+              <h3 className="card-title">Define your destination</h3>
               <p className="card-text">
-                Pilih fokus: dana darurat, pendidikan, atau pensiun sebagai dasar
-                gaya simulasi.
+                Tentukan apakah fokusmu dana darurat, pendidikan, pensiun, atau
+                kebebasan finansial. Arah yang jelas adalah separuh keputusan.
               </p>
             </div>
 
             <div className="card animate-fade-up animate-delay-2">
-              <div className="chip">Langkah 2</div>
-              <h3 className="card-title">Pilih paket simulasi</h3>
+              <div className="chip">Step 2</div>
+              <h3 className="card-title">Choose your simulation style</h3>
               <p className="card-text">
-                Sesuaikan paket dengan horizon waktu dan profil risiko yang kamu
-                rasa paling nyaman.
+                Pilih paket simulasi yang paling sesuai dengan karakter dan
+                horizon waktu yang kamu inginkan—konservatif, seimbang, atau
+                agresif elegan.
               </p>
             </div>
 
             <div className="card animate-fade-up animate-delay-3">
-              <div className="chip">Langkah 3</div>
-              <h3 className="card-title">Bangun kebiasaan</h3>
+              <div className="chip">Step 3</div>
+              <h3 className="card-title">Observe, reflect, refine</h3>
               <p className="card-text">
-                Gunakan simulasi untuk memahami pola. Setelah nyaman, terapkan
-                pola yang sama di instrumen keuangan nyata.
+                Amati pola, evaluasi ulang, dan perbaiki rencana. Di sini,
+                tujuan utamanya adalah memperhalus cara berpikirmu sebelum
+                masuk ke dunia finansial sesungguhnya.
               </p>
             </div>
           </div>
@@ -276,27 +282,25 @@ export default function HomePage() {
           className="container section animate-fade-up animate-delay-1"
         >
           <div className="section-header">
-            <div className="section-eyebrow">Testimoni</div>
-            <h2 className="section-title">Suara dari para pengguna awal</h2>
+            <div className="section-eyebrow">Testimonials</div>
+            <h2 className="section-title">Trusted by thoughtful planners</h2>
             <p className="section-subtitle">
-              Mereka bukan mencari “cepat kaya”, tapi ingin hubungan yang lebih
-              sehat dengan uang dan rencana keuangan.
+              Mereka tidak mengejar sensasi. Mereka mengejar kejelasan, ritme,
+              dan hubungan yang lebih dewasa dengan uang.
             </p>
           </div>
 
           <div className="testimonials">
             <article className="testimonial-card animate-fade-up animate-delay-1">
               <p className="testimonial-text">
-                “Sebelumnya aku selalu panik kalau bicara soal investasi. Di
-                Nadnad Invest, semuanya terasa pelan, elegan, dan masuk akal.
-                Aku jadi sadar kalau kuncinya adalah konsistensi, bukan kejar
-                angka instan.”
+                “A rare platform that respects my pace. Tidak memaksa, tidak
+                mengiming-imingi. Justru karena itu aku merasa lebih percaya.”
               </p>
               <div className="testimonial-footer">
                 <div>
-                  <div className="testimonial-name">Dita</div>
+                  <div className="testimonial-name">Adit</div>
                   <div className="testimonial-role">
-                    Karyawan swasta, 28 tahun
+                    Consultant, fokus jangka panjang
                   </div>
                 </div>
               </div>
@@ -304,30 +308,28 @@ export default function HomePage() {
 
             <article className="testimonial-card animate-fade-up animate-delay-2">
               <p className="testimonial-text">
-                “Tampilan Nadnad Invest bikin aku betah ngulik. Rasanya seperti
-                lihat dashboard butik finansial, bukan aplikasi trading yang
-                bising.”
+                “Feels like having a private financial planner. Elegan, tenang,
+                dan tidak bising. Aku bisa berpikir jernih tanpa merasa dikejar
+                pasar.”
               </p>
               <div className="testimonial-footer">
                 <div>
-                  <div className="testimonial-name">Rendy</div>
-                  <div className="testimonial-role">Freelancer, 32 tahun</div>
+                  <div className="testimonial-name">Hana</div>
+                  <div className="testimonial-role">Entrepreneur</div>
                 </div>
               </div>
             </article>
 
             <article className="testimonial-card animate-fade-up animate-delay-3">
               <p className="testimonial-text">
-                “Sebagai orang yang visual, aku suka cara Nadnad menyajikan
-                rencana. Tenang, rapi, tapi tetap tegas. Rasanya kayak diajak
-                mikir bareng, bukan disuruh spekulasi.”
+                “The design alone changes the way I think about money. Sederhana
+                tapi terasa mahal. Nadnad Invest lebih mirip ruang refleksi
+                daripada aplikasi trading.”
               </p>
               <div className="testimonial-footer">
                 <div>
-                  <div className="testimonial-name">Maya</div>
-                  <div className="testimonial-role">
-                    Wirausaha kecil, 30 tahun
-                  </div>
+                  <div className="testimonial-name">Rangga</div>
+                  <div className="testimonial-role">34, creative professional</div>
                 </div>
               </div>
             </article>
@@ -341,17 +343,18 @@ export default function HomePage() {
           <div className="cta animate-fade-up animate-delay-1">
             <div>
               <div className="cta-title">
-                Siap memulai perjalanan investasimu dengan lebih elegan?
+                Craft your financial tomorrow with calm, clarity, and class.
               </div>
               <div className="cta-sub">
-                Buat akun, pilih paket simulasi, lalu lihat bagaimana kebiasaan
-                kecil yang konsisten bisa mengubah arah keuanganmu.
+                Tidak ada setoran, tidak ada janji palsu. Nadnad Invest memberi
+                Anda ruang untuk berlatih—sebelum benar-benar berkomitmen pada
+                instrumen keuangan apa pun.
               </div>
             </div>
             <div className="cta-actions">
-              <button className="btn-main">Daftar sekarang</button>
+              <button className="btn-main">Start Your Intelligent Journey</button>
               <a href="/dashboard" className="btn-ghost">
-                Lihat demo dashboard
+                See the Dashboard Experience
               </a>
             </div>
           </div>
