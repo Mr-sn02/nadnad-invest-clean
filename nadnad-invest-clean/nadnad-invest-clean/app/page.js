@@ -357,10 +357,10 @@ export default function HomePage() {
           <div className="footer-links">
             <a href="#">Kebijakan Privasi</a>
             <a href="#">Syarat &amp; Ketentuan</a>
-            <a href="#">Kontak</a>
-          </div>
-        </div>
-      </footer>
+            <a href="/about">Tentang Nadnad Invest</a>
+           </div>
+         </div>
+       </footer>
     </>
   );
 }
