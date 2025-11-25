@@ -9,7 +9,7 @@ export default function HomePage() {
             <div className="brand-icon">Ni</div>
             <div>
               <div className="brand-text">Nadnad Invest</div>
-              <div className="brand-sub">Gold · Black · Silver · White</div>
+              <div className="brand-sub">Elegance Powered by Intelligence.</div>
             </div>
           </div>
           <div>
@@ -21,6 +21,7 @@ export default function HomePage() {
       </header>
 
       <main>
+        {/* HERO SECTION */}
         <section className="container hero">
           <div className="hero-grid">
             {/* Kiri: teks */}
@@ -36,7 +37,7 @@ export default function HomePage() {
               <p className="hero-sub">
                 Platform simulasi yang tenang, rapi, dan terasa mewah. Nuansa
                 gold–black–silver–white untuk menemani perjalananmu merapikan
-                rencana keuangan, sebelum benar-benar menaruh dana.
+                rencana keuangan sebelum benar-benar menaruh dana.
               </p>
 
               <div className="hero-actions">
@@ -46,15 +47,10 @@ export default function HomePage() {
                 </a>
               </div>
 
+              {/* DIGANTI SESUAI PERMINTAAN */}
               <div className="hero-meta">
                 <span>
-                  <strong>Gold</strong> · fokus jangka panjang
-                </span>
-                <span>
-                  <strong>Black</strong> · ketenangan &amp; kontrol
-                </span>
-                <span>
-                  <strong>Silver</strong> · data rapi &amp; modern
+                  <strong>Elegance Powered by Intelligence.</strong>
                 </span>
               </div>
             </section>
@@ -70,9 +66,7 @@ export default function HomePage() {
 
               <div className="hero-card-amount">Rp 185.000.000</div>
               <p className="hero-card-caption">
-                Contoh ilustrasi nilai rencana setelah beberapa tahun dengan
-                setoran rutin dan asumsi pertumbuhan stabil. Bukan janji hasil,
-                hanya contoh visual yang rapi.
+                Contoh ilustrasi nilai rencana dengan setoran rutin dan asumsi pertumbuhan stabil.
               </p>
 
               <div
@@ -96,9 +90,9 @@ export default function HomePage() {
                   <div style={{ fontWeight: 600 }}>Konservatif</div>
                 </div>
                 <div>
-                  <div style={{ color: "#9ca3af" }}>Nuansa</div>
+                  <div style={{ color: "#9ca3af" }}>Tema</div>
                   <div style={{ fontWeight: 600 }}>
-                    Gold · Black · Silver · White
+                    Elegance Powered by Intelligence
                   </div>
                 </div>
               </div>
@@ -106,14 +100,16 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION: Paket simulasi */}
+        {/* ================================
+           SECTION: Paket Simulasi
+        ================================= */}
         <section id="paket" className="container section">
           <div className="section-header">
             <div className="section-eyebrow">Paket simulasi</div>
             <h2 className="section-title">Pilih gaya investasimu</h2>
             <p className="section-subtitle">
               Semua paket di bawah ini masih berbentuk simulasi. Cocok untuk
-              belajar menyusun rencana sebelum masuk ke instrumen nyata.
+              belajar menyusun rencana sebelum masuk instrumen nyata.
             </p>
           </div>
 
@@ -123,12 +119,10 @@ export default function HomePage() {
                 <div className="chip">Konservatif</div>
                 <h3 className="card-title">Stabil Elegan</h3>
                 <p className="card-text">
-                  Fokus ke kestabilan nilai. Cocok untuk dana darurat dan
-                  rencana 1–3 tahun dengan fluktuasi relatif kecil.
+                  Fokus kestabilan nilai. Cocok dana darurat / rencana 1–3 tahun.
                 </p>
                 <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 100.000</strong>
-                  <br />
+                  Minimal simulasi: <strong>Rp 100.000</strong><br />
                   Horizon waktu: 1–3 tahun
                 </div>
               </div>
@@ -143,12 +137,10 @@ export default function HomePage() {
                 <div className="chip">Moderate</div>
                 <h3 className="card-title">Rencana Pendidikan</h3>
                 <p className="card-text">
-                  Menjaga keseimbangan antara pertumbuhan dan risiko. Cocok
-                  untuk biaya sekolah / kuliah beberapa tahun lagi.
+                  Seimbang antara pertumbuhan & risiko. Cocok biaya sekolah/kuliah.
                 </p>
                 <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 250.000</strong>
-                  <br />
+                  Minimal simulasi: <strong>Rp 250.000</strong><br />
                   Horizon waktu: 5–10 tahun
                 </div>
               </div>
@@ -160,15 +152,13 @@ export default function HomePage() {
 
             <article className="card">
               <div>
-                <div className="chip">Agresif elegan</div>
+                <div className="chip">Agresif Elegan</div>
                 <h3 className="card-title">Pensiun Mandiri</h3>
                 <p className="card-text">
-                  Untuk kamu yang siap dengan fluktuasi lebih besar demi potensi
-                  pertumbuhan jangka panjang.
+                  Untuk kamu yang siap fluktuasi lebih besar demi pertumbuhan jangka panjang.
                 </p>
                 <div className="card-meta">
-                  Minimal simulasi: <strong>Rp 500.000</strong>
-                  <br />
+                  Minimal simulasi: <strong>Rp 500.000</strong><br />
                   Horizon waktu: 10+ tahun
                 </div>
               </div>
@@ -179,14 +169,62 @@ export default function HomePage() {
             </article>
           </div>
         </section>
+
+        {/* ================================
+           SECTION: Cara Kerja (dipindah ke posisi benar)
+        ================================= */}
+        <section id="cara-kerja" className="container section">
+          <div className="section-header">
+            <div className="section-eyebrow">Cara kerja</div>
+            <h2 className="section-title">Bagaimana Nadnad Invest membantumu</h2>
+            <p className="section-subtitle">
+              Dibuat sederhana agar kamu bisa fokus membangun kebiasaan sehat,
+              bukan pusing dengan istilah teknis.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: "1.2rem",
+            }}
+          >
+            <div className="card">
+              <div className="chip">Langkah 1</div>
+              <h3 className="card-title">Tentukan tujuanmu</h3>
+              <p className="card-text">
+                Pilih fokus: dana darurat, pendidikan, atau pensiun.
+              </p>
+            </div>
+
+            <div className="card">
+              <div className="chip">Langkah 2</div>
+              <h3 className="card-title">Pilih paket simulasi</h3>
+              <p className="card-text">
+                Bandingkan paket sesuai horizon waktu dan profil risiko.
+              </p>
+            </div>
+
+            <div className="card">
+              <div className="chip">Langkah 3</div>
+              <h3 className="card-title">Bangun kebiasaan</h3>
+              <p className="card-text">
+                Gunakan simulasi untuk memahami pola sebelum masuk instrumen nyata.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="footer">
         <div className="container footer-inner">
-          <div>© {new Date().getFullYear()} Nadnad Invest. All rights reserved.</div>
+          <div>
+            © {new Date().getFullYear()} Nadnad Invest. All rights reserved.
+          </div>
           <div className="footer-links">
             <a href="#">Kebijakan Privasi</a>
-            <a href="#">Syarat &amp; Ketentuan</a>
+            <a href="#">Syarat & Ketentuan</a>
             <a href="#">Kontak</a>
           </div>
         </div>
