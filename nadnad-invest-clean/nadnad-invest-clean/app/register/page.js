@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "../lib/supabaseClient"; // sesuaikan kalau path beda
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -12,6 +12,19 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Kalau sudah login & masih buka /register → lempar ke dashboard
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        router.push("/");
+      }
+    };
+    checkUser();
+  }, [router]);
 
   async function handleRegister(e) {
     e.preventDefault();
@@ -48,7 +61,7 @@ export default function RegisterPage() {
   return (
     <main className="nanad-login-page">
       <div className="nanad-login-shell">
-        {/* Brand bar (sama dengan login) */}
+        {/* Brand bar */}
         <header className="nanad-login-brand">
           <div className="nanad-login-brand-left">
             <div className="nanad-login-logo">N</div>
@@ -107,8 +120,8 @@ export default function RegisterPage() {
               <p>New account</p>
               <h2>Buat akun Nanad Invest</h2>
               <p>
-                Isi data singkat di bawah. Kamu selalu bisa memperbarui nama
-                dan rencana di dalam dasbor.
+                Isi data singkat di bawah. Kamu selalu bisa memperbarui nama dan
+                rencana di dalam dasbor.
               </p>
             </div>
 
