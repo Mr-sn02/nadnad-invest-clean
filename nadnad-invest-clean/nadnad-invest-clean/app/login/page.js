@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleLogin(e) {
     e.preventDefault();
-    setErrorMsg("");
+    setLoading(true);
+    setError("");
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -20,7 +22,8 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setErrorMsg(error.message);
+      setError(error.message);
+      setLoading(false);
       return;
     }
 
@@ -28,39 +31,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: "60px auto" }}>
-      <h1>Masuk ke Nadnad Invest</h1>
+    <div style={{ padding: "2rem" }}>
+      <h1>Login</h1>
 
-      {errorMsg && (
-        <p style={{ color: "red", marginBottom: 10 }}>{errorMsg}</p>
-      )}
-
-      <form onSubmit={handleLogin} style={{ display: "grid", gap: 12 }}>
+      <form onSubmit={handleLogin} style={{ display: "grid", gap: "1rem", maxWidth: "320px" }}>
         <input
           type="email"
           placeholder="Email"
           value={email}
-          required
           onChange={(e) => setEmail(e.target.value)}
-          className="input"
+          required
         />
 
         <input
           type="password"
           placeholder="Password"
           value={password}
-          required
           onChange={(e) => setPassword(e.target.value)}
-          className="input"
+          required
         />
 
-        <button type="submit" className="btn-main">
-          Login
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Memproses..." : "Login"}
         </button>
       </form>
 
-      <p style={{ marginTop: 20 }}>
-        Belum punya akun? <a href="/register">Daftar</a>
+      <p style={{ marginTop: "1rem" }}>
+        Belum punya akun? <a href="/register">Daftar di sini</a>
       </p>
     </div>
   );
