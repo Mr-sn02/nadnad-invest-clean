@@ -2,199 +2,175 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabaseClient"; // ganti kalau path berbeda
+import { supabase } from "../lib/supabaseClient"; // sesuaikan kalau path beda
 
-export default function DashboardPage() {
+export default function LoginPage() {
   const router = useRouter();
-  const [userEmail, setUserEmail] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  // Ambil user dari Supabase, kalau tidak ada redirect ke /login
+  // Kalau sudah login & masih coba buka /login → lempar ke dashboard
   useEffect(() => {
     const checkUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push("/login");
-        return;
+      if (user) {
+        router.push("/");
       }
-
-      setUserEmail(user.email || "");
-      setLoading(false);
     };
-
     checkUser();
   }, [router]);
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/login");
-  }
+  async function handleLogin(e) {
+    e.preventDefault();
+    setErrorMsg("");
+    setLoading(true);
 
-  if (loading) {
-    // tampilan loading singkat biar nggak blank
-    return (
-      <main className="nanad-dashboard-page">
-        <div className="nanad-dashboard-shell">
-          <p style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
-            Memuat dashboard Nanad Invest...
-          </p>
-        </div>
-      </main>
-    );
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setErrorMsg(error.message || "Login gagal, cek email & kata sandi.");
+      return;
+    }
+
+    router.push("/");
   }
 
   return (
-    <main className="nanad-dashboard-page">
-      <div className="nanad-dashboard-shell">
-        {/* HEADER ATAS */}
-        <header className="nanad-dashboard-header">
-          <div className="nanad-dashboard-header-left">
-            <div className="nanad-dashboard-logo">N</div>
-            <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
-              <p className="nanad-dashboard-brand-sub">
-                Gigana · Personal Planning Dashboard
+    <main className="nanad-login-page">
+      <div className="nanad-login-shell">
+        {/* Brand bar */}
+        <header className="nanad-login-brand">
+          <div className="nanad-login-brand-left">
+            <div className="nanad-login-logo">N</div>
+            <div className="nanad-login-brand-text">
+              <p className="nanad-login-brand-title">Nanad Invest</p>
+              <p className="nanad-login-brand-sub">
+                Personal Planning &amp; Simulation Space
               </p>
             </div>
           </div>
-
-          <div className="nanad-dashboard-header-right">
-            <div className="nanad-dashboard-account">
-              <span className="nanad-dashboard-account-label">Akun aktif</span>
-              <span className="nanad-dashboard-account-email">
-                {userEmail || "-"}
-              </span>
-            </div>
-            <button
-              type="button"
-              className="nanad-dashboard-logout"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </div>
+          <span className="nanad-login-badge">Beta Studio · v0.1</span>
         </header>
 
-        {/* RINGKASAN SELAMAT DATANG */}
-        <section className="nanad-dashboard-welcome">
-          <div>
-            <p className="nanad-dashboard-eyebrow">
-              Welcome to your plan space
-            </p>
-            <h1 className="nanad-dashboard-heading">
-              Selamat datang di ruang rencana finansial yang rapi.
+        {/* Main content */}
+        <div className="nanad-login-main">
+          {/* Left copy */}
+          <section className="nanad-login-copy">
+            <p className="nanad-login-eyebrow">Welcome back</p>
+            <h1 className="nanad-login-heading">
+              Masuk ke ruang
+              <span>rencana finansial yang rapi &amp; elegan.</span>
             </h1>
-            <p className="nanad-dashboard-text">
-              Satu dasbor untuk menyusun tujuan, mensimulasikan setoran, dan
-              memantau progresmu tanpa pusing lihat angka di banyak tempat.
-              Data rencana disimpan rapi, bisa kamu ubah kapan saja, dan tidak
-              langsung terhubung ke instrumen — aman untuk eksplorasi bersama
-              Nanad Invest.
+            <p className="nanad-login-text">
+              Simulasikan tujuan, rancang setoran, dan lihat bagaimana
+              rencanamu bisa tumbuh secara terukur. Semua tersimpan rapi,
+              tanpa tekanan untuk langsung mengeksekusi di instrumen nyata.
             </p>
-          </div>
 
-          <div className="nanad-dashboard-stats">
-            <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-number">3</p>
-              <p className="nanad-dashboard-stat-label">Rencana contoh aktif</p>
+            <div className="nanad-login-highlights">
+              <div className="nanad-login-highlight-card nanad-login-highlight-primary">
+                <p className="nanad-login-highlight-title">
+                  Ruang simulasi dulu
+                </p>
+                <p className="nanad-login-highlight-body">
+                  Uji berbagai skenario: dana darurat, rumah, pensiun —
+                  tanpa mengubah uang di rekeningmu.
+                </p>
+              </div>
+              <div className="nanad-login-highlight-card">
+                <p className="nanad-login-highlight-title">
+                  Satu dasbor, banyak tujuan
+                </p>
+                <p className="nanad-login-highlight-body">
+                  Lihat gambaran besar keuanganmu dalam satu tampilan tenang,
+                  bukan penuh angka yang bikin panik.
+                </p>
+              </div>
             </div>
-            <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-number">2</p>
-              <p className="nanad-dashboard-stat-label">Kategori tujuan</p>
-            </div>
-            <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-number">Demo</p>
-              <p className="nanad-dashboard-stat-label">Mode saat ini</p>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* TIGA KARTU PENJELASAN */}
-        <section className="nanad-dashboard-grid">
-          <article className="nanad-dashboard-card">
-            <h2>Identitas kamu</h2>
-            <p>
-              Email ini akan dipakai untuk menyimpan preferensi default, lokasi
-              rencana, dan riwayat perjalanan finansialmu di Nanad Invest versi
-              berikutnya. Di tahap ini, kamu masih berada di mode demo yang
-              fokus ke simulasi dan perapian rencana.
-            </p>
-          </article>
-
-          <article className="nanad-dashboard-card">
-            <h2>Target dana &amp; unggahan</h2>
-            <p>
-              Nantinya kamu bisa menetapkan target dana untuk berbagai tujuan:
-              dana darurat, pendidikan, rumah, atau pensiun. Dashboard akan
-              membantu menghitung kisaran setoran bulanan, timeline, dan
-              progres yang perlu kamu kejar untuk tiap tujuan tersebut.
-            </p>
-          </article>
-
-          <article className="nanad-dashboard-card">
-            <h2>Kenapa dashboard ini akan berkembang?</h2>
-            <p>
-              Versi selanjutnya akan menghadirkan grafik pertumbuhan, catatan
-              emosi saat berinvestasi, insight berkala, serta pengelompokan
-              rencana berdasarkan prioritas. Tujuannya: membantumu mengambil
-              keputusan finansial dengan lebih tenang dan terukur.
-            </p>
-          </article>
-        </section>
-
-        {/* KARTU CONTOH RENCANA */}
-        <section className="nanad-dashboard-plan">
-          <div className="nanad-dashboard-plan-header">
-            <div>
-              <p className="nanad-dashboard-eyebrow">Sample plan preview</p>
-              <h2>Contoh rencana yang sedang disusun</h2>
+          {/* Right card */}
+          <section className="nanad-login-card">
+            <div className="nanad-login-card-header">
+              <p className="nanad-login-card-eyebrow">Secure access</p>
+              <h2>Masuk ke dashboard Nanad Invest</h2>
               <p>
-                Ini hanya ilustrasi. Di tahap berikutnya, rencana milikmu
-                sendiri akan muncul di sini setelah kamu mengisi form
-                perencanaan bersama Nanad Invest.
+                Gunakan email yang kamu daftarkan. Kamu bisa mengubah detail
+                rencana kapan pun di dalam dasbor.
               </p>
             </div>
-          </div>
 
-          <div className="nanad-dashboard-table">
-            <div className="nanad-dashboard-table-header">
-              <div>Nama rencana</div>
-              <div>Durasi</div>
-              <div>Setoran bulanan</div>
-              <div>Estimasi dana akhir</div>
-            </div>
+            <form onSubmit={handleLogin} className="nanad-login-form">
+              <div className="nanad-login-field">
+                <label>Email</label>
+                <div className="nanad-login-input-wrapper">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="nama@email.com"
+                  />
+                </div>
+              </div>
 
-            <div className="nanad-dashboard-table-row">
-              <div>Dana Darurat 6× Pengeluaran</div>
-              <div>36 bulan</div>
-              <div>Rp 750.000</div>
-              <div>± Rp 28.000.000</div>
-            </div>
+              <div className="nanad-login-field">
+                <label>Kata sandi</label>
+                <div className="nanad-login-input-wrapper">
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
 
-            <div className="nanad-dashboard-table-row">
-              <div>DP Rumah 20%</div>
-              <div>60 bulan</div>
-              <div>Rp 2.000.000</div>
-              <div>± Rp 140.000.000</div>
-            </div>
+              <div className="nanad-login-row">
+                <label className="nanad-login-remember">
+                  <input type="checkbox" />
+                  <span>Ingat saya di perangkat ini</span>
+                </label>
+                <button
+                  type="button"
+                  className="nanad-login-forgot"
+                >
+                  Lupa kata sandi?
+                </button>
+              </div>
 
-            <div className="nanad-dashboard-table-row">
-              <div>Pendidikan Anak</div>
-              <div>120 bulan</div>
-              <div>Rp 1.500.000</div>
-              <div>± Rp 260.000.000</div>
-            </div>
-          </div>
+              {errorMsg && (
+                <p className="nanad-login-error">{errorMsg}</p>
+              )}
 
-          <p className="nanad-dashboard-plan-footnote">
-            Angka di atas hanyalah ilustrasi kasar. Perhitungan riil akan
-            menyesuaikan profil risiko, asumsi imbal hasil, dan data yang kamu
-            isi saat sesi perencanaan bersama Nanad Invest.
-          </p>
-        </section>
+              <button
+                type="submit"
+                disabled={loading}
+                className="nanad-login-submit"
+              >
+                {loading ? "Memproses..." : "Masuk sekarang"}
+              </button>
+            </form>
+
+            <p className="nanad-login-bottom-text">
+              Belum punya akun? <a href="/register">Daftar dulu</a>
+            </p>
+            <p className="nanad-login-bottom-sub">
+              Dengan masuk, kamu menyetujui pengelolaan data rencana untuk
+              keperluan simulasi di Nanad Invest.
+            </p>
+          </section>
+        </div>
       </div>
     </main>
   );
