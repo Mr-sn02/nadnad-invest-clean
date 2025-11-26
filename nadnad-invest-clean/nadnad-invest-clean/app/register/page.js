@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleRegister(e) {
     e.preventDefault();
-    setErrorMsg("");
+    setError("");
+    setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -20,48 +22,45 @@ export default function RegisterPage() {
     });
 
     if (error) {
-      setErrorMsg(error.message);
+      setError(error.message);
+      setLoading(false);
       return;
     }
 
-    alert("Akun berhasil dibuat! Silakan login.");
+    alert("Pendaftaran berhasil! Silakan cek email untuk verifikasi.");
     router.push("/login");
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: "60px auto" }}>
-      <h1>Buat akun Nadnad Invest</h1>
+    <div style={{ padding: "2rem" }}>
+      <h1>Daftar Akun</h1>
 
-      {errorMsg && (
-        <p style={{ color: "red", marginBottom: 10 }}>{errorMsg}</p>
-      )}
-
-      <form onSubmit={handleRegister} style={{ display: "grid", gap: 12 }}>
+      <form onSubmit={handleRegister} style={{ display: "grid", gap: "1rem", maxWidth: "320px" }}>
         <input
           type="email"
           placeholder="Email"
-          value={email}
           required
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="input"
         />
 
         <input
           type="password"
-          placeholder="Password minimal 6 karakter"
-          value={password}
+          placeholder="Password"
           required
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="input"
         />
 
-        <button type="submit" className="btn-main">
-          Daftar
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Memproses..." : "Daftar"}
         </button>
       </form>
 
-      <p style={{ marginTop: 20 }}>
-        Sudah punya akun? <a href="/login">Login</a>
+      <p style={{ marginTop: "1rem" }}>
+        Sudah punya akun? <a href="/login">Login di sini</a>
       </p>
     </div>
   );
