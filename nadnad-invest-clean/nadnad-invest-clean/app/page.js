@@ -51,32 +51,36 @@ export default function DashboardPage() {
       <div className="nanad-dashboard-shell">
         {/* HEADER ATAS */}
         <header className="nanad-dashboard-header">
-          <div className="nanad-dashboard-header-left">
-            <div className="nanad-dashboard-logo">N</div>
-            <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
-              <p className="nanad-dashboard-brand-sub">
-                Gigana · Personal Planning Dashboard
-              </p>
-            </div>
+        <div className="nanad-dashboard-header-left">
+          <div className="nanad-dashboard-logo">N</div>
+          <div>
+            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+            <p className="nanad-dashboard-brand-sub">
+              Gigana · Personal Planning Dashboard
+            </p>
+          </div>
+        </div>
+
+        <div className="nanad-dashboard-header-right">
+          {/* Badge demo mode */}
+          <span className="nanad-dashboard-demo-badge">Demo mode</span>
+
+          <div className="nanad-dashboard-account">
+            <span className="nanad-dashboard-account-label">Akun aktif</span>
+            <span className="nanad-dashboard-account-email">
+              {userEmail || "-"}
+            </span>
           </div>
 
-          <div className="nanad-dashboard-header-right">
-            <div className="nanad-dashboard-account">
-              <span className="nanad-dashboard-account-label">Akun aktif</span>
-              <span className="nanad-dashboard-account-email">
-                {userEmail || "-"}
-              </span>
-            </div>
-            <button
-              type="button"
-              className="nanad-dashboard-logout"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </div>
-        </header>
+          <button
+            type="button"
+            className="nanad-dashboard-logout"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
+      </header>
 
         {/* RINGKASAN SELAMAT DATANG */}
         <section className="nanad-dashboard-welcome">
