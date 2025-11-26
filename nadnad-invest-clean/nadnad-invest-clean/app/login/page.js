@@ -4,8 +4,6 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
-"use client";
-
 export default function LoginPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-50">
