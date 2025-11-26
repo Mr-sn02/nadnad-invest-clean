@@ -32,7 +32,9 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Dashboard</h1>
-      <p>Selamat datang, <strong>{user.email}</strong></p>
+      <p>
+        Selamat datang, <strong>{user.email}</strong>
+      </p>
 
       <button onClick={logout} style={{ marginTop: "1rem" }}>
         Logout
