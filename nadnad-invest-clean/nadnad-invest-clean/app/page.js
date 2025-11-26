@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient"; // sesuaikan kalau lokasi lib beda
 
 // === Paket simulasi contoh ===
 const examplePackages = [
@@ -20,7 +20,7 @@ const examplePackages = [
     name: "Paket Mingguan Contoh",
     description:
       "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
-    depositTotal: 600000, // contoh: Rp 150.000 x 4 minggu (bisa diubah)
+    depositTotal: 600000, // contoh: Rp 150.000 x 4 minggu, bisa diubah
     durationLabel: "3 bulan (setoran Rp 150.000 per minggu)",
     returnPercent: 8,
   },
@@ -107,7 +107,6 @@ export default function DashboardPage() {
     }
 
     const duration = parseInt(planDuration, 10);
-    // boleh tulis 750000 atau 750.000
     const monthly = parseFloat(
       planMonthly.replace(/\./g, "").replace(",", ".")
     );
@@ -140,6 +139,24 @@ export default function DashboardPage() {
     setPlanName("");
     setPlanDuration("");
     setPlanMonthly("");
+    await loadPlans(userId);
+  }
+
+  async function handleDeletePlan(id) {
+    if (!userId) return;
+
+    const confirmDelete = window.confirm(
+      "Hapus rencana ini dari Nanad Invest?"
+    );
+    if (!confirmDelete) return;
+
+    const { error } = await supabase.from("plans").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting plan:", error);
+      return;
+    }
+
     await loadPlans(userId);
   }
 
@@ -289,6 +306,7 @@ export default function DashboardPage() {
               <div>Durasi</div>
               <div>Setoran bulanan</div>
               <div>Estimasi dana akhir</div>
+              <div>Aksi</div>
             </div>
 
             {loadingPlans ? (
@@ -297,10 +315,12 @@ export default function DashboardPage() {
                 <div></div>
                 <div></div>
                 <div></div>
+                <div></div>
               </div>
             ) : plans.length === 0 ? (
               <div className="nanad-dashboard-table-row">
                 <div>Belum ada rencana</div>
+                <div>-</div>
                 <div>-</div>
                 <div>-</div>
                 <div>-</div>
@@ -324,6 +344,15 @@ export default function DashboardPage() {
                     {Number(plan.final_estimate).toLocaleString("id-ID", {
                       maximumFractionDigits: 0,
                     })}
+                  </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="nanad-dashboard-plan-delete"
+                      onClick={() => handleDeletePlan(plan.id)}
+                    >
+                      Hapus
+                    </button>
                   </div>
                 </div>
               ))
