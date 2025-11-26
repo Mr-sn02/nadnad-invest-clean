@@ -1,39 +1,40 @@
 "use client";
 
-import { supabase } from "../../lib/supabaseClient";
 import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
 
-  async function getUser() {
-    const { data } = await supabase.auth.getUser();
-    setUser(data.user);
+  useEffect(() => {
+    async function loadUser() {
+      const { data } = await supabase.auth.getUser();
 
-    if (!data.user) {
-      router.push("/login");
+      if (!data.user) {
+        router.push("/login");
+      } else {
+        setUser(data.user);
+      }
     }
-  }
 
-  async function handleLogout() {
+    loadUser();
+  }, [router]);
+
+  async function logout() {
     await supabase.auth.signOut();
     router.push("/login");
   }
 
-  useEffect(() => {
-    getUser();
-  }, []);
-
-  if (!user) return <p style={{ padding: 40 }}>Memuat akun...</p>;
+  if (!user) return <p style={{ padding: "1rem" }}>Loading...</p>;
 
   return (
-    <div style={{ maxWidth: 600, margin: "60px auto" }}>
+    <div style={{ padding: "2rem" }}>
       <h1>Dashboard</h1>
-      <p>Selamat datang, {user.email}</p>
+      <p>Selamat datang, <strong>{user.email}</strong></p>
 
-      <button className="btn-main" onClick={handleLogout} style={{ marginTop: 20 }}>
+      <button onClick={logout} style={{ marginTop: "1rem" }}>
         Logout
       </button>
     </div>
