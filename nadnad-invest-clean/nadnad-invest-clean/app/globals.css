@@ -1734,6 +1734,107 @@ body {
   color: #9ca3af;
 }
 
+.nanad-dashboard-packages {
+  margin-top: 1.9rem;
+  border-radius: 1.9rem;
+  border: 1px solid #111827;
+  background-color: rgba(15, 23, 42, 0.98);
+  padding: 1.6rem 1.7rem 1.4rem;
+}
+
+.nanad-dashboard-packages-header h2 {
+  font-size: 0.98rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
+.nanad-dashboard-packages-header p {
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.nanad-dashboard-packages-grid {
+  margin-top: 1.1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .nanad-dashboard-packages-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.nanad-dashboard-package-card {
+  border-radius: 1.3rem;
+  border: 1px solid #111827;
+  background-color: rgba(15, 23, 42, 0.97);
+  padding: 1rem 1rem 0.9rem;
+  font-size: 0.78rem;
+}
+
+.nanad-dashboard-package-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.nanad-dashboard-package-name {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #fef3c7;
+}
+
+.nanad-dashboard-package-badge {
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.7);
+  background-color: rgba(251, 191, 36, 0.12);
+  padding: 0.22rem 0.6rem;
+  font-size: 0.65rem;
+  color: #fef3c7;
+}
+
+.nanad-dashboard-package-desc {
+  margin-top: 0.4rem;
+  color: #d1d5db;
+  font-size: 0.76rem;
+}
+
+.nanad-dashboard-package-rows {
+  margin-top: 0.6rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.nanad-dashboard-package-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.nanad-dashboard-package-row dt {
+  color: #9ca3af;
+}
+
+.nanad-dashboard-package-row dd {
+  text-align: right;
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-package-note {
+  margin-top: 0.6rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.nanad-dashboard-package-disclaimer {
+  margin-top: 0.9rem;
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
 /* Table */
 
 .nanad-dashboard-table {
