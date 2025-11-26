@@ -4,6 +4,37 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabaseClient"; // ganti kalau path berbeda
 
+  // === Paket simulasi contoh ===
+  const examplePackages = [
+    {
+      id: "daily-20",
+      name: "Paket Harian Contoh",
+      description:
+        "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
+      depositTotal: 1200000, // Rp 100.000 x 12 hari
+      durationLabel: "12 hari (setoran Rp 100.000 per hari)",
+      returnPercent: 20, // asumsi 20% total, hanya contoh
+    },
+    {
+      id: "weekly-8",
+      name: "Paket Mingguan Contoh",
+      description:
+        "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
+      depositTotal: 600000, // misal Rp 150.000 x 4 minggu
+      durationLabel: "3 bulan (setoran Rp 150.000 per minggu)",
+      returnPercent: 8,
+    },
+    {
+      id: "monthly-10",
+      name: "Paket Bulanan Contoh",
+      description:
+        "Contoh target tahunan dengan setoran bulanan tetap.",
+      depositTotal: 2400000, // Rp 200.000 x 12 bulan
+      durationLabel: "12 bulan (setoran Rp 200.000 per bulan)",
+      returnPercent: 10,
+    },
+  ];
+
 export default function DashboardPage() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState("");
