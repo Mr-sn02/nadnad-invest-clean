@@ -11,6 +11,19 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Kalau sudah login & masih coba buka /login → lempar ke dashboard
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        router.push("/");
+      }
+    };
+    checkUser();
+  }, [router]);
+
   async function handleLogin(e) {
     e.preventDefault();
     setErrorMsg("");
@@ -150,8 +163,7 @@ export default function LoginPage() {
             </form>
 
             <p className="nanad-login-bottom-text">
-              Belum punya akun?{" "}
-              <a href="/register">Daftar dulu</a>
+              Belum punya akun? <a href="/register">Daftar dulu</a>
             </p>
             <p className="nanad-login-bottom-sub">
               Dengan masuk, kamu menyetujui pengelolaan data rencana untuk
