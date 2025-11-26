@@ -34,7 +34,10 @@ export default function LoginPage() {
     <div style={{ padding: "2rem" }}>
       <h1>Login</h1>
 
-      <form onSubmit={handleLogin} style={{ display: "grid", gap: "1rem", maxWidth: "320px" }}>
+      <form
+        onSubmit={handleLogin}
+        style={{ display: "grid", gap: "1rem", maxWidth: "320px" }}
+      >
         <input
           type="email"
           placeholder="Email"
