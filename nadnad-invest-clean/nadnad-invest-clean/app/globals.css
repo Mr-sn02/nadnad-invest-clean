@@ -1566,6 +1566,15 @@ body {
   gap: 0.9rem;
 }
 
+.nanad-dashboard-demo-badge {
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.7);
+  background-color: rgba(251, 191, 36, 0.12);
+  padding: 0.25rem 0.7rem;
+  font-size: 0.65rem;
+  color: #fef3c7;
+}
+
 .nanad-dashboard-account {
   display: flex;
   flex-direction: column;
