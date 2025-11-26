@@ -1189,10 +1189,12 @@ body {
   align-items: center;
   justify-content: center;
   background-color: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(52, 211, 153, 0.7);
-  color: rgb(52, 211, 153);
+  border: 1px solid rgba(251, 191, 36, 0.8); /* gold */
+  color: #facc15; /* gold terang */
   font-weight: 600;
 }
+
+.nanad-login-brand-text {}
 
 .nanad-login-brand-title {
   text-transform: uppercase;
@@ -1209,12 +1211,12 @@ body {
 
 .nanad-login-badge {
   border-radius: 999px;
-  border: 1px solid rgba(52, 211, 153, 0.6);
-  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.75); /* gold */
+  background-color: rgba(251, 191, 36, 0.12);
   padding: 0.3rem 0.9rem;
   font-size: 0.65rem;
   font-weight: 500;
-  color: #a7f3d0;
+  color: #fef3c7;
 }
 
 .nanad-login-main {
@@ -1260,7 +1262,7 @@ body {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.32em;
-  color: rgba(52, 211, 153, 0.8);
+  color: rgba(250, 204, 21, 0.85); /* gold accent */
   font-weight: 500;
 }
 
@@ -1275,9 +1277,9 @@ body {
   display: block;
   background: linear-gradient(
     90deg,
-    #4ade80,
-    #a7f3d0,
-    #67e8f9
+    #fbbf24,
+    #facc15,
+    #fef3c7
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -1315,8 +1317,12 @@ body {
 }
 
 .nanad-login-highlight-primary {
-  border-color: rgba(52, 211, 153, 0.6);
-  background: radial-gradient(circle at top left, rgba(52, 211, 153, 0.3), #020617);
+  border-color: rgba(251, 191, 36, 0.75); /* gold */
+  background: radial-gradient(
+    circle at top left,
+    rgba(251, 191, 36, 0.3),
+    #020617
+  );
 }
 
 .nanad-login-highlight-title {
@@ -1327,7 +1333,7 @@ body {
 
 .nanad-login-highlight-body {
   font-size: 0.72rem;
-  color: #d1fae5;
+  color: #fef3c7; /* soft gold text */
 }
 
 /* Right card */
@@ -1386,8 +1392,8 @@ body {
 }
 
 .nanad-login-input-wrapper:focus-within {
-  border-color: rgba(52, 211, 153, 0.9);
-  box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.4);
+  border-color: rgba(251, 191, 36, 0.9); /* gold */
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.4);
 }
 
 .nanad-login-input-wrapper input {
@@ -1427,13 +1433,13 @@ body {
   background: none;
   border: none;
   padding: 0;
-  color: #6ee7b7;
+  color: #facc15; /* gold */
   cursor: pointer;
   font-size: 0.7rem;
 }
 
 .nanad-login-forgot:hover {
-  color: #a7f3d0;
+  color: #fef3c7;
 }
 
 .nanad-login-error {
@@ -1453,11 +1459,11 @@ body {
   color: #020617;
   background-image: linear-gradient(
     90deg,
-    #4ade80,
-    #bbf7d0,
-    #67e8f9
+    #fbbf24,
+    #facc15,
+    #fef3c7
   );
-  box-shadow: 0 18px 40px rgba(16, 185, 129, 0.6);
+  box-shadow: 0 18px 40px rgba(234, 179, 8, 0.6); /* gold shadow */
 }
 
 .nanad-login-submit:disabled {
@@ -1473,12 +1479,12 @@ body {
 }
 
 .nanad-login-bottom-text a {
-  color: #6ee7b7;
+  color: #facc15;
   font-weight: 600;
 }
 
 .nanad-login-bottom-text a:hover {
-  color: #a7f3d0;
+  color: #fef3c7;
 }
 
 .nanad-login-bottom-sub {
