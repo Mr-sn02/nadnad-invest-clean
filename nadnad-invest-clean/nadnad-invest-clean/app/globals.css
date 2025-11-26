@@ -1734,6 +1734,154 @@ body {
   color: #9ca3af;
 }
 
+/* Table */
+
+.nanad-dashboard-table {
+  margin-top: 1.1rem;
+  border-radius: 1.2rem;
+  border: 1px solid #020617;
+  background-color: rgba(15, 23, 42, 0.98);
+  overflow: hidden;
+  font-size: 0.78rem;
+}
+
+.nanad-dashboard-table-header,
+.nanad-dashboard-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.1fr 1.3fr 0.8fr;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+}
+
+.nanad-dashboard-table-header {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.98),
+    rgba(30, 64, 175, 0.35)
+  );
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-table-row:nth-child(odd) {
+  background-color: rgba(15, 23, 42, 0.98);
+}
+
+.nanad-dashboard-table-row:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.92);
+}
+
+.nanad-dashboard-table-row div:nth-child(1) {
+  font-weight: 500;
+}
+
+/* Plan delete button */
+
+.nanad-dashboard-plan-delete {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-delete:hover {
+  border-color: #fca5a5;
+  color: #fecaca;
+}
+
+.nanad-dashboard-plan-footnote {
+  margin-top: 0.8rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+/* Plan form */
+
+.nanad-dashboard-plan-form {
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #111827;
+}
+
+.nanad-dashboard-plan-form h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: #fef3c7;
+}
+
+.nanad-dashboard-plan-form-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .nanad-dashboard-plan-form-grid {
+    grid-template-columns: 1.8fr 0.9fr 1.1fr;
+  }
+}
+
+.nanad-dashboard-plan-form-field label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-plan-form-field input {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid #1f2937;
+  background-color: rgba(15, 23, 42, 0.98);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.78rem;
+  color: #f9fafb;
+  outline: none;
+}
+
+.nanad-dashboard-plan-form-field input::placeholder {
+  color: #6b7280;
+}
+
+.nanad-dashboard-plan-form-field input:focus {
+  border-color: rgba(251, 191, 36, 0.9);
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
+
+.nanad-dashboard-plan-error {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: #fecaca;
+}
+
+.nanad-dashboard-plan-submit {
+  margin-top: 0.7rem;
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #020617;
+  background-image: linear-gradient(
+    90deg,
+    #fbbf24,
+    #facc15,
+    #fef3c7
+  );
+  box-shadow: 0 12px 30px rgba(234, 179, 8, 0.55);
+}
+
+.nanad-dashboard-plan-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Packages section */
+
 .nanad-dashboard-packages {
   margin-top: 1.9rem;
   border-radius: 1.9rem;
@@ -1835,53 +1983,6 @@ body {
   color: #6b7280;
 }
 
-/* Table */
-
-.nanad-dashboard-table {
-  margin-top: 1.1rem;
-  border-radius: 1.2rem;
-  border: 1px solid #020617;
-  background-color: rgba(15, 23, 42, 0.98);
-  overflow: hidden;
-  font-size: 0.78rem;
-}
-
-.nanad-dashboard-table-header,
-.nanad-dashboard-table-row {
-  display: grid;
-  grid-template-columns: 2.2fr 1.1fr 1.2fr 1.4fr;
-  gap: 0.4rem;
-  padding: 0.55rem 0.9rem;
-}
-
-.nanad-dashboard-table-header {
-  background: linear-gradient(
-    90deg,
-    rgba(15, 23, 42, 0.98),
-    rgba(30, 64, 175, 0.35)
-  );
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-table-row:nth-child(odd) {
-  background-color: rgba(15, 23, 42, 0.98);
-}
-
-.nanad-dashboard-table-row:nth-child(even) {
-  background-color: rgba(15, 23, 42, 0.92);
-}
-
-.nanad-dashboard-table-row div:nth-child(1) {
-  font-weight: 500;
-}
-
-.nanad-dashboard-plan-footnote {
-  margin-top: 0.8rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
 /* Responsive tweaks */
 
 @media (max-width: 640px) {
@@ -1897,15 +1998,6 @@ body {
 
   .nanad-dashboard-table-header,
   .nanad-dashboard-table-row {
-    grid-template-columns: 1.8fr 1fr;
-    grid-auto-rows: auto;
-    row-gap: 0.2rem;
-  }
-
-  .nanad-dashboard-table-header div:nth-child(3),
-  .nanad-dashboard-table-header div:nth-child(4),
-  .nanad-dashboard-table-row div:nth-child(3),
-  .nanad-dashboard-table-row div:nth-child(4) {
-    font-size: 0.7rem;
+    grid-template-columns: 1.7fr 0.9fr 1fr 1.2fr 0.9fr;
   }
 }
