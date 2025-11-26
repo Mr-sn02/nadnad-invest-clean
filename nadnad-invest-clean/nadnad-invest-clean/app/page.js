@@ -2,70 +2,148 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabaseClient"; // ganti kalau path berbeda
+import { supabase } from "../../lib/supabaseClient";
 
-  // === Paket simulasi contoh ===
-  const examplePackages = [
-    {
-      id: "daily-20",
-      name: "Paket Harian Contoh",
-      description:
-        "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
-      depositTotal: 1200000, // Rp 100.000 x 12 hari
-      durationLabel: "12 hari (setoran Rp 100.000 per hari)",
-      returnPercent: 20, // asumsi 20% total, hanya contoh
-    },
-    {
-      id: "weekly-8",
-      name: "Paket Mingguan Contoh",
-      description:
-        "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
-      depositTotal: 600000, // misal Rp 150.000 x 4 minggu
-      durationLabel: "3 bulan (setoran Rp 150.000 per minggu)",
-      returnPercent: 8,
-    },
-    {
-      id: "monthly-10",
-      name: "Paket Bulanan Contoh",
-      description:
-        "Contoh target tahunan dengan setoran bulanan tetap.",
-      depositTotal: 2400000, // Rp 200.000 x 12 bulan
-      durationLabel: "12 bulan (setoran Rp 200.000 per bulan)",
-      returnPercent: 10,
-    },
-  ];
+// === Paket simulasi contoh ===
+const examplePackages = [
+  {
+    id: "daily-20",
+    name: "Paket Harian Contoh",
+    description:
+      "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
+    depositTotal: 1200000, // Rp 100.000 x 12 hari
+    durationLabel: "12 hari (setoran Rp 100.000 per hari)",
+    returnPercent: 20, // asumsi 20% total, hanya contoh
+  },
+  {
+    id: "weekly-8",
+    name: "Paket Mingguan Contoh",
+    description:
+      "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
+    depositTotal: 600000, // contoh: Rp 150.000 x 4 minggu (bisa diubah)
+    durationLabel: "3 bulan (setoran Rp 150.000 per minggu)",
+    returnPercent: 8,
+  },
+  {
+    id: "monthly-10",
+    name: "Paket Bulanan Contoh",
+    description: "Contoh target tahunan dengan setoran bulanan tetap.",
+    depositTotal: 2400000, // Rp 200.000 x 12 bulan
+    durationLabel: "12 bulan (setoran Rp 200.000 per bulan)",
+    returnPercent: 10,
+  },
+];
 
 export default function DashboardPage() {
   const router = useRouter();
+
   const [userEmail, setUserEmail] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
 
-  // Ambil user dari Supabase, kalau tidak ada redirect ke /login
+  const [plans, setPlans] = useState([]);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+
+  const [planName, setPlanName] = useState("");
+  const [planDuration, setPlanDuration] = useState("");
+  const [planMonthly, setPlanMonthly] = useState("");
+  const [savingPlan, setSavingPlan] = useState(false);
+  const [planError, setPlanError] = useState("");
+
+  // cek user + load rencana
   useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const checkUserAndLoadPlans = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      const user = data?.user;
 
-      if (!user) {
+      if (!user || error) {
         router.push("/login");
         return;
       }
 
       setUserEmail(user.email || "");
-      setLoading(false);
+      setUserId(user.id);
+      setLoadingUser(false);
+
+      await loadPlans(user.id);
     };
 
-    checkUser();
+    checkUserAndLoadPlans();
   }, [router]);
+
+  async function loadPlans(uid) {
+    setLoadingPlans(true);
+
+    const { data, error } = await supabase
+      .from("plans")
+      .select("id, name, duration_months, monthly_amount, final_estimate")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Error loading plans:", error);
+      setPlans([]);
+    } else {
+      setPlans(data || []);
+    }
+
+    setLoadingPlans(false);
+  }
 
   async function handleLogout() {
     await supabase.auth.signOut();
     router.push("/login");
   }
 
-  if (loading) {
-    // tampilan loading singkat biar nggak blank
+  async function handleAddPlan(e) {
+    e.preventDefault();
+    if (!userId) return;
+
+    setPlanError("");
+
+    if (!planName || !planDuration || !planMonthly) {
+      setPlanError("Lengkapi nama rencana, durasi, dan setoran bulanan.");
+      return;
+    }
+
+    const duration = parseInt(planDuration, 10);
+    // boleh tulis 750000 atau 750.000
+    const monthly = parseFloat(
+      planMonthly.replace(/\./g, "").replace(",", ".")
+    );
+
+    if (isNaN(duration) || isNaN(monthly)) {
+      setPlanError("Durasi & setoran bulanan harus berupa angka.");
+      return;
+    }
+
+    const finalEstimate = duration * monthly; // perhitungan kasar dulu
+
+    setSavingPlan(true);
+
+    const { error } = await supabase.from("plans").insert({
+      user_id: userId,
+      name: planName,
+      duration_months: duration,
+      monthly_amount: monthly,
+      final_estimate: finalEstimate,
+    });
+
+    setSavingPlan(false);
+
+    if (error) {
+      console.error("Error adding plan:", error);
+      setPlanError(error.message || "Gagal menyimpan rencana.");
+      return;
+    }
+
+    setPlanName("");
+    setPlanDuration("");
+    setPlanMonthly("");
+    await loadPlans(userId);
+  }
+
+  if (loadingUser) {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
@@ -82,36 +160,37 @@ export default function DashboardPage() {
       <div className="nanad-dashboard-shell">
         {/* HEADER ATAS */}
         <header className="nanad-dashboard-header">
-        <div className="nanad-dashboard-header-left">
-          <div className="nanad-dashboard-logo">N</div>
-          <div>
-            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
-            <p className="nanad-dashboard-brand-sub">
-              Gigana · Personal Planning Dashboard
-            </p>
-          </div>
-        </div>
-
-        <div className="nanad-dashboard-header-right">
-          {/* Badge demo mode */}
-          <span className="nanad-dashboard-demo-badge">Demo mode</span>
-
-          <div className="nanad-dashboard-account">
-            <span className="nanad-dashboard-account-label">Akun aktif</span>
-            <span className="nanad-dashboard-account-email">
-              {userEmail || "-"}
-            </span>
+          <div className="nanad-dashboard-header-left">
+            <div className="nanad-dashboard-logo">N</div>
+            <div>
+              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-sub">
+                Gigana · Personal Planning Dashboard
+              </p>
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="nanad-dashboard-logout"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+          <div className="nanad-dashboard-header-right">
+            <span className="nanad-dashboard-demo-badge">Demo mode</span>
+
+            <div className="nanad-dashboard-account">
+              <span className="nanad-dashboard-account-label">
+                Akun aktif
+              </span>
+              <span className="nanad-dashboard-account-email">
+                {userEmail || "-"}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
 
         {/* RINGKASAN SELAMAT DATANG */}
         <section className="nanad-dashboard-welcome">
@@ -133,12 +212,20 @@ export default function DashboardPage() {
 
           <div className="nanad-dashboard-stats">
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-number">3</p>
-              <p className="nanad-dashboard-stat-label">Rencana contoh aktif</p>
+              <p className="nanad-dashboard-stat-number">
+                {plans.length || 0}
+              </p>
+              <p className="nanad-dashboard-stat-label">
+                Rencana tersimpan
+              </p>
             </div>
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-number">2</p>
-              <p className="nanad-dashboard-stat-label">Kategori tujuan</p>
+              <p className="nanad-dashboard-stat-number">
+                {plans.length > 0 ? 2 : 0}
+              </p>
+              <p className="nanad-dashboard-stat-label">
+                Kategori (contoh)
+              </p>
             </div>
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-number">Demo</p>
@@ -180,16 +267,18 @@ export default function DashboardPage() {
           </article>
         </section>
 
-        {/* KARTU CONTOH RENCANA */}
+        {/* KARTU RENCANA + FORM */}
         <section className="nanad-dashboard-plan">
           <div className="nanad-dashboard-plan-header">
             <div>
-              <p className="nanad-dashboard-eyebrow">Sample plan preview</p>
-              <h2>Contoh rencana yang sedang disusun</h2>
+              <p className="nanad-dashboard-eyebrow">
+                Rencana simpanan &amp; investasi
+              </p>
+              <h2>Rencana yang kamu susun di Nanad Invest</h2>
               <p>
-                Ini hanya ilustrasi. Di tahap berikutnya, rencana milikmu
-                sendiri akan muncul di sini setelah kamu mengisi form
-                perencanaan bersama Nanad Invest.
+                Rencana di bawah ini tersimpan untuk akunmu. Kamu bisa menambah
+                rencana baru kapan saja, misalnya dana darurat, DP rumah, atau
+                pendidikan anak.
               </p>
             </div>
           </div>
@@ -202,32 +291,188 @@ export default function DashboardPage() {
               <div>Estimasi dana akhir</div>
             </div>
 
-            <div className="nanad-dashboard-table-row">
-              <div>Dana Darurat 6× Pengeluaran</div>
-              <div>36 bulan</div>
-              <div>Rp 750.000</div>
-              <div>± Rp 28.000.000</div>
-            </div>
-
-            <div className="nanad-dashboard-table-row">
-              <div>DP Rumah 20%</div>
-              <div>60 bulan</div>
-              <div>Rp 2.000.000</div>
-              <div>± Rp 140.000.000</div>
-            </div>
-
-            <div className="nanad-dashboard-table-row">
-              <div>Pendidikan Anak</div>
-              <div>120 bulan</div>
-              <div>Rp 1.500.000</div>
-              <div>± Rp 260.000.000</div>
-            </div>
+            {loadingPlans ? (
+              <div className="nanad-dashboard-table-row">
+                <div>Memuat rencana...</div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            ) : plans.length === 0 ? (
+              <div className="nanad-dashboard-table-row">
+                <div>Belum ada rencana</div>
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+              </div>
+            ) : (
+              plans.map((plan) => (
+                <div
+                  className="nanad-dashboard-table-row"
+                  key={plan.id}
+                >
+                  <div>{plan.name}</div>
+                  <div>{plan.duration_months} bulan</div>
+                  <div>
+                    Rp{" "}
+                    {Number(plan.monthly_amount).toLocaleString("id-ID", {
+                      maximumFractionDigits: 0,
+                    })}
+                  </div>
+                  <div>
+                    ± Rp{" "}
+                    {Number(plan.final_estimate).toLocaleString("id-ID", {
+                      maximumFractionDigits: 0,
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           <p className="nanad-dashboard-plan-footnote">
-            Angka di atas hanyalah ilustrasi kasar. Perhitungan riil akan
-            menyesuaikan profil risiko, asumsi imbal hasil, dan data yang kamu
-            isi saat sesi perencanaan bersama Nanad Invest.
+            Estimasi dana akhir saat ini masih perhitungan kasar (durasi ×
+            setoran bulanan). Ke depan, rumusnya bisa disesuaikan dengan asumsi
+            imbal hasil dan profil risiko.
+          </p>
+
+          {/* FORM TAMBAH RENCANA */}
+          <form
+            className="nanad-dashboard-plan-form"
+            onSubmit={handleAddPlan}
+          >
+            <h3>Tambah rencana baru</h3>
+            <div className="nanad-dashboard-plan-form-grid">
+              <div className="nanad-dashboard-plan-form-field">
+                <label>Nama rencana</label>
+                <input
+                  type="text"
+                  value={planName}
+                  onChange={(e) => setPlanName(e.target.value)}
+                  placeholder="Misal: Dana darurat, DP rumah, Pendidikan anak"
+                />
+              </div>
+              <div className="nanad-dashboard-plan-form-field">
+                <label>Durasi (bulan)</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={planDuration}
+                  onChange={(e) => setPlanDuration(e.target.value)}
+                  placeholder="Misal: 36"
+                />
+              </div>
+              <div className="nanad-dashboard-plan-form-field">
+                <label>Setoran bulanan (Rp)</label>
+                <input
+                  type="text"
+                  value={planMonthly}
+                  onChange={(e) => setPlanMonthly(e.target.value)}
+                  placeholder="Misal: 750000"
+                />
+              </div>
+            </div>
+
+            {planError && (
+              <p className="nanad-dashboard-plan-error">{planError}</p>
+            )}
+
+            <button
+              type="submit"
+              className="nanad-dashboard-plan-submit"
+              disabled={savingPlan}
+            >
+              {savingPlan ? "Menyimpan..." : "Simpan rencana"}
+            </button>
+          </form>
+        </section>
+
+        {/* SIMULASI PAKET */}
+        <section className="nanad-dashboard-packages">
+          <div className="nanad-dashboard-packages-header">
+            <p className="nanad-dashboard-eyebrow">
+              Simulasi paket setoran rutin
+            </p>
+            <h2>Paket contoh untuk memahami pola setoran &amp; hasil</h2>
+            <p>
+              Angka di bawah hanyalah perumpamaan. Kamu bisa memakai paket ini
+              untuk membayangkan skenario, bukan sebagai janji keuntungan atau
+              rekomendasi produk investasi tertentu.
+            </p>
+          </div>
+
+          <div className="nanad-dashboard-packages-grid">
+            {examplePackages.map((pkg) => {
+              const profit =
+                (pkg.depositTotal * pkg.returnPercent) / 100;
+              const total = pkg.depositTotal + profit;
+
+              return (
+                <article
+                  key={pkg.id}
+                  className="nanad-dashboard-package-card"
+                >
+                  <div className="nanad-dashboard-package-card-header">
+                    <h3 className="nanad-dashboard-package-name">
+                      {pkg.name}
+                    </h3>
+                    <span className="nanad-dashboard-package-badge">
+                      Asumsi {pkg.returnPercent}% total
+                    </span>
+                  </div>
+
+                  <p className="nanad-dashboard-package-desc">
+                    {pkg.description}
+                  </p>
+
+                  <dl className="nanad-dashboard-package-rows">
+                    <div className="nanad-dashboard-package-row">
+                      <dt>Durasi simulasi</dt>
+                      <dd>{pkg.durationLabel}</dd>
+                    </div>
+                    <div className="nanad-dashboard-package-row">
+                      <dt>Total setoran</dt>
+                      <dd>
+                        Rp{" "}
+                        {pkg.depositTotal.toLocaleString("id-ID", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </dd>
+                    </div>
+                    <div className="nanad-dashboard-package-row">
+                      <dt>Perkiraan hasil tambahan</dt>
+                      <dd>
+                        Rp{" "}
+                        {profit.toLocaleString("id-ID", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </dd>
+                    </div>
+                    <div className="nanad-dashboard-package-row">
+                      <dt>Perkiraan total nilai akhir</dt>
+                      <dd>
+                        Rp{" "}
+                        {total.toLocaleString("id-ID", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <p className="nanad-dashboard-package-note">
+                    Catatan: ini hanya contoh asumsi. Imbal hasil nyata akan
+                    tergantung instrumen yang kamu pilih dan tidak pernah bisa
+                    dijamin.
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+
+          <p className="nanad-dashboard-package-disclaimer">
+            Fitur ini dimaksudkan sebagai alat bantu berpikir dan simulasi.
+            Nanad Invest tidak menyalurkan dana dan tidak menjanjikan imbal
+            hasil tertentu.
           </p>
         </section>
       </div>
