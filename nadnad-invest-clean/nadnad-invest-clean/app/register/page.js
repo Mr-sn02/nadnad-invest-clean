@@ -35,7 +35,10 @@ export default function RegisterPage() {
     <div style={{ padding: "2rem" }}>
       <h1>Daftar Akun</h1>
 
-      <form onSubmit={handleRegister} style={{ display: "grid", gap: "1rem", maxWidth: "320px" }}>
+      <form
+        onSubmit={handleRegister}
+        style={{ display: "grid", gap: "1rem", maxWidth: "320px" }}
+      >
         <input
           type="email"
           placeholder="Email"
