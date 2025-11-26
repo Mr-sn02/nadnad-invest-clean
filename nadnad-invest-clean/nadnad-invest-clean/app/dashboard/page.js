@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -37,7 +37,6 @@ export default function DashboardPage() {
 
   return (
     <main className="dashboard-shell">
-      {/* Header dashboard */}
       <header className="dashboard-header">
         <div>
           <h1 className="dashboard-title">Dashboard</h1>
@@ -55,7 +54,6 @@ export default function DashboardPage() {
         </button>
       </header>
 
-      {/* Ringkasan singkat */}
       <section className="dashboard-grid">
         <article className="card">
           <div className="chip">Profil</div>
@@ -89,7 +87,6 @@ export default function DashboardPage() {
         </article>
       </section>
 
-      {/* Paket simulasi (teks edukatif) */}
       <section className="section">
         <div className="section-header">
           <div className="section-eyebrow">Paket simulasi</div>
