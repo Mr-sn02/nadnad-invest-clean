@@ -4305,3 +4305,24 @@ body {
   flex-direction: column;
   gap: 0.25rem;
 }
+
+.nanad-landing-footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nanad-landing-footer-links {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.76rem;
+}
+
+.nanad-landing-footer-links a {
+  color: #bfdbfe;
+  text-decoration: none;
+}
+
+.nanad-landing-footer-links a:hover {
+  color: #fefce8;
+}
