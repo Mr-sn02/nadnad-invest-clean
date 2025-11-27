@@ -12,7 +12,7 @@ const examplePackages = [
     description:
       "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
     depositTotal: 1200000, // Rp 100.000 x 12 hari (disetarakan 1 bulan)
-    durationLabel: "1 bulan (12x setoran Rp 100.000)",
+    durationLabel: "1 bulan (12× setoran Rp 100.000)",
     returnPercent: 20, // hanya asumsi contoh
     durationMonths: 1,
     monthlyAmount: 1200000,
@@ -46,6 +46,7 @@ const examplePackages = [
 export default function DashboardPage() {
   const router = useRouter();
 
+  // ==== STATE ==== //
   const [userEmail, setUserEmail] = useState("");
   const [userId, setUserId] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
@@ -69,7 +70,18 @@ export default function DashboardPage() {
   const [savingDeposit, setSavingDeposit] = useState(false);
   const [depositError, setDepositError] = useState("");
 
-  // cek user + load rencana & tabungan
+  // ==== RINGKASAN TOTAL ==== //
+  const totalSaved = Object.values(depositTotals).reduce(
+    (acc, val) => acc + (Number(val) || 0),
+    0
+  );
+
+  const totalTarget = plans.reduce(
+    (acc, plan) => acc + (Number(plan.final_estimate) || 0),
+    0
+  );
+
+  // ==== CEK USER & LOAD DATA ==== //
   useEffect(() => {
     const checkUserAndLoad = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -246,6 +258,14 @@ export default function DashboardPage() {
     await loadPlansAndDeposits(userId);
   }
 
+  // isi form rencana dari paket simulasi
+  function handleUsePackage(pkg) {
+    if (!pkg) return;
+    setPlanName(pkg.planNameSuggestion || pkg.name);
+    setPlanDuration(String(pkg.durationMonths || ""));
+    setPlanMonthly(String(pkg.monthlyAmount || ""));
+  }
+
   if (loadingUser) {
     return (
       <main className="nanad-dashboard-page">
@@ -321,17 +341,29 @@ export default function DashboardPage() {
                 Rencana tersimpan
               </p>
             </div>
+
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-number">
-                {plans.length > 0 ? 2 : 0}
+                Rp{" "}
+                {totalSaved.toLocaleString("id-ID", {
+                  maximumFractionDigits: 0,
+                })}
               </p>
               <p className="nanad-dashboard-stat-label">
-                Kategori (contoh)
+                Total ditabung (semua rencana)
               </p>
             </div>
+
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-number">Demo</p>
-              <p className="nanad-dashboard-stat-label">Mode saat ini</p>
+              <p className="nanad-dashboard-stat-number">
+                Rp{" "}
+                {totalTarget.toLocaleString("id-ID", {
+                  maximumFractionDigits: 0,
+                })}
+              </p>
+              <p className="nanad-dashboard-stat-label">
+                Total target (perkiraan)
+              </p>
             </div>
           </div>
         </section>
@@ -591,7 +623,7 @@ export default function DashboardPage() {
                   <div>Catatan</div>
                 </div>
                 {deposits.slice(0, 8).map((dep) => {
-                  const planName =
+                  const planNameLabel =
                     plans.find((p) => p.id === dep.plan_id)?.name ||
                     "Rencana dihapus";
 
@@ -609,7 +641,7 @@ export default function DashboardPage() {
                       className="nanad-dashboard-deposits-row"
                     >
                       <div>{dateLabel}</div>
-                      <div>{planName}</div>
+                      <div>{planNameLabel}</div>
                       <div>
                         Rp{" "}
                         {Number(dep.amount).toLocaleString("id-ID", {
@@ -700,6 +732,14 @@ export default function DashboardPage() {
                       </dd>
                     </div>
                   </dl>
+
+                  <button
+                    type="button"
+                    className="nanad-dashboard-package-use"
+                    onClick={() => handleUsePackage(pkg)}
+                  >
+                    Gunakan sebagai rencana
+                  </button>
 
                   <p className="nanad-dashboard-package-note">
                     Catatan: ini hanya contoh asumsi. Imbal hasil nyata akan
