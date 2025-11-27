@@ -2441,3 +2441,53 @@ body {
   border-color: #9ca3af;
   color: #f9fafb;
 }
+
+/* Aksi di baris riwayat setoran */
+
+.nanad-dashboard-deposit-row-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+/* tombol EDIT setoran */
+
+.nanad-dashboard-deposit-edit {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposit-edit:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+/* area tombol di form setoran */
+
+.nanad-dashboard-deposit-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+/* tombol batal edit setoran */
+
+.nanad-dashboard-deposit-cancel {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposit-cancel:hover {
+  border-color: #9ca3af;
+  color: #f9fafb;
+}
