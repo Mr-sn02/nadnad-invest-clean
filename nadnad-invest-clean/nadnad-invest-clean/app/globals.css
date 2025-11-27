@@ -3759,3 +3759,538 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(250, 204, 21, 0.8), rgba(30, 64, 175, 0.9));
 }
+
+/* =======================================================
+   NANAD INVEST · PUBLIC LANDING
+   ======================================================= */
+
+.nanad-landing-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2.4rem 1.4rem;
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.12), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+    #020617;
+  color: #e5e7eb;
+}
+
+.nanad-landing-shell {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  border-radius: 1.8rem;
+  padding: 1.8rem 1.8rem 2.1rem;
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.08), transparent 60%),
+    rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+}
+
+/* NAVBAR */
+.nanad-landing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.4rem;
+  margin-bottom: 2.1rem;
+}
+
+.nanad-landing-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.nanad-landing-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 20% 0, #fef9c3, #facc15 55%, #f97316 100%);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.35),
+    0 12px 30px rgba(15, 23, 42, 0.95);
+}
+
+.nanad-landing-brand-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fefce8;
+}
+
+.nanad-landing-brand-sub {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.nanad-landing-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+}
+
+.nanad-landing-nav-link {
+  font-size: 0.78rem;
+  color: #cbd5f5;
+  text-decoration: none;
+}
+
+.nanad-landing-nav-link:hover {
+  color: #fefce8;
+}
+
+.nanad-landing-nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nanad-landing-nav-ghost,
+.nanad-landing-nav-primary {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nanad-landing-nav-ghost {
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background-color: transparent;
+  color: #e5e7eb;
+}
+
+.nanad-landing-nav-ghost:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+.nanad-landing-nav-primary {
+  border: none;
+  color: #0f172a;
+  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.5),
+    0 16px 40px rgba(15, 23, 42, 0.95);
+}
+
+/* HERO */
+.nanad-landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 1.8rem;
+  margin-bottom: 2.2rem;
+}
+
+.nanad-landing-hero-left {
+  max-width: 560px;
+}
+
+.nanad-landing-eyebrow {
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #93c5fd;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-landing-heading {
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #fefce8;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-landing-heading span {
+  display: block;
+  background: linear-gradient(135deg, #fef9c3, #facc15, #f97316);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.nanad-landing-hero-text {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #cbd5f5;
+  margin-bottom: 0.9rem;
+}
+
+.nanad-landing-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 0.6rem;
+}
+
+.nanad-landing-cta-primary,
+.nanad-landing-cta-secondary {
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.3rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.nanad-landing-cta-primary {
+  border: none;
+  color: #0f172a;
+  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.5),
+    0 18px 45px rgba(15, 23, 42, 0.96);
+}
+
+.nanad-landing-cta-secondary {
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  color: #e5e7eb;
+  background: transparent;
+}
+
+.nanad-landing-cta-secondary:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+.nanad-landing-hero-note {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+/* HERO PREVIEW CARD */
+.nanad-landing-hero-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nanad-landing-preview-card {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 1.4rem;
+  padding: 1rem 1rem 0.9rem;
+  background:
+    radial-gradient(circle at top, rgba(250, 204, 21, 0.12), transparent 65%),
+    rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.95);
+  font-size: 0.78rem;
+}
+
+.nanad-landing-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  color: #cbd5f5;
+}
+
+.nanad-landing-demo-pill {
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(250, 204, 21, 0.16);
+  border: 1px solid rgba(250, 204, 21, 0.6);
+  color: #fefce8;
+}
+
+.nanad-landing-preview-stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.nanad-landing-preview-stat span {
+  display: block;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.nanad-landing-preview-stat strong {
+  display: block;
+  margin-top: 0.1rem;
+  color: #fef9c3;
+  font-size: 0.86rem;
+}
+
+.nanad-landing-preview-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.7rem;
+}
+
+.nanad-landing-preview-row-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: #e5e7eb;
+}
+
+.nanad-landing-preview-row-title span {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.nanad-landing-preview-progress {
+  margin-top: 0.15rem;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background-color: rgba(30, 64, 175, 0.45);
+  overflow: hidden;
+}
+
+.nanad-landing-preview-progress > div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #facc15, #f97316);
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.85);
+}
+
+.nanad-landing-preview-footnote {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* SECTION GENERIC */
+.nanad-landing-section {
+  margin-bottom: 2rem;
+}
+
+.nanad-landing-section-soft {
+  border-radius: 1.3rem;
+  padding: 1.1rem 1.1rem 1.2rem;
+  background-color: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.nanad-landing-section-header h2 {
+  font-size: 1.05rem;
+  color: #fefce8;
+  margin-top: 0.2rem;
+}
+
+/* VALUE GRID */
+.nanad-landing-value-grid {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.nanad-landing-value-card {
+  border-radius: 1.1rem;
+  padding: 0.85rem 0.9rem;
+  background-color: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.95);
+  font-size: 0.8rem;
+}
+
+.nanad-landing-value-card h3 {
+  font-size: 0.9rem;
+  color: #fefce8;
+  margin-bottom: 0.3rem;
+}
+
+.nanad-landing-value-card p {
+  color: #cbd5f5;
+  line-height: 1.6;
+}
+
+/* STEPS */
+.nanad-landing-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.nanad-landing-step {
+  border-radius: 1.1rem;
+  padding: 0.85rem 0.9rem;
+  background-color: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.nanad-landing-step-number {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #facc15;
+  margin-top: 0.2rem;
+}
+
+.nanad-landing-step h3 {
+  font-size: 0.9rem;
+  color: #fefce8;
+  margin-bottom: 0.2rem;
+}
+
+.nanad-landing-step p {
+  color: #cbd5f5;
+}
+
+/* SAFETY GRID */
+.nanad-landing-safety-grid {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.nanad-landing-safety-card {
+  border-radius: 1rem;
+  padding: 0.85rem 0.9rem;
+  background-color: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  font-size: 0.8rem;
+}
+
+.nanad-landing-safety-card h3 {
+  font-size: 0.9rem;
+  color: #fefce8;
+  margin-bottom: 0.25rem;
+}
+
+.nanad-landing-safety-card p {
+  color: #cbd5f5;
+}
+
+/* CTA BOTTOM */
+.nanad-landing-bottom-cta {
+  margin-top: 1.6rem;
+}
+
+.nanad-landing-bottom-cta-inner {
+  border-radius: 1.4rem;
+  padding: 1rem 1.1rem;
+  background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.15), transparent 65%),
+    rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(250, 204, 21, 0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nanad-landing-bottom-cta-inner h2 {
+  font-size: 1rem;
+  color: #fefce8;
+  margin-bottom: 0.2rem;
+}
+
+.nanad-landing-bottom-cta-inner p {
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+.nanad-landing-bottom-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* FOOTER */
+.nanad-landing-footer {
+  margin-top: 1.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(51, 65, 85, 1);
+  font-size: 0.74rem;
+  color: #9ca3af;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .nanad-landing-shell {
+    padding: 1.6rem 1.4rem 1.9rem;
+  }
+
+  .nanad-landing-hero {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+  }
+
+  .nanad-landing-value-grid,
+  .nanad-landing-steps,
+  .nanad-landing-safety-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .nanad-landing-page {
+    padding: 1.8rem 1rem;
+  }
+
+  .nanad-landing-shell {
+    padding: 1.4rem 1.2rem 1.7rem;
+    border-radius: 1.5rem;
+  }
+
+  .nanad-landing-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+
+  .nanad-landing-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .nanad-landing-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-landing-hero-right {
+    justify-content: flex-start;
+  }
+
+  .nanad-landing-value-grid,
+  .nanad-landing-steps,
+  .nanad-landing-safety-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-landing-bottom-cta-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nanad-landing-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
