@@ -3640,3 +3640,126 @@ body {
   pointer-events: none;
   filter: blur(2px);
 }
+
+/* === ANIMASI HALUS · GOLD PULSE ========================== */
+
+@keyframes nanadGoldPulse {
+  0% {
+    box-shadow:
+      0 0 0 1px rgba(161, 98, 7, 0.32),
+      0 12px 30px rgba(15, 23, 42, 0.9);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(250, 204, 21, 0.7),
+      0 16px 40px rgba(15, 23, 42, 0.9);
+    transform: translateY(-1px);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(161, 98, 7, 0.32),
+      0 12px 30px rgba(15, 23, 42, 0.9);
+    transform: translateY(0);
+  }
+}
+
+.nanad-dashboard-logo {
+  animation: nanadGoldPulse 9s ease-in-out infinite;
+}
+
+/* badge Demo mode berasa “status live” */
+@keyframes nanadBadgeGlow {
+  0% {
+    box-shadow:
+      0 0 0 1px rgba(161, 98, 7, 0.35),
+      0 10px 25px rgba(15, 23, 42, 0.9);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(250, 204, 21, 0.8),
+      0 14px 35px rgba(15, 23, 42, 0.95);
+    filter: brightness(1.05);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(161, 98, 7, 0.35),
+      0 10px 25px rgba(15, 23, 42, 0.9);
+    filter: brightness(1);
+  }
+}
+
+.nanad-dashboard-demo-badge {
+  animation: nanadBadgeGlow 12s ease-in-out infinite;
+}
+
+/* === DIVIDER ELEGAN ANTAR SECTION ======================== */
+
+.nanad-dashboard-plan,
+.nanad-dashboard-packages {
+  position: relative;
+}
+
+.nanad-dashboard-plan::before,
+.nanad-dashboard-packages::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin: 0.9rem 0 0.8rem;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(148, 163, 184, 0.4),
+    rgba(250, 204, 21, 0.65),
+    rgba(148, 163, 184, 0.4),
+    transparent
+  );
+  opacity: 0.85;
+}
+
+/* === TIPOGRAFI LABEL · FEEL PRIVATE BANK ================ */
+
+.nanad-dashboard-stat-label,
+.nanad-dashboard-account-label,
+.nanad-dashboard-table-header,
+.nanad-dashboard-deposits-header {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* angka keuangan sedikit lebih “ketok” */
+.nanad-dashboard-stat-number,
+.nanad-dashboard-table-row div:nth-child(3),
+.nanad-dashboard-table-row div:nth-child(4),
+.nanad-dashboard-deposits-row div:nth-child(3) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* hover di angka keuangan pada row */
+.nanad-dashboard-table-row div:nth-child(3):hover,
+.nanad-dashboard-table-row div:nth-child(4):hover,
+.nanad-dashboard-deposits-row div:nth-child(3):hover {
+  color: #fef9c3;
+}
+
+/* === SCROLLBAR HALUS ==================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.5), rgba(30, 64, 175, 0.8));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(250, 204, 21, 0.8), rgba(30, 64, 175, 0.9));
+}
