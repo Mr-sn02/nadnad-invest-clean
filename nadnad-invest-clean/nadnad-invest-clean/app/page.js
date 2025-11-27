@@ -303,6 +303,12 @@ export default function DashboardPage() {
     }
   }
 
+  // buka halaman detail rencana
+  function handleOpenPlanDetail(planId) {
+    if (!planId) return;
+    router.push(`/plans/${planId}`);
+  }
+
   // export riwayat ke CSV (pakai filter yang aktif)
   function handleExportHistoryCsv(filtered) {
     const rows = filtered || [];
@@ -585,6 +591,13 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <div className="nanad-dashboard-plan-actions">
+                        <button
+                          type="button"
+                          className="nanad-dashboard-plan-detail"
+                          onClick={() => handleOpenPlanDetail(plan.id)}
+                        >
+                          Detail
+                        </button>
                         <button
                           type="button"
                           className="nanad-dashboard-plan-quick"
