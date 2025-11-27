@@ -11,26 +11,35 @@ const examplePackages = [
     name: "Paket Harian Contoh",
     description:
       "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
-    depositTotal: 1200000, // Rp 100.000 x 12 hari
-    durationLabel: "12 hari (setoran Rp 100.000 per hari)",
+    depositTotal: 1200000, // Rp 100.000 x 12 hari (disetarakan 1 bulan)
+    durationLabel: "1 bulan (12x setoran Rp 100.000)",
     returnPercent: 20, // hanya asumsi contoh
+    durationMonths: 1,
+    monthlyAmount: 1200000,
+    planNameSuggestion: "Simulasi harian 12×100k",
   },
   {
     id: "weekly-8",
     name: "Paket Mingguan Contoh",
     description:
       "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
-    depositTotal: 600000, // contoh: Rp 150.000 x 4 minggu
-    durationLabel: "3 bulan (setoran Rp 150.000 per minggu)",
+    depositTotal: 600000, // 3 bulan × 200.000
+    durationLabel: "3 bulan (setoran Rp 200.000 per bulan)",
     returnPercent: 8,
+    durationMonths: 3,
+    monthlyAmount: 200000,
+    planNameSuggestion: "Tabungan 3 bulan · 200k/bulan",
   },
   {
     id: "monthly-10",
     name: "Paket Bulanan Contoh",
     description: "Contoh target tahunan dengan setoran bulanan tetap.",
-    depositTotal: 2400000, // Rp 200.000 x 12 bulan
+    depositTotal: 2400000, // 12 bulan × 200.000
     durationLabel: "12 bulan (setoran Rp 200.000 per bulan)",
     returnPercent: 10,
+    durationMonths: 12,
+    monthlyAmount: 200000,
+    planNameSuggestion: "Rencana 1 tahun · 200k/bulan",
   },
 ];
 
