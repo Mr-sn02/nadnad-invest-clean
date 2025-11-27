@@ -11,9 +11,9 @@ const examplePackages = [
     name: "Paket Harian Contoh",
     description:
       "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
-    depositTotal: 1200000, // Rp 100.000 x 12 hari (disetarakan 1 bulan)
+    depositTotal: 1200000,
     durationLabel: "1 bulan (12× setoran Rp 100.000)",
-    returnPercent: 20, // hanya asumsi contoh
+    returnPercent: 20,
     durationMonths: 1,
     monthlyAmount: 1200000,
     planNameSuggestion: "Simulasi harian 12×100k",
@@ -23,7 +23,7 @@ const examplePackages = [
     name: "Paket Mingguan Contoh",
     description:
       "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
-    depositTotal: 600000, // 3 bulan × 200.000
+    depositTotal: 600000,
     durationLabel: "3 bulan (setoran Rp 200.000 per bulan)",
     returnPercent: 8,
     durationMonths: 3,
@@ -34,7 +34,7 @@ const examplePackages = [
     id: "monthly-10",
     name: "Paket Bulanan Contoh",
     description: "Contoh target tahunan dengan setoran bulanan tetap.",
-    depositTotal: 2400000, // 12 bulan × 200.000
+    depositTotal: 2400000,
     durationLabel: "12 bulan (setoran Rp 200.000 per bulan)",
     returnPercent: 10,
     durationMonths: 12,
@@ -61,16 +61,17 @@ export default function DashboardPage() {
   const [planMonthly, setPlanMonthly] = useState("");
   const [savingPlan, setSavingPlan] = useState(false);
   const [planError, setPlanError] = useState("");
-  const [editingPlanId, setEditingPlanId] = useState(null); // <-- rencana yang sedang diedit
+  const [editingPlanId, setEditingPlanId] = useState(null);
 
   // ==== STATE SETORAN ==== //
   const [depositTotals, setDepositTotals] = useState({});
-  const [deposits, setDeposits] = useState([]); // riwayat setoran
+  const [deposits, setDeposits] = useState([]);
   const [depositPlanId, setDepositPlanId] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [depositNote, setDepositNote] = useState("");
   const [savingDeposit, setSavingDeposit] = useState(false);
   const [depositError, setDepositError] = useState("");
+  const [editingDepositId, setEditingDepositId] = useState(null);
 
   // filter riwayat
   const [historyFilterPlanId, setHistoryFilterPlanId] = useState("");
@@ -179,7 +180,6 @@ export default function DashboardPage() {
     setSavingPlan(true);
 
     if (editingPlanId) {
-      // MODE EDIT
       const { error } = await supabase
         .from("plans")
         .update({
@@ -199,7 +199,6 @@ export default function DashboardPage() {
         return;
       }
     } else {
-      // MODE TAMBAH BARU
       const { error } = await supabase.from("plans").insert({
         user_id: userId,
         name: planName,
@@ -217,7 +216,6 @@ export default function DashboardPage() {
       }
     }
 
-    // reset form & mode edit
     setPlanName("");
     setPlanDuration("");
     setPlanMonthly("");
@@ -231,7 +229,7 @@ export default function DashboardPage() {
     setPlanDuration(String(plan.duration_months || ""));
     setPlanMonthly(String(plan.monthly_amount || ""));
     setPlanError("");
-    // opsional: scroll ke form
+
     if (typeof window !== "undefined") {
       setTimeout(() => {
         const el = document.getElementById("nanad-plan-form");
@@ -266,7 +264,6 @@ export default function DashboardPage() {
       return;
     }
 
-    // jika rencana yang dihapus sedang diedit → reset form
     if (editingPlanId === id) {
       handleCancelEditPlan();
     }
@@ -274,8 +271,8 @@ export default function DashboardPage() {
     await loadPlansAndDeposits(userId);
   }
 
-  // ==== CATAT SETORAN ==== //
-  async function handleAddDeposit(e) {
+  // ==== TAMBAH / EDIT SETORAN ==== //
+  async function handleSaveDeposit(e) {
     e.preventDefault();
     if (!userId) return;
 
@@ -297,24 +294,71 @@ export default function DashboardPage() {
 
     setSavingDeposit(true);
 
-    const { error } = await supabase.from("plan_deposits").insert({
-      user_id: userId,
-      plan_id: depositPlanId,
-      amount,
-      note: depositNote || null,
-    });
+    if (editingDepositId) {
+      const { error } = await supabase
+        .from("plan_deposits")
+        .update({
+          plan_id: depositPlanId,
+          amount,
+          note: depositNote || null,
+        })
+        .eq("id", editingDepositId)
+        .eq("user_id", userId);
 
-    setSavingDeposit(false);
+      setSavingDeposit(false);
 
-    if (error) {
-      console.error("Error adding deposit:", error);
-      setDepositError(error.message || "Gagal mencatat setoran.");
-      return;
+      if (error) {
+        console.error("Error updating deposit:", error);
+        setDepositError(error.message || "Gagal menyimpan perubahan setoran.");
+        return;
+      }
+    } else {
+      const { error } = await supabase.from("plan_deposits").insert({
+        user_id: userId,
+        plan_id: depositPlanId,
+        amount,
+        note: depositNote || null,
+      });
+
+      setSavingDeposit(false);
+
+      if (error) {
+        console.error("Error adding deposit:", error);
+        setDepositError(error.message || "Gagal mencatat setoran.");
+        return;
+      }
     }
 
     setDepositAmount("");
     setDepositNote("");
+    setDepositPlanId("");
+    setEditingDepositId(null);
     await loadPlansAndDeposits(userId);
+  }
+
+  function handleStartEditDeposit(dep) {
+    setEditingDepositId(dep.id);
+    setDepositPlanId(dep.plan_id);
+    setDepositAmount(String(dep.amount || ""));
+    setDepositNote(dep.note || "");
+    setDepositError("");
+
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        const el = document.getElementById("nanad-deposit-section");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
+    }
+  }
+
+  function handleCancelEditDeposit() {
+    setEditingDepositId(null);
+    setDepositPlanId("");
+    setDepositAmount("");
+    setDepositNote("");
+    setDepositError("");
   }
 
   // ==== HAPUS SETORAN ==== //
@@ -334,13 +378,17 @@ export default function DashboardPage() {
       return;
     }
 
+    if (editingDepositId === id) {
+      handleCancelEditDeposit();
+    }
+
     await loadPlansAndDeposits(userId);
   }
 
   // isi form rencana dari paket simulasi
   function handleUsePackage(pkg) {
     if (!pkg) return;
-    setEditingPlanId(null); // mulai dari rencana baru
+    setEditingPlanId(null);
     setPlanName(pkg.planNameSuggestion || pkg.name);
     setPlanDuration(String(pkg.durationMonths || ""));
     setPlanMonthly(String(pkg.monthlyAmount || ""));
@@ -358,7 +406,10 @@ export default function DashboardPage() {
 
   // klik "Setor" dari tabel rencana → pilih rencana & scroll ke form
   function handleQuickDeposit(planId) {
+    setEditingDepositId(null);
     setDepositPlanId(planId);
+    setDepositAmount("");
+    setDepositNote("");
     setDepositError("");
     if (typeof window !== "undefined") {
       setTimeout(() => {
@@ -376,7 +427,7 @@ export default function DashboardPage() {
     router.push(`/plans/${planId}`);
   }
 
-  // export riwayat ke CSV (pakai filter yang aktif)
+  // export riwayat ke CSV
   function handleExportHistoryCsv(filtered) {
     const rows = filtered || [];
 
@@ -449,7 +500,6 @@ export default function DashboardPage() {
     );
   }
 
-  // filter riwayat yang ditampilkan
   const filteredHistory = historyFilterPlanId
     ? deposits.filter((d) => d.plan_id === historyFilterPlanId)
     : deposits;
@@ -769,13 +819,15 @@ export default function DashboardPage() {
             </div>
           </form>
 
-          {/* FORM CATAT SETORAN */}
+          {/* FORM TAMBAH / EDIT SETORAN */}
           <form
             id="nanad-deposit-section"
             className="nanad-dashboard-deposit-form"
-            onSubmit={handleAddDeposit}
+            onSubmit={handleSaveDeposit}
           >
-            <h3>Catat setoran tabungan</h3>
+            <h3>
+              {editingDepositId ? "Edit setoran" : "Catat setoran tabungan"}
+            </h3>
             <p className="nanad-dashboard-deposit-caption">
               Uang tetap berada di rekening atau e-wallet kamu. Fitur ini hanya
               membantu mencatat setoran supaya progres rencana terlihat rapi.
@@ -821,13 +873,29 @@ export default function DashboardPage() {
               </p>
             )}
 
-            <button
-              type="submit"
-              className="nanad-dashboard-deposit-submit"
-              disabled={savingDeposit || plans.length === 0}
-            >
-              {savingDeposit ? "Mencatat..." : "Catat setoran"}
-            </button>
+            <div className="nanad-dashboard-deposit-actions">
+              <button
+                type="submit"
+                className="nanad-dashboard-deposit-submit"
+                disabled={savingDeposit || plans.length === 0}
+              >
+                {savingDeposit
+                  ? "Mencatat..."
+                  : editingDepositId
+                  ? "Simpan perubahan"
+                  : "Catat setoran"}
+              </button>
+
+              {editingDepositId && (
+                <button
+                  type="button"
+                  className="nanad-dashboard-deposit-cancel"
+                  onClick={handleCancelEditDeposit}
+                >
+                  Batalkan edit
+                </button>
+              )}
+            </div>
           </form>
 
           {/* RIWAYAT SETORAN TERBARU */}
@@ -901,13 +969,22 @@ export default function DashboardPage() {
                       </div>
                       <div>{dep.note || "-"}</div>
                       <div>
-                        <button
-                          type="button"
-                          className="nanad-dashboard-deposit-delete"
-                          onClick={() => handleDeleteDeposit(dep.id)}
-                        >
-                          Hapus
-                        </button>
+                        <div className="nanad-dashboard-deposit-row-actions">
+                          <button
+                            type="button"
+                            className="nanad-dashboard-deposit-edit"
+                            onClick={() => handleStartEditDeposit(dep)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="nanad-dashboard-deposit-delete"
+                            onClick={() => handleDeleteDeposit(dep.id)}
+                          >
+                            Hapus
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
