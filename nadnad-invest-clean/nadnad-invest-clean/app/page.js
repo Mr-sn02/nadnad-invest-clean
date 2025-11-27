@@ -496,6 +496,13 @@ export default function DashboardPage() {
             Memuat dashboard Nanad Invest...
           </p>
         </div>
+      <footer className="nanad-dashboard-footer">
+        <span>© {new Date().getFullYear()} Nanad Invest. All rights reserved.</span>
+        <span>
+          Dashboard ini digunakan untuk simulasi &amp; pencatatan rencana saja. Bukan platform
+          penitipan dana dan bukan penyedia produk investasi.
+        </span>
+      </footer>
       </main>
     );
   }
