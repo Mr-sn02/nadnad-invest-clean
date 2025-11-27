@@ -2643,3 +2643,965 @@ body {
   box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.35),
     0 20px 55px rgba(15, 23, 42, 0.9);
 }
+
+/* =======================================================
+   NANAD INVEST · PREMIUM GOLD THEME
+   Tempel di PALING BAWAH globals.css
+   ======================================================= */
+
+/* Body & page background */
+body {
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.12), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(55, 65, 81, 0.4), transparent 55%),
+    #020617;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+}
+
+/* Halaman utama Nanad */
+.nanad-dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2.8rem 1.2rem;
+}
+
+.nanad-dashboard-shell {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  border-radius: 1.8rem;
+  padding: 1.8rem 1.7rem 2.1rem;
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.07), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(18px);
+}
+
+/* HEADER ================================================= */
+
+.nanad-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.6rem;
+}
+
+.nanad-dashboard-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.nanad-dashboard-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 20% 0, #fef9c3, #facc15 55%, #f97316 100%);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.25),
+    0 12px 30px rgba(15, 23, 42, 0.9);
+}
+
+.nanad-dashboard-brand-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fefce8;
+}
+
+.nanad-dashboard-brand-sub {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.nanad-dashboard-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.nanad-dashboard-demo-badge {
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0f172a;
+  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.35),
+    0 10px 25px rgba(15, 23, 42, 0.9);
+}
+
+.nanad-dashboard-account {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nanad-dashboard-account-label {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.nanad-dashboard-account-email {
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+/* Tombol logout */
+.nanad-dashboard-logout {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background-color: rgba(15, 23, 42, 0.85);
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.nanad-dashboard-logout:hover {
+  background-color: rgba(30, 64, 175, 0.8);
+  border-color: rgba(191, 219, 254, 0.9);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.85);
+  transform: translateY(-1px);
+}
+
+/* HERO / SELAMAT DATANG ================================= */
+
+.nanad-dashboard-welcome {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.4rem;
+  margin-bottom: 1.6rem;
+}
+
+.nanad-dashboard-eyebrow {
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #93c5fd;
+  margin-bottom: 0.4rem;
+}
+
+.nanad-dashboard-heading {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fefce8;
+  margin-bottom: 0.4rem;
+}
+
+.nanad-dashboard-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #cbd5f5;
+  max-width: 520px;
+}
+
+/* STAT CARDS ============================================ */
+
+.nanad-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.nanad-dashboard-stat-card {
+  position: relative;
+  border-radius: 1.1rem;
+  padding: 0.8rem 0.9rem;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.96)),
+    radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 65%);
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.85);
+  overflow: hidden;
+}
+
+.nanad-dashboard-stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at top right, rgba(250, 204, 21, 0.22), transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.nanad-dashboard-stat-number {
+  position: relative;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fef9c3;
+}
+
+.nanad-dashboard-stat-label {
+  position: relative;
+  margin-top: 0.15rem;
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+/* KARTU PENJELASAN ====================================== */
+
+.nanad-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.nanad-dashboard-card {
+  border-radius: 1.1rem;
+  padding: 0.9rem 1rem;
+  background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.06), transparent 60%),
+    rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.9);
+}
+
+.nanad-dashboard-card h2 {
+  font-size: 0.92rem;
+  color: #fefce8;
+  margin-bottom: 0.25rem;
+}
+
+.nanad-dashboard-card p {
+  font-size: 0.8rem;
+  color: #cbd5f5;
+  line-height: 1.6;
+}
+
+/* TABEL RENCANA ========================================= */
+
+.nanad-dashboard-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 0.7rem;
+}
+
+.nanad-dashboard-plan {
+  margin-bottom: 1.6rem;
+}
+
+.nanad-dashboard-table {
+  margin-top: 0.6rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background-color: rgba(15, 23, 42, 0.98);
+  overflow: hidden;
+}
+
+/* bisa di-scroll horizontal di layar kecil, sudah ditambah sebelumnya */
+.nanad-dashboard-table-header,
+.nanad-dashboard-table-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr 1.1fr 1.6fr 1.1fr;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.78rem;
+}
+
+.nanad-dashboard-table-header {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.55));
+  border-bottom: 1px solid rgba(51, 65, 85, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #cbd5f5;
+}
+
+.nanad-dashboard-table-row:nth-child(odd) {
+  background-color: rgba(15, 23, 42, 0.96);
+}
+
+.nanad-dashboard-table-row:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.92);
+}
+
+.nanad-dashboard-table-row:hover {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 1), rgba(30, 64, 175, 0.3));
+}
+
+/* Progress bar */
+.nanad-dashboard-progress-bar {
+  margin-top: 0.25rem;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background-color: rgba(30, 64, 175, 0.4);
+  overflow: hidden;
+}
+
+.nanad-dashboard-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #facc15, #f97316);
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.8);
+}
+
+/* Aksi rencana */
+.nanad-dashboard-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.nanad-dashboard-plan-detail,
+.nanad-dashboard-plan-edit,
+.nanad-dashboard-plan-quick,
+.nanad-dashboard-plan-delete {
+  border-radius: 999px;
+  font-size: 0.72rem;
+  padding: 0.22rem 0.65rem;
+  cursor: pointer;
+  border: 1px solid #374151;
+  background-color: transparent;
+  color: #e5e7eb;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.nanad-dashboard-plan-detail:hover,
+.nanad-dashboard-plan-edit:hover,
+.nanad-dashboard-plan-quick:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+  transform: translateY(-0.5px);
+}
+
+.nanad-dashboard-plan-delete {
+  border-color: rgba(127, 29, 29, 0.9);
+  color: #fecaca;
+}
+
+.nanad-dashboard-plan-delete:hover {
+  background-color: rgba(127, 29, 29, 0.7);
+  color: #fef2f2;
+}
+
+/* Form rencana ========================================== */
+
+.nanad-dashboard-plan-form {
+  margin-top: 1.1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background: radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 60%),
+    rgba(15, 23, 42, 0.97);
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.95);
+}
+
+.nanad-dashboard-plan-form h3 {
+  font-size: 0.95rem;
+  color: #fefce8;
+  margin-bottom: 0.65rem;
+}
+
+.nanad-dashboard-plan-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.nanad-dashboard-plan-form-field label {
+  font-size: 0.75rem;
+  color: #cbd5f5;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.nanad-dashboard-plan-form-field input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(51, 65, 85, 0.9);
+  padding: 0.42rem 0.6rem;
+  font-size: 0.8rem;
+  background-color: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.nanad-dashboard-plan-form-field input::placeholder {
+  color: #6b7280;
+}
+
+.nanad-dashboard-plan-form-field input:focus {
+  border-color: #facc15;
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.3),
+    0 0 0 4px rgba(250, 204, 21, 0.16);
+}
+
+.nanad-dashboard-plan-error {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: #fecaca;
+}
+
+.nanad-dashboard-plan-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+/* Tombol utama (rencana, setoran, paket) */
+.nanad-dashboard-plan-submit,
+.nanad-dashboard-deposit-submit,
+.nanad-dashboard-package-use {
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 1.25rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #0f172a;
+  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.45),
+    0 18px 45px rgba(15, 23, 42, 0.95);
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+}
+
+.nanad-dashboard-plan-submit:hover,
+.nanad-dashboard-deposit-submit:hover,
+.nanad-dashboard-package-use:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.6),
+    0 22px 55px rgba(15, 23, 42, 0.96);
+  filter: brightness(1.02);
+}
+
+.nanad-dashboard-plan-submit:disabled,
+.nanad-dashboard-deposit-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Tombol batal edit teks */
+.nanad-dashboard-plan-cancel,
+.nanad-dashboard-deposit-cancel {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-cancel:hover,
+.nanad-dashboard-deposit-cancel:hover {
+  border-color: #9ca3af;
+  color: #f9fafb;
+}
+
+/* FORM SETORAN ========================================== */
+
+.nanad-dashboard-deposit-form {
+  margin-top: 1.1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background-color: rgba(15, 23, 42, 0.98);
+}
+
+.nanad-dashboard-deposit-form h3 {
+  font-size: 0.95rem;
+  color: #fefce8;
+  margin-bottom: 0.25rem;
+}
+
+.nanad-dashboard-deposit-caption {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-bottom: 0.6rem;
+}
+
+.nanad-dashboard-deposit-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 0.6rem;
+}
+
+.nanad-dashboard-deposit-field label {
+  font-size: 0.75rem;
+  color: #cbd5f5;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.nanad-dashboard-deposit-field input,
+.nanad-dashboard-deposit-field select {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(51, 65, 85, 0.9);
+  padding: 0.42rem 0.6rem;
+  font-size: 0.8rem;
+  background-color: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.nanad-dashboard-deposit-field input::placeholder {
+  color: #6b7280;
+}
+
+.nanad-dashboard-deposit-field input:focus,
+.nanad-dashboard-deposit-field select:focus {
+  border-color: #facc15;
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.3),
+    0 0 0 4px rgba(250, 204, 21, 0.16);
+}
+
+.nanad-dashboard-deposit-error {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: #fecaca;
+}
+
+.nanad-dashboard-deposit-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+/* RIWAYAT SETORAN ======================================= */
+
+.nanad-dashboard-deposits-history {
+  margin-top: 1.2rem;
+}
+
+.nanad-dashboard-deposits-history h3 {
+  font-size: 0.9rem;
+  color: #fefce8;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-dashboard-deposits-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.nanad-dashboard-deposits-filter span {
+  color: #9ca3af;
+}
+
+.nanad-dashboard-deposits-filter select {
+  border-radius: 999px;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background-color: rgba(15, 23, 42, 0.96);
+  font-size: 0.78rem;
+  padding: 0.28rem 0.7rem;
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-deposits-export {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background-color: transparent;
+  font-size: 0.72rem;
+  padding: 0.27rem 0.8rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposits-export:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+/* Tabel riwayat */
+.nanad-dashboard-deposits-table {
+  border-radius: 1rem;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background-color: rgba(15, 23, 42, 0.98);
+  overflow: hidden;
+}
+
+.nanad-dashboard-deposits-header,
+.nanad-dashboard-deposits-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 1fr 1.4fr 1fr;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.78rem;
+}
+
+.nanad-dashboard-deposits-header {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.55));
+  border-bottom: 1px solid rgba(51, 65, 85, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #cbd5f5;
+}
+
+.nanad-dashboard-deposits-row:nth-child(odd) {
+  background-color: rgba(15, 23, 42, 0.96);
+}
+
+.nanad-dashboard-deposits-row:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.92);
+}
+
+.nanad-dashboard-deposits-row:hover {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 1), rgba(30, 64, 175, 0.35));
+}
+
+.nanad-dashboard-deposit-row-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+/* Tombol edit / hapus setoran */
+.nanad-dashboard-deposit-edit {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposit-edit:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+.nanad-dashboard-deposit-delete {
+  border-radius: 999px;
+  border: 1px solid rgba(127, 29, 29, 0.9);
+  background-color: transparent;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.65rem;
+  color: #fecaca;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposit-delete:hover {
+  background-color: rgba(127, 29, 29, 0.7);
+  color: #fef2f2;
+}
+
+/* PAKET SIMULASI ======================================= */
+
+.nanad-dashboard-packages {
+  margin-top: 1.8rem;
+}
+
+.nanad-dashboard-packages-header h2 {
+  font-size: 0.98rem;
+  color: #fefce8;
+  margin-bottom: 0.2rem;
+}
+
+.nanad-dashboard-packages-header p {
+  font-size: 0.8rem;
+  color: #cbd5f5;
+}
+
+.nanad-dashboard-packages-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.nanad-dashboard-package-card {
+  border-radius: 1.2rem;
+  padding: 0.9rem 1rem;
+  background: radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 60%),
+    rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.95);
+}
+
+.nanad-dashboard-package-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.nanad-dashboard-package-name {
+  font-size: 0.86rem;
+  color: #fefce8;
+}
+
+.nanad-dashboard-package-badge {
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.7);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.55rem;
+  color: #fef9c3;
+}
+
+.nanad-dashboard-package-desc {
+  font-size: 0.78rem;
+  color: #cbd5f5;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-dashboard-package-rows {
+  font-size: 0.78rem;
+  margin-bottom: 0.6rem;
+}
+
+.nanad-dashboard-package-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+}
+
+.nanad-dashboard-package-row dt {
+  color: #9ca3af;
+}
+
+.nanad-dashboard-package-row dd {
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-package-note {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.nanad-dashboard-package-disclaimer {
+  margin-top: 0.9rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+/* DETAIL RENCANA (halaman /plans/[id]) ================== */
+
+.nanad-plan-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+}
+
+.nanad-plan-detail-main {
+  padding: 1rem 1.2rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(55, 65, 81, 0.95);
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.09), transparent 60%),
+    rgba(15, 23, 42, 0.98);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.95);
+}
+
+.nanad-plan-detail-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fefce8;
+  margin-bottom: 0.2rem;
+}
+
+.nanad-plan-detail-sub {
+  font-size: 0.78rem;
+  color: #e5e7eb;
+  margin-bottom: 0.7rem;
+}
+
+.nanad-plan-detail-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.nanad-plan-detail-summary-item span {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  display: block;
+}
+
+.nanad-plan-detail-summary-item strong {
+  font-size: 0.8rem;
+  color: #fef3c7;
+}
+
+.nanad-plan-detail-footnote {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.nanad-plan-detail-side {
+  padding: 0.9rem 1rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(55, 65, 81, 0.95);
+  background-color: rgba(15, 23, 42, 0.98);
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.9);
+}
+
+.nanad-plan-detail-side h2 {
+  font-size: 0.9rem;
+  color: #fef3c7;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-plan-detail-side-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  font-size: 0.72rem;
+}
+
+.nanad-plan-detail-side-grid span {
+  display: block;
+  color: #9ca3af;
+}
+
+.nanad-plan-detail-side-grid strong {
+  display: block;
+  color: #e5e7eb;
+}
+
+.nanad-plan-detail-side-note {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.nanad-plan-detail-history {
+  margin-top: 1.4rem;
+}
+
+.nanad-plan-detail-history h2 {
+  font-size: 0.9rem;
+  color: #fef3c7;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-plan-detail-empty {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* RESPONSIVE TWEAK (supaya tetap cakep di HP) =========== */
+
+@media (max-width: 1024px) {
+  .nanad-dashboard-shell {
+    padding: 1.5rem 1.4rem;
+  }
+
+  .nanad-dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nanad-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-plan-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .nanad-dashboard-page {
+    padding: 1.8rem 0.9rem;
+  }
+
+  .nanad-dashboard-shell {
+    padding: 1.3rem 1.1rem 1.5rem;
+    border-radius: 1.4rem;
+  }
+
+  .nanad-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .nanad-dashboard-header-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .nanad-dashboard-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-dashboard-plan-form-grid,
+  .nanad-dashboard-deposit-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-plan-detail-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nanad-dashboard-packages-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-dashboard-plan-actions,
+  .nanad-dashboard-deposit-row-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .nanad-dashboard-heading {
+    font-size: 1.1rem;
+  }
+
+  .nanad-dashboard-text {
+    font-size: 0.8rem;
+  }
+
+  .nanad-dashboard-card h2 {
+    font-size: 0.9rem;
+  }
+
+  .nanad-dashboard-table-header,
+  .nanad-dashboard-table-row,
+  .nanad-dashboard-deposits-header,
+  .nanad-dashboard-deposits-row {
+    font-size: 0.76rem;
+  }
+}
