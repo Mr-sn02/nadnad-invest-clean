@@ -1,169 +1,101 @@
-export const dynamic = "force-dynamic";
+// app/about/page.js
+"use client";
+
+import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <main className="about-shell">
-      <div className="container">
-        {/* HEADER ABOUT */}
-        <header className="about-header">
-          <div>
-            <div className="about-eyebrow">Tentang Nadnad Invest</div>
-            <h1 className="about-title">
-              Elegance Powered by Intelligence.
-            </h1>
-            <p className="about-sub">
-              Nadnad Invest dirancang sebagai ruang yang tenang dan elegan untuk
-              belajar merencanakan keuangan. Bukan tempat spekulasi liar, tapi
-              tempat berlatih berpikir jangka panjang dengan cara yang rapi,
-              bersih, dan bisa dinikmati.
-            </p>
+    <main className="nanad-landing-page">
+      <div className="nanad-landing-shell">
+        {/* Header mini */}
+        <header className="nanad-landing-header">
+          <div className="nanad-landing-brand">
+            <div className="nanad-landing-logo">N</div>
+            <div>
+              <p className="nanad-landing-brand-title">Nanad Invest</p>
+              <p className="nanad-landing-brand-sub">
+                Personal Planning &amp; Simulation Space
+              </p>
+            </div>
           </div>
-          <div className="about-tag">
-            Gold · Black · Silver · White
-          </div>
+
+          <nav className="nanad-landing-nav">
+            <Link href="/landing" className="nanad-landing-nav-link">
+              Beranda
+            </Link>
+            <Link href="/legal" className="nanad-landing-nav-link">
+              Legal &amp; Disclaimer
+            </Link>
+            <div className="nanad-landing-nav-cta">
+              <Link href="/login" className="nanad-landing-nav-ghost">
+                Masuk
+              </Link>
+              <Link href="/register" className="nanad-landing-nav-primary">
+                Buat akun
+              </Link>
+            </div>
+          </nav>
         </header>
 
-        {/* GRID: FILOSOFI & SIMULASI */}
-        <section className="about-grid">
-          <article className="about-block">
-            <h2 className="about-block-title">Filosofi di balik Nadnad Invest</h2>
-            <p>
-              Banyak orang ingin belajar investasi, tapi langsung disambut angka,
-              istilah teknis, dan grafik yang menegangkan. Nadnad Invest hadir
-              sebagai “ruang latihan” yang aman: kamu bisa mengutak-atik simulasi,
-              mencoba skenario, dan melihat gambaran jangka panjang tanpa harus
-              menginvestasikan dana sungguhan.
-            </p>
-            <p>
-              Fokus kami adalah membantu membangun kebiasaan sehat: konsistensi
-              setoran, pemahaman risiko, dan rasa tenang saat melihat naik-turun
-              nilai. Baru setelah itu, kamu bebas membawa pola pikir tersebut ke
-              platform investasi lain yang kamu percaya.
-            </p>
-          </article>
-
-          <article className="about-block">
-            <h2 className="about-block-title">Apa itu platform simulasi?</h2>
-            <p>
-              Platform simulasi di sini berarti semua angka yang kamu lihat
-              merupakan ilustrasi, bukan data keuangan nyata. Kamu bisa:
-            </p>
-            <ul className="about-list">
-              <li>Mencoba berbagai skenario setoran bulanan.</li>
-              <li>Melihat efek jangka panjang dari kebiasaan kecil yang konsisten.</li>
-              <li>Membandingkan horizon waktu dan profil risiko.</li>
-            </ul>
-            <p>
-              Dengan cara ini, kamu bisa “berlatih” dulu sebelum terjun ke dunia
-              investasi yang sebenarnya.
-            </p>
-          </article>
-        </section>
-
-        {/* PILAR DESAIN */}
-        <section className="about-section">
-          <div className="section-header">
-            <div className="section-eyebrow">Pilar desain</div>
-            <h2 className="section-title">Tiga pilar Nadnad Invest</h2>
-            <p className="section-subtitle">
-              Setiap tampilan, warna, dan teks di Nadnad Invest mengikuti tiga
-              prinsip utama ini.
-            </p>
+        <section className="nanad-landing-section nanad-landing-section-soft">
+          <div className="nanad-landing-section-header">
+            <p className="nanad-landing-eyebrow">About</p>
+            <h2>Tentang Nanad Invest</h2>
           </div>
 
-          <div className="about-pillars">
-            <article className="about-pillar-card">
-              <h3>Elegan, bukan heboh</h3>
-              <p>
-                Warna gold–black–silver–white dipilih untuk menciptakan nuansa
-                tenang dan mewah. Bukan agar terlihat “pamer”, tapi agar pikiranmu
-                terasa rapi saat mengambil keputusan.
-              </p>
-            </article>
+          <div style={{ marginTop: "0.9rem", fontSize: "0.85rem", lineHeight: 1.7 }}>
+            <p style={{ marginBottom: "0.7rem" }}>
+              <strong>Nanad Invest</strong> adalah ruang digital untuk menyusun rencana
+              keuangan pribadi dengan cara yang sederhana, terstruktur, dan mudah dipahami.
+              Fokus utama kami adalah membantu pengguna melihat gambaran besar: berapa banyak
+              yang ingin dicapai, berapa yang sudah ditabung, dan berapa lama lagi target itu
+              realistis tercapai.
+            </p>
 
-            <article className="about-pillar-card">
-              <h3>Jernih, bukan rumit</h3>
-              <p>
-                Angka dan teks dibuat sesederhana mungkin tanpa mengorbankan
-                makna. Fokus pada hal yang benar-benar penting: tujuan, durasi,
-                dan kebiasaan setoran.
-              </p>
-            </article>
+            <p style={{ marginBottom: "0.7rem" }}>
+              Nanad Invest tidak menjual produk investasi dan tidak menerima titipan dana
+              dari pengguna. Semua transaksi uang tetap terjadi di rekening bank, e-wallet,
+              atau platform investasi yang pengguna pilih sendiri. Dashboard Nanad Invest
+              digunakan untuk <em>mencatat, mensimulasikan, dan memvisualisasikan</em> rencana
+              tersebut.
+            </p>
 
-            <article className="about-pillar-card">
-              <h3>Reflektif, bukan impulsif</h3>
-              <p>
-                Alih-alih memicu FOMO, Nadnad Invest mengajakmu berhenti sejenak,
-                melihat pola, dan merenungkan: “Sebenarnya, apa yang ingin aku
-                capai dengan uang ini?”
-              </p>
-            </article>
+            <p style={{ marginBottom: "0.7rem" }}>
+              Kami percaya bahwa sebelum memilih produk keuangan apa pun, setiap orang
+              berhak memiliki ruang yang tenang untuk berpikir: apa tujuan keuangannya,
+              seberapa besar kemampuannya saat ini, dan seperti apa prioritas hidupnya.
+              Nanad Invest dirancang sebagai ruang refleksi tersebut.
+            </p>
+
+            <p style={{ marginBottom: "0.7rem" }}>
+              Pengembangan Nanad Invest masih berjalan dan akan terus berevolusi:
+              mulai dari tampilan progres rencana, catatan emosi saat mengambil keputusan
+              finansial, hingga insight sederhana yang membantu pengguna tetap konsisten
+              pada rencananya.
+            </p>
+
+            <p style={{ marginBottom: "0.4rem" }}>
+              Untuk saran kolaborasi, umpan balik, atau pertanyaan terkait penggunaan,
+              silakan hubungi kami melalui email:
+              <br />
+              <strong>support@nanadinvest.app</strong> (contoh, silakan ganti dengan email resmi).
+            </p>
           </div>
         </section>
 
-        {/* UNTUK SIAPA */}
-        <section className="about-section">
-          <div className="section-header">
-            <div className="section-eyebrow">Untuk siapa</div>
-            <h2 className="section-title">Siapa yang cocok memakai Nadnad Invest?</h2>
+        <footer className="nanad-landing-footer">
+          <div className="nanad-landing-footer-left">
+            <span>© {new Date().getFullYear()} Nanad Invest. All rights reserved.</span>
+            <span>
+              Nanad Invest adalah ruang simulasi &amp; perencanaan keuangan pribadi, bukan
+              platform penitipan dana maupun penyedia produk investasi.
+            </span>
           </div>
-
-          <div className="about-forwho">
-            <div className="about-forwho-col">
-              <ul className="about-list">
-                <li>
-                  Kamu yang baru mulai belajar keuangan dan ingin melihat gambaran
-                  besar tanpa langsung menaruh dana sungguhan.
-                </li>
-                <li>
-                  Kamu yang sudah pernah berinvestasi, tapi ingin punya ruang
-                  latihan yang lebih tenang dan elegan.
-                </li>
-                <li>
-                  Kamu yang ingin menjelaskan rencana keuangan ke pasangan atau
-                  keluarga dengan visual yang rapi dan mudah dipahami.
-                </li>
-              </ul>
-            </div>
-            <div className="about-forwho-col note">
-              <p>
-                Nadnad Invest bukan platform jual-beli produk keuangan, dan tidak
-                memberikan rekomendasi instrumen spesifik. Ini adalah ruang
-                simulasi dan refleksi.
-              </p>
-            </div>
+          <div className="nanad-landing-footer-links">
+            <Link href="/about">Tentang</Link>
+            <Link href="/legal">Legal &amp; Disclaimer</Link>
           </div>
-        </section>
-
-        {/* CATATAN PENTING */}
-        <section className="about-section">
-          <div className="section-header">
-            <div className="section-eyebrow">Catatan penting</div>
-            <h2 className="section-title">Disclaimer & batasan</h2>
-          </div>
-
-          <ul className="about-list">
-            <li>
-              Semua angka di Nadnad Invest bersifat simulasi ilustratif, bukan
-              proyeksi resmi, saran keuangan, atau jaminan hasil.
-            </li>
-            <li>
-              Keputusan finansial tetap menjadi tanggung jawab masing-masing
-              pengguna. Pertimbangkan untuk berdiskusi dengan perencana keuangan
-              profesional sebelum mengambil keputusan besar.
-            </li>
-            <li>
-              Tujuan utama Nadnad Invest adalah membantumu mengembangkan pola
-              pikir, kebiasaan, dan cara pandang yang lebih sehat terhadap uang.
-            </li>
-          </ul>
-
-          <div className="about-backlink">
-            <a href="/" className="btn-ghost">
-              ← Kembali ke beranda
-            </a>
-          </div>
-        </section>
+        </footer>
       </div>
     </main>
   );
