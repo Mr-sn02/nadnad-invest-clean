@@ -2368,7 +2368,8 @@ body {
 
 .nanad-dashboard-plan-actions {
   display: flex;
-  gap: 0.35rem;
+  flex-wrap: wrap;
+  gap: 0.3rem;
 }
 
 .nanad-dashboard-plan-detail {
@@ -2384,4 +2385,59 @@ body {
 .nanad-dashboard-plan-detail:hover {
   border-color: rgba(191, 219, 254, 0.9);
   color: #bfdbfe;
+}
+
+/* tombol EDIT */
+.nanad-dashboard-plan-edit {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-edit:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+/* tombol DETAIL sudah ada, biarkan atau samakan gaya dengan edit */
+.nanad-dashboard-plan-detail {
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background-color: transparent;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-detail:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
+
+/* tombol BATALKAN EDIT di bawah form */
+.nanad-dashboard-plan-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.nanad-dashboard-plan-cancel {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-cancel:hover {
+  border-color: #9ca3af;
+  color: #f9fafb;
 }
