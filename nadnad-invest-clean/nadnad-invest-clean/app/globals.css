@@ -2218,3 +2218,39 @@ body {
 .nanad-dashboard-package-use:hover {
   background-color: rgba(251, 191, 36, 0.12);
 }
+
+.nanad-dashboard-plan-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.nanad-dashboard-plan-quick {
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.7);
+  background-color: transparent;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #fef3c7;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-quick:hover {
+  background-color: rgba(251, 191, 36, 0.12);
+}
+
+.nanad-dashboard-deposits-export {
+  margin-left: auto;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background-color: rgba(15, 23, 42, 0.98);
+  padding: 0.25rem 0.8rem;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposits-export:hover {
+  border-color: rgba(251, 191, 36, 0.9);
+  color: #fef3c7;
+}
