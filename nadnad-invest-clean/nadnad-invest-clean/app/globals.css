@@ -2125,6 +2125,30 @@ body {
   margin-bottom: 0.4rem;
 }
 
+.nanad-dashboard-deposits-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #e5e7eb;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-dashboard-deposits-filter select {
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background-color: rgba(15, 23, 42, 0.98);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  color: #f9fafb;
+  outline: none;
+}
+
+.nanad-dashboard-deposits-filter select:focus {
+  border-color: rgba(251, 191, 36, 0.9);
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
+
 .nanad-dashboard-deposits-table {
   border-radius: 1rem;
   border: 1px solid #020617;
@@ -2136,7 +2160,7 @@ body {
 .nanad-dashboard-deposits-header,
 .nanad-dashboard-deposits-row {
   display: grid;
-  grid-template-columns: 1.1fr 1.5fr 1.1fr 2fr;
+  grid-template-columns: 1fr 1.4fr 1fr 1.8fr 0.8fr;
   gap: 0.4rem;
   padding: 0.5rem 0.8rem;
 }
@@ -2156,6 +2180,21 @@ body {
 
 .nanad-dashboard-deposits-row:nth-child(even) {
   background-color: rgba(15, 23, 42, 0.93);
+}
+
+.nanad-dashboard-deposit-delete {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: transparent;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-deposit-delete:hover {
+  border-color: #fca5a5;
+  color: #fecaca;
 }
 
 .nanad-dashboard-deposits-footnote {
