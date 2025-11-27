@@ -20,7 +20,7 @@ const examplePackages = [
     name: "Paket Mingguan Contoh",
     description:
       "Ilustrasi tabungan mingguan selama 3 bulan untuk tujuan jangka pendek.",
-    depositTotal: 600000, // contoh: Rp 150.000 x 4 minggu, bisa diubah
+    depositTotal: 600000, // contoh: Rp 150.000 x 4 minggu
     durationLabel: "3 bulan (setoran Rp 150.000 per minggu)",
     returnPercent: 8,
   },
@@ -44,15 +44,24 @@ export default function DashboardPage() {
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
 
+  // form bikin rencana
   const [planName, setPlanName] = useState("");
   const [planDuration, setPlanDuration] = useState("");
   const [planMonthly, setPlanMonthly] = useState("");
   const [savingPlan, setSavingPlan] = useState(false);
   const [planError, setPlanError] = useState("");
 
-  // cek user + load rencana
+  // tabungan / setoran
+  const [depositTotals, setDepositTotals] = useState({});
+  const [depositPlanId, setDepositPlanId] = useState("");
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositNote, setDepositNote] = useState("");
+  const [savingDeposit, setSavingDeposit] = useState(false);
+  const [depositError, setDepositError] = useState("");
+
+  // cek user + load rencana & tabungan
   useEffect(() => {
-    const checkUserAndLoadPlans = async () => {
+    const checkUserAndLoad = async () => {
       const { data, error } = await supabase.auth.getUser();
       const user = data?.user;
 
@@ -65,26 +74,43 @@ export default function DashboardPage() {
       setUserId(user.id);
       setLoadingUser(false);
 
-      await loadPlans(user.id);
+      await loadPlansAndDeposits(user.id);
     };
 
-    checkUserAndLoadPlans();
+    checkUserAndLoad();
   }, [router]);
 
-  async function loadPlans(uid) {
+  async function loadPlansAndDeposits(uid) {
     setLoadingPlans(true);
 
-    const { data, error } = await supabase
+    const { data: planData, error: planError } = await supabase
       .from("plans")
       .select("id, name, duration_months, monthly_amount, final_estimate")
       .eq("user_id", uid)
       .order("created_at", { ascending: true });
 
-    if (error) {
-      console.error("Error loading plans:", error);
+    if (planError) {
+      console.error("Error loading plans:", planError);
       setPlans([]);
     } else {
-      setPlans(data || []);
+      setPlans(planData || []);
+    }
+
+    const { data: depositRows, error: depError } = await supabase
+      .from("plan_deposits")
+      .select("plan_id, amount")
+      .eq("user_id", uid);
+
+    if (depError) {
+      console.error("Error loading deposits:", depError);
+      setDepositTotals({});
+    } else {
+      const totals = {};
+      (depositRows || []).forEach((row) => {
+        const amt = Number(row.amount) || 0;
+        totals[row.plan_id] = (totals[row.plan_id] || 0) + amt;
+      });
+      setDepositTotals(totals);
     }
 
     setLoadingPlans(false);
@@ -95,6 +121,7 @@ export default function DashboardPage() {
     router.push("/login");
   }
 
+  // tambah rencana
   async function handleAddPlan(e) {
     e.preventDefault();
     if (!userId) return;
@@ -139,9 +166,10 @@ export default function DashboardPage() {
     setPlanName("");
     setPlanDuration("");
     setPlanMonthly("");
-    await loadPlans(userId);
+    await loadPlansAndDeposits(userId);
   }
 
+  // hapus rencana
   async function handleDeletePlan(id) {
     if (!userId) return;
 
@@ -157,7 +185,50 @@ export default function DashboardPage() {
       return;
     }
 
-    await loadPlans(userId);
+    await loadPlansAndDeposits(userId);
+  }
+
+  // catat setoran
+  async function handleAddDeposit(e) {
+    e.preventDefault();
+    if (!userId) return;
+
+    setDepositError("");
+
+    if (!depositPlanId || !depositAmount) {
+      setDepositError("Pilih rencana & isi nominal setoran.");
+      return;
+    }
+
+    const amount = parseFloat(
+      depositAmount.replace(/\./g, "").replace(",", ".")
+    );
+
+    if (isNaN(amount) || amount <= 0) {
+      setDepositError("Nominal setoran harus berupa angka positif.");
+      return;
+    }
+
+    setSavingDeposit(true);
+
+    const { error } = await supabase.from("plan_deposits").insert({
+      user_id: userId,
+      plan_id: depositPlanId,
+      amount,
+      note: depositNote || null,
+    });
+
+    setSavingDeposit(false);
+
+    if (error) {
+      console.error("Error adding deposit:", error);
+      setDepositError(error.message || "Gagal mencatat setoran.");
+      return;
+    }
+
+    setDepositAmount("");
+    setDepositNote("");
+    await loadPlansAndDeposits(userId);
   }
 
   if (loadingUser) {
@@ -221,9 +292,8 @@ export default function DashboardPage() {
             <p className="nanad-dashboard-text">
               Satu dasbor untuk menyusun tujuan, mensimulasikan setoran, dan
               memantau progresmu tanpa pusing lihat angka di banyak tempat.
-              Data rencana disimpan rapi, bisa kamu ubah kapan saja, dan tidak
-              langsung terhubung ke instrumen — aman untuk eksplorasi bersama
-              Nanad Invest.
+              Uangmu tetap berada di rekening atau e-wallet milikmu — Nanad
+              Invest hanya membantu mencatat dan memvisualisasikan rencana.
             </p>
           </div>
 
@@ -276,10 +346,9 @@ export default function DashboardPage() {
           <article className="nanad-dashboard-card">
             <h2>Kenapa dashboard ini akan berkembang?</h2>
             <p>
-              Versi selanjutnya akan menghadirkan grafik pertumbuhan, catatan
+              Versi selanjutnya dapat menghadirkan grafik pertumbuhan, catatan
               emosi saat berinvestasi, insight berkala, serta pengelompokan
-              rencana berdasarkan prioritas. Tujuannya: membantumu mengambil
-              keputusan finansial dengan lebih tenang dan terukur.
+              rencana berdasarkan prioritas.
             </p>
           </article>
         </section>
@@ -293,9 +362,9 @@ export default function DashboardPage() {
               </p>
               <h2>Rencana yang kamu susun di Nanad Invest</h2>
               <p>
-                Rencana di bawah ini tersimpan untuk akunmu. Kamu bisa menambah
-                rencana baru kapan saja, misalnya dana darurat, DP rumah, atau
-                pendidikan anak.
+                Rencana di bawah ini tersimpan untuk akunmu. Uang fisik tetap
+                berada di rekening/ewallet kamu; Nanad Invest hanya mencatat
+                dan menampilkan progres tabunganmu.
               </p>
             </div>
           </div>
@@ -305,7 +374,7 @@ export default function DashboardPage() {
               <div>Nama rencana</div>
               <div>Durasi</div>
               <div>Setoran bulanan</div>
-              <div>Estimasi dana akhir</div>
+              <div>Progres tabungan</div>
               <div>Aksi</div>
             </div>
 
@@ -326,43 +395,62 @@ export default function DashboardPage() {
                 <div>-</div>
               </div>
             ) : (
-              plans.map((plan) => (
-                <div
-                  className="nanad-dashboard-table-row"
-                  key={plan.id}
-                >
-                  <div>{plan.name}</div>
-                  <div>{plan.duration_months} bulan</div>
-                  <div>
-                    Rp{" "}
-                    {Number(plan.monthly_amount).toLocaleString("id-ID", {
-                      maximumFractionDigits: 0,
-                    })}
+              plans.map((plan) => {
+                const saved = depositTotals[plan.id] || 0;
+                const target = Number(plan.final_estimate) || 0;
+                const pct =
+                  target > 0 ? Math.min(100, (saved / target) * 100) : 0;
+
+                return (
+                  <div
+                    className="nanad-dashboard-table-row"
+                    key={plan.id}
+                  >
+                    <div>{plan.name}</div>
+                    <div>{plan.duration_months} bulan</div>
+                    <div>
+                      Rp{" "}
+                      {Number(plan.monthly_amount).toLocaleString("id-ID", {
+                        maximumFractionDigits: 0,
+                      })}
+                    </div>
+                    <div>
+                      <div>
+                        Rp{" "}
+                        {saved.toLocaleString("id-ID", {
+                          maximumFractionDigits: 0,
+                        })}{" "}
+                        / ± Rp{" "}
+                        {target.toLocaleString("id-ID", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </div>
+                      <div className="nanad-dashboard-progress-bar">
+                        <div
+                          className="nanad-dashboard-progress-fill"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        className="nanad-dashboard-plan-delete"
+                        onClick={() => handleDeletePlan(plan.id)}
+                      >
+                        Hapus
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    ± Rp{" "}
-                    {Number(plan.final_estimate).toLocaleString("id-ID", {
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
-                  <div>
-                    <button
-                      type="button"
-                      className="nanad-dashboard-plan-delete"
-                      onClick={() => handleDeletePlan(plan.id)}
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 
           <p className="nanad-dashboard-plan-footnote">
-            Estimasi dana akhir saat ini masih perhitungan kasar (durasi ×
-            setoran bulanan). Ke depan, rumusnya bisa disesuaikan dengan asumsi
-            imbal hasil dan profil risiko.
+            Estimasi target saat ini masih perhitungan kasar (durasi × setoran
+            bulanan). Kedepan bisa disesuaikan dengan asumsi imbal hasil dan
+            profil risiko yang lebih detail.
           </p>
 
           {/* FORM TAMBAH RENCANA */}
@@ -412,6 +500,66 @@ export default function DashboardPage() {
               disabled={savingPlan}
             >
               {savingPlan ? "Menyimpan..." : "Simpan rencana"}
+            </button>
+          </form>
+
+          {/* FORM CATAT SETORAN */}
+          <form
+            className="nanad-dashboard-deposit-form"
+            onSubmit={handleAddDeposit}
+          >
+            <h3>Catat setoran tabungan</h3>
+            <p className="nanad-dashboard-deposit-caption">
+              Uang tetap berada di rekening atau e-wallet kamu. Fitur ini hanya
+              membantu mencatat setoran supaya progres rencana terlihat rapi.
+            </p>
+            <div className="nanad-dashboard-deposit-grid">
+              <div className="nanad-dashboard-deposit-field">
+                <label>Pilih rencana</label>
+                <select
+                  value={depositPlanId}
+                  onChange={(e) => setDepositPlanId(e.target.value)}
+                >
+                  <option value="">Pilih salah satu</option>
+                  {plans.map((plan) => (
+                    <option key={plan.id} value={plan.id}>
+                      {plan.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="nanad-dashboard-deposit-field">
+                <label>Nominal setoran (Rp)</label>
+                <input
+                  type="text"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  placeholder="Misal: 100000"
+                />
+              </div>
+              <div className="nanad-dashboard-deposit-field">
+                <label>Catatan (opsional)</label>
+                <input
+                  type="text"
+                  value={depositNote}
+                  onChange={(e) => setDepositNote(e.target.value)}
+                  placeholder="Misal: dari gaji bulan ini"
+                />
+              </div>
+            </div>
+
+            {depositError && (
+              <p className="nanad-dashboard-deposit-error">
+                {depositError}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="nanad-dashboard-deposit-submit"
+              disabled={savingDeposit || plans.length === 0}
+            >
+              {savingDeposit ? "Mencatat..." : "Catat setoran"}
             </button>
           </form>
         </section>
