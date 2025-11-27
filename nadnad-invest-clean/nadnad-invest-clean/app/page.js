@@ -46,22 +46,24 @@ const examplePackages = [
 export default function DashboardPage() {
   const router = useRouter();
 
-  // ==== STATE ==== //
+  // ==== STATE USER ==== //
   const [userEmail, setUserEmail] = useState("");
   const [userId, setUserId] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
+  // ==== STATE RENCANA ==== //
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
 
-  // form bikin rencana
+  // form bikin / edit rencana
   const [planName, setPlanName] = useState("");
   const [planDuration, setPlanDuration] = useState("");
   const [planMonthly, setPlanMonthly] = useState("");
   const [savingPlan, setSavingPlan] = useState(false);
   const [planError, setPlanError] = useState("");
+  const [editingPlanId, setEditingPlanId] = useState(null); // <-- rencana yang sedang diedit
 
-  // tabungan / setoran
+  // ==== STATE SETORAN ==== //
   const [depositTotals, setDepositTotals] = useState({});
   const [deposits, setDeposits] = useState([]); // riwayat setoran
   const [depositPlanId, setDepositPlanId] = useState("");
@@ -151,8 +153,8 @@ export default function DashboardPage() {
     router.push("/login");
   }
 
-  // tambah rencana
-  async function handleAddPlan(e) {
+  // ==== TAMBAH / EDIT RENCANA ==== //
+  async function handleSavePlan(e) {
     e.preventDefault();
     if (!userId) return;
 
@@ -174,32 +176,81 @@ export default function DashboardPage() {
     }
 
     const finalEstimate = duration * monthly;
-
     setSavingPlan(true);
 
-    const { error } = await supabase.from("plans").insert({
-      user_id: userId,
-      name: planName,
-      duration_months: duration,
-      monthly_amount: monthly,
-      final_estimate: finalEstimate,
-    });
+    if (editingPlanId) {
+      // MODE EDIT
+      const { error } = await supabase
+        .from("plans")
+        .update({
+          name: planName,
+          duration_months: duration,
+          monthly_amount: monthly,
+          final_estimate: finalEstimate,
+        })
+        .eq("id", editingPlanId)
+        .eq("user_id", userId);
 
-    setSavingPlan(false);
+      setSavingPlan(false);
 
-    if (error) {
-      console.error("Error adding plan:", error);
-      setPlanError(error.message || "Gagal menyimpan rencana.");
-      return;
+      if (error) {
+        console.error("Error updating plan:", error);
+        setPlanError(error.message || "Gagal menyimpan perubahan rencana.");
+        return;
+      }
+    } else {
+      // MODE TAMBAH BARU
+      const { error } = await supabase.from("plans").insert({
+        user_id: userId,
+        name: planName,
+        duration_months: duration,
+        monthly_amount: monthly,
+        final_estimate: finalEstimate,
+      });
+
+      setSavingPlan(false);
+
+      if (error) {
+        console.error("Error adding plan:", error);
+        setPlanError(error.message || "Gagal menyimpan rencana.");
+        return;
+      }
     }
 
+    // reset form & mode edit
     setPlanName("");
     setPlanDuration("");
     setPlanMonthly("");
+    setEditingPlanId(null);
     await loadPlansAndDeposits(userId);
   }
 
-  // hapus rencana
+  function handleStartEditPlan(plan) {
+    setEditingPlanId(plan.id);
+    setPlanName(plan.name);
+    setPlanDuration(String(plan.duration_months || ""));
+    setPlanMonthly(String(plan.monthly_amount || ""));
+    setPlanError("");
+    // opsional: scroll ke form
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        const el = document.getElementById("nanad-plan-form");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
+    }
+  }
+
+  function handleCancelEditPlan() {
+    setEditingPlanId(null);
+    setPlanName("");
+    setPlanDuration("");
+    setPlanMonthly("");
+    setPlanError("");
+  }
+
+  // ==== HAPUS RENCANA ==== //
   async function handleDeletePlan(id) {
     if (!userId) return;
 
@@ -215,10 +266,15 @@ export default function DashboardPage() {
       return;
     }
 
+    // jika rencana yang dihapus sedang diedit → reset form
+    if (editingPlanId === id) {
+      handleCancelEditPlan();
+    }
+
     await loadPlansAndDeposits(userId);
   }
 
-  // catat setoran
+  // ==== CATAT SETORAN ==== //
   async function handleAddDeposit(e) {
     e.preventDefault();
     if (!userId) return;
@@ -261,7 +317,7 @@ export default function DashboardPage() {
     await loadPlansAndDeposits(userId);
   }
 
-  // hapus setoran (riwayat)
+  // ==== HAPUS SETORAN ==== //
   async function handleDeleteDeposit(id) {
     if (!userId) return;
 
@@ -284,9 +340,20 @@ export default function DashboardPage() {
   // isi form rencana dari paket simulasi
   function handleUsePackage(pkg) {
     if (!pkg) return;
+    setEditingPlanId(null); // mulai dari rencana baru
     setPlanName(pkg.planNameSuggestion || pkg.name);
     setPlanDuration(String(pkg.durationMonths || ""));
     setPlanMonthly(String(pkg.monthlyAmount || ""));
+    setPlanError("");
+
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        const el = document.getElementById("nanad-plan-form");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
+    }
   }
 
   // klik "Setor" dari tabel rencana → pilih rencana & scroll ke form
@@ -600,6 +667,13 @@ export default function DashboardPage() {
                         </button>
                         <button
                           type="button"
+                          className="nanad-dashboard-plan-edit"
+                          onClick={() => handleStartEditPlan(plan)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
                           className="nanad-dashboard-plan-quick"
                           onClick={() => handleQuickDeposit(plan.id)}
                         >
@@ -626,12 +700,15 @@ export default function DashboardPage() {
             profil risiko yang lebih detail.
           </p>
 
-          {/* FORM TAMBAH RENCANA */}
+          {/* FORM TAMBAH / EDIT RENCANA */}
           <form
+            id="nanad-plan-form"
             className="nanad-dashboard-plan-form"
-            onSubmit={handleAddPlan}
+            onSubmit={handleSavePlan}
           >
-            <h3>Tambah rencana baru</h3>
+            <h3>
+              {editingPlanId ? "Edit rencana" : "Tambah rencana baru"}
+            </h3>
             <div className="nanad-dashboard-plan-form-grid">
               <div className="nanad-dashboard-plan-form-field">
                 <label>Nama rencana</label>
@@ -667,13 +744,29 @@ export default function DashboardPage() {
               <p className="nanad-dashboard-plan-error">{planError}</p>
             )}
 
-            <button
-              type="submit"
-              className="nanad-dashboard-plan-submit"
-              disabled={savingPlan}
-            >
-              {savingPlan ? "Menyimpan..." : "Simpan rencana"}
-            </button>
+            <div className="nanad-dashboard-plan-form-actions">
+              <button
+                type="submit"
+                className="nanad-dashboard-plan-submit"
+                disabled={savingPlan}
+              >
+                {savingPlan
+                  ? "Menyimpan..."
+                  : editingPlanId
+                  ? "Simpan perubahan"
+                  : "Simpan rencana"}
+              </button>
+
+              {editingPlanId && (
+                <button
+                  type="button"
+                  className="nanad-dashboard-plan-cancel"
+                  onClick={handleCancelEditPlan}
+                >
+                  Batalkan edit
+                </button>
+              )}
+            </div>
           </form>
 
           {/* FORM CATAT SETORAN */}
@@ -761,7 +854,9 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   className="nanad-dashboard-deposits-export"
-                  onClick={() => handleExportHistoryCsv(filteredHistory)}
+                  onClick={() =>
+                    handleExportHistoryCsv(filteredHistory)
+                  }
                 >
                   Export CSV
                 </button>
