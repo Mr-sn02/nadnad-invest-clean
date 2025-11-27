@@ -273,12 +273,24 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="nanad-landing-footer">
-          <span>© {new Date().getFullYear()} Nanad Invest.</span>
-          <span>Dirancang sebagai ruang perencanaan pribadi, bukan produk investasi.</span>
-        </footer>
-      </div>
-    </main>
-  );
-}
+              {/* FOOTER RESMI */}
+      <footer className="nanad-landing-footer">
+        <div className="nanad-landing-footer-left">
+          <span>
+            © {new Date().getFullYear()} Nanad Invest. All rights reserved.
+          </span>
+          <span>
+            Nanad Invest adalah ruang simulasi &amp; perencanaan keuangan pribadi.
+            Nanad Invest tidak menerima titipan dana, tidak menyalurkan dana, dan
+            tidak menjanjikan imbal hasil investasi apa pun.
+          </span>
+        </div>
+
+        <div className="nanad-landing-footer-links">
+          <a href="/about">Tentang</a>
+          <a href="/legal">Legal &amp; Disclaimer</a>
+        </div>
+      </footer>
+    </div>
+  </main>
+);
