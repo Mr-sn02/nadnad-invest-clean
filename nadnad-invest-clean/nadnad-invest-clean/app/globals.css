@@ -2111,3 +2111,55 @@ body {
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+/* Riwayat setoran */
+
+.nanad-dashboard-deposits-history {
+  margin-top: 1.3rem;
+}
+
+.nanad-dashboard-deposits-history h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fef3c7;
+  margin-bottom: 0.4rem;
+}
+
+.nanad-dashboard-deposits-table {
+  border-radius: 1rem;
+  border: 1px solid #020617;
+  background-color: rgba(15, 23, 42, 0.98);
+  font-size: 0.78rem;
+  overflow: hidden;
+}
+
+.nanad-dashboard-deposits-header,
+.nanad-dashboard-deposits-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.5fr 1.1fr 2fr;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+}
+
+.nanad-dashboard-deposits-header {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.98),
+    rgba(30, 64, 175, 0.35)
+  );
+  font-weight: 600;
+}
+
+.nanad-dashboard-deposits-row:nth-child(odd) {
+  background-color: rgba(15, 23, 42, 0.98);
+}
+
+.nanad-dashboard-deposits-row:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.93);
+}
+
+.nanad-dashboard-deposits-footnote {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
