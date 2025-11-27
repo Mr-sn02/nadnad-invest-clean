@@ -289,6 +289,81 @@ export default function DashboardPage() {
     setPlanMonthly(String(pkg.monthlyAmount || ""));
   }
 
+  // klik "Setor" dari tabel rencana → pilih rencana & scroll ke form
+  function handleQuickDeposit(planId) {
+    setDepositPlanId(planId);
+    setDepositError("");
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        const el = document.getElementById("nanad-deposit-section");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
+    }
+  }
+
+  // export riwayat ke CSV (pakai filter yang aktif)
+  function handleExportHistoryCsv(filtered) {
+    const rows = filtered || [];
+
+    if (!rows.length) {
+      alert("Belum ada data setoran untuk diekspor.");
+      return;
+    }
+
+    const csvRows = [];
+    csvRows.push(["Tanggal", "Rencana", "Nominal", "Catatan"]);
+
+    rows.forEach((dep) => {
+      const planNameLabel =
+        plans.find((p) => p.id === dep.plan_id)?.name ||
+        "Rencana dihapus";
+
+      const dateLabel = dep.created_at
+        ? new Date(dep.created_at).toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+        : "-";
+
+      csvRows.push([
+        dateLabel,
+        planNameLabel,
+        Number(dep.amount).toLocaleString("id-ID", {
+          maximumFractionDigits: 0,
+        }),
+        dep.note || "",
+      ]);
+    });
+
+    const csvContent = csvRows
+      .map((row) =>
+        row
+          .map((value) =>
+            `"${String(value).replace(/"/g, '""')}"`
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      "nanad-invest-riwayat-setoran.csv"
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
   if (loadingUser) {
     return (
       <main className="nanad-dashboard-page">
@@ -509,13 +584,22 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div>
-                      <button
-                        type="button"
-                        className="nanad-dashboard-plan-delete"
-                        onClick={() => handleDeletePlan(plan.id)}
-                      >
-                        Hapus
-                      </button>
+                      <div className="nanad-dashboard-plan-actions">
+                        <button
+                          type="button"
+                          className="nanad-dashboard-plan-quick"
+                          onClick={() => handleQuickDeposit(plan.id)}
+                        >
+                          Setor
+                        </button>
+                        <button
+                          type="button"
+                          className="nanad-dashboard-plan-delete"
+                          onClick={() => handleDeletePlan(plan.id)}
+                        >
+                          Hapus
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -581,6 +665,7 @@ export default function DashboardPage() {
 
           {/* FORM CATAT SETORAN */}
           <form
+            id="nanad-deposit-section"
             className="nanad-dashboard-deposit-form"
             onSubmit={handleAddDeposit}
           >
@@ -659,6 +744,14 @@ export default function DashboardPage() {
                     </option>
                   ))}
                 </select>
+
+                <button
+                  type="button"
+                  className="nanad-dashboard-deposits-export"
+                  onClick={() => handleExportHistoryCsv(filteredHistory)}
+                >
+                  Export CSV
+                </button>
               </div>
 
               <div className="nanad-dashboard-deposits-table">
