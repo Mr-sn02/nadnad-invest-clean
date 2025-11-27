@@ -70,6 +70,9 @@ export default function DashboardPage() {
   const [savingDeposit, setSavingDeposit] = useState(false);
   const [depositError, setDepositError] = useState("");
 
+  // filter riwayat
+  const [historyFilterPlanId, setHistoryFilterPlanId] = useState("");
+
   // ==== RINGKASAN TOTAL ==== //
   const totalSaved = Object.values(depositTotals).reduce(
     (acc, val) => acc + (Number(val) || 0),
@@ -258,6 +261,26 @@ export default function DashboardPage() {
     await loadPlansAndDeposits(userId);
   }
 
+  // hapus setoran (riwayat)
+  async function handleDeleteDeposit(id) {
+    if (!userId) return;
+
+    const ok = window.confirm("Hapus setoran ini dari riwayat?");
+    if (!ok) return;
+
+    const { error } = await supabase
+      .from("plan_deposits")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting deposit:", error);
+      return;
+    }
+
+    await loadPlansAndDeposits(userId);
+  }
+
   // isi form rencana dari paket simulasi
   function handleUsePackage(pkg) {
     if (!pkg) return;
@@ -277,6 +300,11 @@ export default function DashboardPage() {
       </main>
     );
   }
+
+  // filter riwayat yang ditampilkan
+  const filteredHistory = historyFilterPlanId
+    ? deposits.filter((d) => d.plan_id === historyFilterPlanId)
+    : deposits;
 
   return (
     <main className="nanad-dashboard-page">
@@ -615,24 +643,46 @@ export default function DashboardPage() {
           {deposits.length > 0 && (
             <div className="nanad-dashboard-deposits-history">
               <h3>Riwayat setoran terbaru</h3>
+
+              <div className="nanad-dashboard-deposits-filter">
+                <span>Filter rencana:</span>
+                <select
+                  value={historyFilterPlanId}
+                  onChange={(e) =>
+                    setHistoryFilterPlanId(e.target.value)
+                  }
+                >
+                  <option value="">Semua rencana</option>
+                  {plans.map((plan) => (
+                    <option key={plan.id} value={plan.id}>
+                      {plan.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="nanad-dashboard-deposits-table">
                 <div className="nanad-dashboard-deposits-header">
                   <div>Tanggal</div>
                   <div>Rencana</div>
                   <div>Nominal</div>
                   <div>Catatan</div>
+                  <div>Aksi</div>
                 </div>
-                {deposits.slice(0, 8).map((dep) => {
+                {filteredHistory.slice(0, 10).map((dep) => {
                   const planNameLabel =
                     plans.find((p) => p.id === dep.plan_id)?.name ||
                     "Rencana dihapus";
 
                   const dateLabel = dep.created_at
-                    ? new Date(dep.created_at).toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
+                    ? new Date(dep.created_at).toLocaleDateString(
+                        "id-ID",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )
                     : "-";
 
                   return (
@@ -649,6 +699,15 @@ export default function DashboardPage() {
                         })}
                       </div>
                       <div>{dep.note || "-"}</div>
+                      <div>
+                        <button
+                          type="button"
+                          className="nanad-dashboard-deposit-delete"
+                          onClick={() => handleDeleteDeposit(dep.id)}
+                        >
+                          Hapus
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
