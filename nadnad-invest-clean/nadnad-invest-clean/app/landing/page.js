@@ -27,7 +27,7 @@ export default function LandingPage() {
               Cara kerja
             </a>
             <a href="#safety" className="nanad-landing-nav-link">
-              Keamanan &amp; catatan
+              Keamanan
             </a>
 
             <div className="nanad-landing-nav-cta">
@@ -35,7 +35,7 @@ export default function LandingPage() {
                 Masuk
               </Link>
               <Link href="/register" className="nanad-landing-nav-primary">
-                Buat akun gratis
+                Buat akun
               </Link>
             </div>
           </nav>
@@ -71,7 +71,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* KARTU PRATINJAU DASHBOARD */}
+          {/* PREVIEW DASHBOARD */}
           <div className="nanad-landing-hero-right">
             <div className="nanad-landing-preview-card">
               <div className="nanad-landing-preview-header">
@@ -98,7 +98,7 @@ export default function LandingPage() {
                 <div className="nanad-landing-preview-row">
                   <div className="nanad-landing-preview-row-title">
                     Dana darurat
-                    <span>Rp 6jt / target 10jt</span>
+                    <span>Rp 6 jt / target 10 jt</span>
                   </div>
                   <div className="nanad-landing-preview-progress">
                     <div style={{ width: "60%" }} />
@@ -108,7 +108,7 @@ export default function LandingPage() {
                 <div className="nanad-landing-preview-row">
                   <div className="nanad-landing-preview-row-title">
                     DP rumah
-                    <span>Rp 4jt / target 20jt</span>
+                    <span>Rp 4 jt / target 20 jt</span>
                   </div>
                   <div className="nanad-landing-preview-progress">
                     <div style={{ width: "20%" }} />
@@ -118,7 +118,7 @@ export default function LandingPage() {
                 <div className="nanad-landing-preview-row">
                   <div className="nanad-landing-preview-row-title">
                     Liburan keluarga
-                    <span>Rp 2,5jt / target 5jt</span>
+                    <span>Rp 2,5 jt / target 5 jt</span>
                   </div>
                   <div className="nanad-landing-preview-progress">
                     <div style={{ width: "50%" }} />
@@ -127,9 +127,9 @@ export default function LandingPage() {
               </div>
 
               <p className="nanad-landing-preview-footnote">
-                Tampilan di atas adalah ilustrasi. Angka yang kamu lihat di
-                dashboard Nanad Invest hanya berasal dari rencana &amp; setoran
-                yang kamu catat sendiri.
+                Tampilan di atas adalah ilustrasi. Angka di dashboard Nanad
+                Invest hanya berasal dari rencana &amp; setoran yang kamu catat
+                sendiri.
               </p>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function LandingPage() {
         <section id="how-it-works" className="nanad-landing-section">
           <div className="nanad-landing-section-header">
             <p className="nanad-landing-eyebrow">Cara kerja</p>
-            <h2>Dari “bingung mulai dari mana” ke rencana yang jelas.</h2>
+            <h2>Dari bingung mulai dari mana ke rencana yang jelas.</h2>
           </div>
 
           <ol className="nanad-landing-steps">
@@ -194,11 +194,11 @@ export default function LandingPage() {
             <li className="nanad-landing-step">
               <span className="nanad-landing-step-number">02</span>
               <div>
-                <h3>Set setoran &amp; timeline</h3>
+                <h3>Set setoran &amp; durasi</h3>
                 <p>
-                  Tentukan berapa yang ingin kamu setor per bulan dan berapa
-                  lama durasi rencananya. Nanad Invest akan menghitung total
-                  target kasar dan memvisualisasikan progresnya.
+                  Tentukan nominal setoran dan lama waktu rencananya. Nanad
+                  Invest akan menghitung target kasar dan memvisualisasikan
+                  progresnya.
                 </p>
               </div>
             </li>
@@ -208,20 +208,20 @@ export default function LandingPage() {
               <div>
                 <h3>Catat setoran &amp; pantau progres</h3>
                 <p>
-                  Setiap kali kamu menabung di bank/e-wallet, cukup catat
-                  setoran itu ke Nanad Invest. Lihat grafik dan persentase
-                  tercapai untuk tiap rencana — semuanya di satu tempat.
+                  Setiap kali menabung di bank/e-wallet, cukup catat di Nanad
+                  Invest. Lihat persentase tercapai untuk tiap rencana, semua di
+                  satu tempat.
                 </p>
               </div>
             </li>
           </ol>
         </section>
 
-        {/* SAFETY / DISCLAIMER */}
+        {/* SAFETY / DISCLAIMER SHORT */}
         <section id="safety" className="nanad-landing-section nanad-landing-section-soft">
           <div className="nanad-landing-section-header">
             <p className="nanad-landing-eyebrow">Keamanan &amp; catatan penting</p>
-            <h2>Nanad Invest bukan platform titip dana atau janji imbal hasil.</h2>
+            <h2>Nanad Invest bukan tempat titip dana atau janji keuntungan.</h2>
           </div>
 
           <div className="nanad-landing-safety-grid">
@@ -234,7 +234,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="nanad-landing-safety-card">
-              <h3>Simulasi, bukan janji keuntungan</h3>
+              <h3>Simulasi, bukan janji imbal hasil</h3>
               <p>
                 Angka imbal hasil di dalam contoh paket hanyalah ilustrasi untuk
                 membantumu berpikir. Bukan rekomendasi, bukan ajakan, dan tidak
@@ -242,7 +242,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="nanad-landing-safety-card">
-              <h3>Kamu tetap pegang kendali penuh</h3>
+              <h3>Kamu pegang kendali penuh</h3>
               <p>
                 Kamu bisa menghapus, mengubah, atau menambah rencana kapan pun.
                 Nanad Invest hanya menyediakan ruang visual untuk membantumu
@@ -252,7 +252,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* CTA AKHIR */}
+        {/* CTA BOTTOM */}
         <section className="nanad-landing-bottom-cta">
           <div className="nanad-landing-bottom-cta-inner">
             <div>
@@ -267,30 +267,32 @@ export default function LandingPage() {
                 Buat akun Nanad Invest
               </Link>
               <Link href="/login" className="nanad-landing-cta-secondary">
-                Masuk ke dashboard demo
+                Masuk ke dashboard
               </Link>
             </div>
           </div>
         </section>
 
-              {/* FOOTER RESMI */}
-      <footer className="nanad-landing-footer">
-        <div className="nanad-landing-footer-left">
-          <span>
-            © {new Date().getFullYear()} Nanad Invest. All rights reserved.
-          </span>
-          <span>
-            Nanad Invest adalah ruang simulasi &amp; perencanaan keuangan pribadi.
-            Nanad Invest tidak menerima titipan dana, tidak menyalurkan dana, dan
-            tidak menjanjikan imbal hasil investasi apa pun.
-          </span>
-        </div>
+        {/* FOOTER RESMI */}
+        <footer className="nanad-landing-footer">
+          <div className="nanad-landing-footer-left">
+            <span>
+              © {new Date().getFullYear()} Nanad Invest. All rights reserved.
+            </span>
+            <span>
+              Nanad Invest adalah ruang simulasi &amp; perencanaan keuangan
+              pribadi. Nanad Invest tidak menerima titipan dana, tidak
+              menyalurkan dana, dan tidak menjanjikan imbal hasil investasi apa
+              pun.
+            </span>
+          </div>
 
-        <div className="nanad-landing-footer-links">
-          <a href="/about">Tentang</a>
-          <a href="/legal">Legal &amp; Disclaimer</a>
-        </div>
-      </footer>
-    </div>
-  </main>
-);
+          <div className="nanad-landing-footer-links">
+            <a href="/about">Tentang</a>
+            <a href="/legal">Legal &amp; Disclaimer</a>
+          </div>
+        </footer>
+      </div>
+    </main>
+  );
+}
