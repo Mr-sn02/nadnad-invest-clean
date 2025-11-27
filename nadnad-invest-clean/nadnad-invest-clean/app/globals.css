@@ -2491,3 +2491,117 @@ body {
   border-color: #9ca3af;
   color: #f9fafb;
 }
+
+/* ========== RESPONSIVE NANAD INVEST ========== */
+
+@media (max-width: 1024px) {
+  .nanad-dashboard-shell {
+    padding: 1.4rem;
+  }
+
+  .nanad-dashboard-header {
+    gap: 0.75rem;
+  }
+
+  .nanad-dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nanad-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-plan-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .nanad-dashboard-shell {
+    padding: 1rem 1.1rem;
+  }
+
+  /* Header jadi vertikal di mobile */
+  .nanad-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .nanad-dashboard-header-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .nanad-dashboard-account {
+    flex: 1;
+  }
+
+  .nanad-dashboard-logout {
+    margin-left: auto;
+  }
+
+  /* Stats jadi 1 kolom */
+  .nanad-dashboard-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Kartu info */
+  .nanad-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Form rencana & setoran: 1 kolom */
+  .nanad-dashboard-plan-form-grid,
+  .nanad-dashboard-deposit-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Detail rencana: tumpuk */
+  .nanad-plan-detail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .nanad-plan-detail-main,
+  .nanad-plan-detail-side {
+    padding: 0.9rem 1rem;
+  }
+
+  .nanad-plan-detail-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Tombol aksi plan & setoran lebih rapi di HP */
+  .nanad-dashboard-plan-actions,
+  .nanad-dashboard-deposit-row-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .nanad-dashboard-heading {
+    font-size: 1.1rem;
+  }
+
+  .nanad-dashboard-text {
+    font-size: 0.8rem;
+  }
+
+  .nanad-dashboard-card h2 {
+    font-size: 0.9rem;
+  }
+
+  .nanad-dashboard-plan-form h3,
+  .nanad-dashboard-deposit-form h3,
+  .nanad-dashboard-deposits-history h3 {
+    font-size: 0.9rem;
+  }
+
+  /* Ringkasan di detail rencana jadi 2 kolom */
+  .nanad-plan-detail-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
