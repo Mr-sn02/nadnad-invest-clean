@@ -3605,3 +3605,38 @@ body {
     font-size: 0.76rem;
   }
 }
+
+/* === FRAME PREMIUM GLOW ================================== */
+
+.nanad-dashboard-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+/* garis cahaya tipis keliling card besar */
+.nanad-dashboard-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)) padding-box,
+    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(148, 163, 184, 0.6)) border-box;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* highlight tipis di sisi atas */
+.nanad-dashboard-shell::after {
+  content: "";
+  position: absolute;
+  top: -18%;
+  left: 5%;
+  width: 60%;
+  height: 80px;
+  background: radial-gradient(circle at top, rgba(250, 250, 210, 0.35), transparent 70%);
+  opacity: 0.6;
+  pointer-events: none;
+  filter: blur(2px);
+}
