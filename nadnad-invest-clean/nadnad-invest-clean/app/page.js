@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabaseClient"; // sesuaikan kalau lokasi lib beda
+import { supabase } from "../lib/supabaseClient";
 
 // === Paket simulasi contoh ===
 const examplePackages = [
@@ -13,7 +13,7 @@ const examplePackages = [
       "Setoran harian kecil untuk melihat pola pertumbuhan jangka sangat pendek.",
     depositTotal: 1200000, // Rp 100.000 x 12 hari
     durationLabel: "12 hari (setoran Rp 100.000 per hari)",
-    returnPercent: 20, // asumsi 20% total, hanya contoh
+    returnPercent: 20, // hanya asumsi contoh
   },
   {
     id: "weekly-8",
@@ -53,6 +53,7 @@ export default function DashboardPage() {
 
   // tabungan / setoran
   const [depositTotals, setDepositTotals] = useState({});
+  const [deposits, setDeposits] = useState([]); // riwayat setoran
   const [depositPlanId, setDepositPlanId] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [depositNote, setDepositNote] = useState("");
@@ -83,6 +84,7 @@ export default function DashboardPage() {
   async function loadPlansAndDeposits(uid) {
     setLoadingPlans(true);
 
+    // rencana
     const { data: planData, error: planError } = await supabase
       .from("plans")
       .select("id, name, duration_months, monthly_amount, final_estimate")
@@ -96,14 +98,17 @@ export default function DashboardPage() {
       setPlans(planData || []);
     }
 
+    // setoran
     const { data: depositRows, error: depError } = await supabase
       .from("plan_deposits")
-      .select("plan_id, amount")
-      .eq("user_id", uid);
+      .select("id, plan_id, amount, note, created_at")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: false });
 
     if (depError) {
       console.error("Error loading deposits:", depError);
       setDepositTotals({});
+      setDeposits([]);
     } else {
       const totals = {};
       (depositRows || []).forEach((row) => {
@@ -111,6 +116,7 @@ export default function DashboardPage() {
         totals[row.plan_id] = (totals[row.plan_id] || 0) + amt;
       });
       setDepositTotals(totals);
+      setDeposits(depositRows || []);
     }
 
     setLoadingPlans(false);
@@ -143,7 +149,7 @@ export default function DashboardPage() {
       return;
     }
 
-    const finalEstimate = duration * monthly; // perhitungan kasar dulu
+    const finalEstimate = duration * monthly;
 
     setSavingPlan(true);
 
@@ -353,7 +359,7 @@ export default function DashboardPage() {
           </article>
         </section>
 
-        {/* KARTU RENCANA + FORM */}
+        {/* KARTU RENCANA + FORM + TABUNGAN */}
         <section className="nanad-dashboard-plan">
           <div className="nanad-dashboard-plan-header">
             <div>
@@ -369,6 +375,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* TABEL RENCANA */}
           <div className="nanad-dashboard-table">
             <div className="nanad-dashboard-table-header">
               <div>Nama rencana</div>
@@ -562,6 +569,55 @@ export default function DashboardPage() {
               {savingDeposit ? "Mencatat..." : "Catat setoran"}
             </button>
           </form>
+
+          {/* RIWAYAT SETORAN TERBARU */}
+          {deposits.length > 0 && (
+            <div className="nanad-dashboard-deposits-history">
+              <h3>Riwayat setoran terbaru</h3>
+              <div className="nanad-dashboard-deposits-table">
+                <div className="nanad-dashboard-deposits-header">
+                  <div>Tanggal</div>
+                  <div>Rencana</div>
+                  <div>Nominal</div>
+                  <div>Catatan</div>
+                </div>
+                {deposits.slice(0, 8).map((dep) => {
+                  const planName =
+                    plans.find((p) => p.id === dep.plan_id)?.name ||
+                    "Rencana dihapus";
+
+                  const dateLabel = dep.created_at
+                    ? new Date(dep.created_at).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "-";
+
+                  return (
+                    <div
+                      key={dep.id}
+                      className="nanad-dashboard-deposits-row"
+                    >
+                      <div>{dateLabel}</div>
+                      <div>{planName}</div>
+                      <div>
+                        Rp{" "}
+                        {Number(dep.amount).toLocaleString("id-ID", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </div>
+                      <div>{dep.note || "-"}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="nanad-dashboard-deposits-footnote">
+                Hanya menampilkan beberapa setoran terakhir. Riwayat lengkap
+                bisa dikembangkan pada versi berikutnya.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* SIMULASI PAKET */}
