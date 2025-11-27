@@ -4326,3 +4326,168 @@ body {
 .nanad-landing-footer-links a:hover {
   color: #fefce8;
 }
+
+/* === NANAD INVEST · CATAT SETORAN & RIWAYAT =============== */
+
+/* Card kanan (catat setoran + riwayat) */
+.nanad-dashboard-deposits {
+  border-radius: 1.4rem;
+  padding: 1rem 1.1rem 1.2rem;
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), transparent 55%),
+    rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+  font-size: 0.82rem;
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-deposits-header h3 {
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+  color: #fefce8;
+}
+
+.nanad-dashboard-deposits-header p {
+  font-size: 0.8rem;
+  color: #cbd5f5;
+}
+
+/* Form setoran */
+.nanad-dashboard-deposit-form {
+  margin-top: 0.8rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.nanad-dashboard-deposit-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.nanad-dashboard-deposit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #cbd5f5;
+}
+
+.nanad-dashboard-deposit-form input,
+.nanad-dashboard-deposit-form select {
+  border-radius: 999px;
+  border: 1px solid rgba(51, 65, 85, 1);
+  background-color: rgba(15, 23, 42, 1);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  outline: none;
+}
+
+.nanad-dashboard-deposit-form input::placeholder {
+  color: #6b7280;
+}
+
+.nanad-dashboard-deposit-form input:focus,
+.nanad-dashboard-deposit-form select:focus {
+  border-color: rgba(191, 219, 254, 0.95);
+  box-shadow: 0 0 0 1px rgba(191, 219, 254, 0.75);
+}
+
+/* supaya input tanggal tidak putih polos */
+.nanad-dashboard-deposit-form input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Baris nominal sendiri biar lebar */
+.nanad-dashboard-deposit-amount {
+  width: 100%;
+}
+
+/* Tombol simpan setoran */
+.nanad-dashboard-deposit-submit {
+  align-self: flex-start;
+  margin-top: 0.1rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 1.4rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+  color: #0f172a;
+  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
+  box-shadow:
+    0 0 0 1px rgba(161, 98, 7, 0.55),
+    0 16px 36px rgba(15, 23, 42, 0.96);
+}
+
+.nanad-dashboard-deposit-submit:hover {
+  filter: brightness(1.05);
+}
+
+/* Riwayat setoran */
+.nanad-dashboard-deposits-list {
+  margin-top: 0.9rem;
+}
+
+.nanad-dashboard-deposits-list h4 {
+  font-size: 0.86rem;
+  margin-bottom: 0.4rem;
+  color: #fefce8;
+}
+
+.nanad-dashboard-deposits-rows {
+  border-radius: 0.9rem;
+  overflow: hidden;
+  border: 1px solid rgba(30, 64, 175, 0.7);
+}
+
+.nanad-dashboard-deposits-row {
+  display: grid;
+  grid-template-columns: 0.9fr 1.2fr 1.2fr;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.78rem;
+  background-color: rgba(15, 23, 42, 0.98);
+}
+
+.nanad-dashboard-deposits-row:nth-child(2n) {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.98),
+    rgba(30, 64, 175, 0.65)
+  );
+}
+
+.nanad-dashboard-deposits-row div:nth-child(3) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #e5e7eb;
+}
+
+/* Responsive: form & tabel rapi di HP */
+@media (max-width: 768px) {
+  .nanad-dashboard-deposit-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-dashboard-deposit-submit {
+    width: 100%;
+    text-align: center;
+  }
+
+  .nanad-dashboard-deposits-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nanad-dashboard-deposits-row div:nth-child(3) {
+    text-align: left;
+  }
+}
