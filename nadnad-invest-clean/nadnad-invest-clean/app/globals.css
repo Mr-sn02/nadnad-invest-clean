@@ -2001,3 +2001,113 @@ body {
     grid-template-columns: 1.7fr 0.9fr 1fr 1.2fr 0.9fr;
   }
 }
+
+/* Progress bar pada kolom Progres tabungan */
+.nanad-dashboard-progress-bar {
+  margin-top: 0.25rem;
+  width: 100%;
+  height: 0.35rem;
+  border-radius: 999px;
+  background-color: #020617;
+  overflow: hidden;
+}
+
+.nanad-dashboard-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    90deg,
+    #fbbf24,
+    #facc15,
+    #fef3c7
+  );
+}
+
+/* Form setoran / tabungan */
+.nanad-dashboard-deposit-form {
+  margin-top: 1.2rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #111827;
+}
+
+.nanad-dashboard-deposit-form h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #fef3c7;
+}
+
+.nanad-dashboard-deposit-caption {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin-bottom: 0.6rem;
+}
+
+.nanad-dashboard-deposit-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .nanad-dashboard-deposit-grid {
+    grid-template-columns: 1.5fr 1.1fr 1.4fr;
+  }
+}
+
+.nanad-dashboard-deposit-field label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+  color: #e5e7eb;
+}
+
+.nanad-dashboard-deposit-field input,
+.nanad-dashboard-deposit-field select {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid #1f2937;
+  background-color: rgba(15, 23, 42, 0.98);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.78rem;
+  color: #f9fafb;
+  outline: none;
+}
+
+.nanad-dashboard-deposit-field input::placeholder {
+  color: #6b7280;
+}
+
+.nanad-dashboard-deposit-field input:focus,
+.nanad-dashboard-deposit-field select:focus {
+  border-color: rgba(251, 191, 36, 0.9);
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
+
+.nanad-dashboard-deposit-error {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: #fecaca;
+}
+
+.nanad-dashboard-deposit-submit {
+  margin-top: 0.7rem;
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #020617;
+  background-image: linear-gradient(
+    90deg,
+    #fbbf24,
+    #facc15,
+    #fef3c7
+  );
+  box-shadow: 0 12px 30px rgba(234, 179, 8, 0.55);
+}
+
+.nanad-dashboard-deposit-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
