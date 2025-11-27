@@ -2254,3 +2254,134 @@ body {
   border-color: rgba(251, 191, 36, 0.9);
   color: #fef3c7;
 }
+
+/* Detail rencana */
+
+.nanad-plan-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+  gap: 1.4rem;
+  margin-top: 1.2rem;
+}
+
+.nanad-plan-detail-main {
+  padding: 1rem 1.2rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(15, 23, 42, 0.95);
+  background: radial-gradient(
+      circle at top left,
+      rgba(251, 191, 36, 0.09),
+      transparent 55%
+    ),
+    rgba(15, 23, 42, 0.98);
+}
+
+.nanad-plan-detail-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fefce8;
+  margin-bottom: 0.2rem;
+}
+
+.nanad-plan-detail-sub {
+  font-size: 0.78rem;
+  color: #e5e7eb;
+  margin-bottom: 0.7rem;
+}
+
+.nanad-plan-detail-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.nanad-plan-detail-summary-item span {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  display: block;
+}
+
+.nanad-plan-detail-summary-item strong {
+  font-size: 0.8rem;
+  color: #fef3c7;
+}
+
+.nanad-plan-detail-footnote {
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.nanad-plan-detail-side {
+  padding: 0.9rem 1rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(15, 23, 42, 0.95);
+  background-color: rgba(15, 23, 42, 0.96);
+}
+
+.nanad-plan-detail-side h2 {
+  font-size: 0.9rem;
+  color: #fef3c7;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-plan-detail-side-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  font-size: 0.72rem;
+}
+
+.nanad-plan-detail-side-grid span {
+  display: block;
+  color: #9ca3af;
+}
+
+.nanad-plan-detail-side-grid strong {
+  display: block;
+  color: #e5e7eb;
+}
+
+.nanad-plan-detail-side-note {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.nanad-plan-detail-history {
+  margin-top: 1.4rem;
+}
+
+.nanad-plan-detail-history h2 {
+  font-size: 0.9rem;
+  color: #fef3c7;
+  margin-bottom: 0.5rem;
+}
+
+.nanad-plan-detail-empty {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Tombol detail di tabel rencana */
+
+.nanad-dashboard-plan-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.nanad-dashboard-plan-detail {
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background-color: transparent;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.nanad-dashboard-plan-detail:hover {
+  border-color: rgba(191, 219, 254, 0.9);
+  color: #bfdbfe;
+}
