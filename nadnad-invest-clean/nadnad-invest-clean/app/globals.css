@@ -2605,3 +2605,41 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Tabel boleh di-scroll horizontal pada layar kecil */
+
+.nanad-dashboard-table,
+.nanad-dashboard-deposits-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.nanad-dashboard-deposits-header,
+.nanad-dashboard-deposits-row {
+  min-width: 520px; /* biar kolom tidak terlalu sempit */
+}
+
+@media (max-width: 600px) {
+  .nanad-dashboard-deposits-header,
+  .nanad-dashboard-deposits-row {
+    min-width: 460px;
+  }
+}
+
+/* Glow halus tombol utama */
+
+.nanad-dashboard-plan-submit,
+.nanad-dashboard-deposit-submit,
+.nanad-dashboard-package-use {
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.1),
+    0 18px 45px rgba(15, 23, 42, 0.9);
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+
+.nanad-dashboard-plan-submit:hover,
+.nanad-dashboard-deposit-submit:hover,
+.nanad-dashboard-package-use:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.35),
+    0 20px 55px rgba(15, 23, 42, 0.9);
+}
