@@ -416,6 +416,7 @@ export default function WalletPage() {
               onSubmit={handleCreateDeposit}
               className="nanad-dashboard-deposit-form"
             >
+              {/* Nominal */}
               <label className="nanad-dashboard-deposit-amount">
                 Nominal deposit
                 <input
@@ -428,6 +429,7 @@ export default function WalletPage() {
                 />
               </label>
 
+              {/* Atas nama pengirim */}
               <label className="nanad-dashboard-deposit-amount">
                 Atas nama pengirim
                 <input
@@ -438,6 +440,7 @@ export default function WalletPage() {
                 />
               </label>
 
+              {/* Rekening tujuan + bukti transfer */}
               <div className="nanad-dashboard-deposit-row">
                 <label>
                   Rekening tujuan deposit
@@ -485,6 +488,19 @@ export default function WalletPage() {
                 </label>
               </div>
 
+              {/* ⚠️ Teks peringatan di bawah dropdown rekening */}
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.75rem", marginTop: "0.75rem" }}
+              >
+                Jika nomor rekening tujuan terlihat berbeda dari informasi
+                resmi, tidak aktif, atau kamu ragu,{" "}
+                <strong>jangan melakukan transfer</strong>. Segera hubungi
+                admin melalui tombol <strong>Pengaduan WhatsApp</strong> di
+                pojok kanan bawah untuk konfirmasi nomor rekening.
+              </p>
+
+              {/* Tombol submit */}
               <button
                 type="submit"
                 disabled={actionLoading}
