@@ -40,6 +40,9 @@ export default function WalletPage() {
     DEPOSIT_TARGETS[0]?.id || ""
   );
   const [depositProofFile, setDepositProofFile] = useState(null);
+  const [depositSenderName, setDepositSenderName] = useState(""); // 👈 NEW
+  );
+  const [depositProofFile, setDepositProofFile] = useState(null);
 
   // Form withdraw + rekening tujuan
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -140,20 +143,25 @@ export default function WalletPage() {
   }, [router]);
 
   // === Pengajuan DEPOSIT (rekening + bukti) ===
-  const handleCreateDeposit = async (e) => {
-    e.preventDefault();
-    if (!wallet || !user) return;
+const handleCreateDeposit = async (e) => {
+  e.preventDefault();
+  if (!wallet || !user) return;
 
-    const amount = Number(depositAmount);
-    if (!amount || amount <= 0) {
-      alert("Nominal deposit harus lebih besar dari 0.");
-      return;
-    }
+  const amount = Number(depositAmount);
+  if (!amount || amount <= 0) {
+    alert("Nominal deposit harus lebih besar dari 0.");
+    return;
+  }
 
-    if (!depositTarget) {
-      alert("Pilih rekening tujuan deposit.");
-      return;
-    }
+  if (!depositTarget) {
+    alert("Pilih rekening tujuan deposit.");
+    return;
+  }
+
+  if (!depositSenderName.trim()) {              // 👈 NEW
+    alert("Isi nama pengirim (atas nama di rekening pengirim).");
+    return;
+  }
 
     const targetObj =
       DEPOSIT_TARGETS.find((t) => t.id === depositTarget) || null;
@@ -205,12 +213,15 @@ export default function WalletPage() {
           note: "Pengajuan deposit menunggu persetujuan admin.",
           deposit_target: targetLabel,
           proof_image_url: proofImageUrl,
+          sender_name: depositSenderName.trim(),   // 👈 NEW
+          user_email: user.email || null,          // 👈 NEW
         });
 
       if (txErr) throw txErr;
 
       setDepositAmount("");
       setDepositProofFile(null);
+      setDepositSenderName("");    // 👈 NEW
 
       await loadTransactions(wallet.id);
       alert(
@@ -272,6 +283,7 @@ export default function WalletPage() {
           withdraw_bank_name: withdrawBankName,
           withdraw_bank_account: withdrawBankAccount,
           withdraw_bank_holder: withdrawBankHolder,
+          user_email: user?.email || null,   // 👈 tambahkan ini
         });
 
       if (txErr) throw txErr;
@@ -402,14 +414,24 @@ export default function WalletPage() {
               <label className="nanad-dashboard-deposit-amount">
                 Nominal deposit
                 <input
-                  type="number"
-                  min="0"
-                  step="1000"
-                  placeholder="contoh: 100000"
-                  value={depositAmount}
-                  onChange={(e) => setDepositAmount(e.target.value)}
-                />
-              </label>
+                   type="number"
+                   min="0"
+                   step="1000"
+                   placeholder="contoh: 100000"
+                   value={depositAmount}
+                   onChange={(e) => setDepositAmount(e.target.value)}
+                 />
+               </label>
+
+               <label className="nanad-dashboard-deposit-amount">
+                 Atas nama pengirim
+                 <input
+                   type="text"
+                   placeholder="nama pemilik rekening pengirim"
+                   value={depositSenderName}
+                   onChange={(e) => setDepositSenderName(e.target.value)}
+                 />
+               </label>
 
               <div className="nanad-dashboard-deposit-row">
                 <label>
