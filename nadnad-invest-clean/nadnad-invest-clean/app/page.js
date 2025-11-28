@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../lib/supabaseClient"; // sesuaikan jika path berbeda
+import supabase from "../lib/supabaseClient";
 
 // === Paket simulasi contoh (ILUSTRASI SAJA) ====================
 const examplePackages = [
@@ -64,16 +64,16 @@ export default function DashboardPage() {
       id: "emergency",
       name: "Dana darurat",
       category: "Keamanan",
-      targetAmount: 5000000,
-      savedAmount: 1000000,
+      targetAmount: 10000000,
+      savedAmount: 3000000,
       note: "Cadangan minimal 3–6 bulan pengeluaran bulanan.",
     },
     {
       id: "house",
       name: "DP rumah",
       category: "Aset",
-      targetAmount: 20000000,
-      savedAmount: 4000000,
+      targetAmount: 15000000,
+      savedAmount: 3000000,
       note: "Target jangka menengah, bisa dipecah menjadi beberapa sub-target.",
     },
     {
@@ -81,7 +81,7 @@ export default function DashboardPage() {
       name: "Liburan keluarga",
       category: "Gaya hidup",
       targetAmount: 5000000,
-      savedAmount: 2500000,
+      savedAmount: 1500000,
       note: "Rencana refreshing tanpa mengganggu dana darurat.",
     },
   ]);
@@ -236,6 +236,17 @@ export default function DashboardPage() {
                 {userEmail || "user@nanadinvest.app"}
               </span>
             </div>
+
+            {/* Tombol Buka Wallet */}
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => router.push("/wallet")}
+            >
+              Buka Wallet
+            </button>
+
+            {/* Tombol Logout */}
             <button
               type="button"
               className="nanad-dashboard-logout"
@@ -453,13 +464,6 @@ export default function DashboardPage() {
                     <span className="nanad-dashboard-package-badge">
                       {pack.badge}
                     </span>
-                <button
-                    type="button"
-                    className="nanad-dashboard-logout" // atau bikin class baru
-                    onClick={() => router.push("/wallet")}
-                   >
-                    Buka Wallet
-                   </button>
                   </header>
 
                   <dl className="nanad-dashboard-package-meta">
