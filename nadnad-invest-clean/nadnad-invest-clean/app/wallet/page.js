@@ -14,15 +14,19 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-// Rekening tujuan deposit (silakan ganti dengan rekening resmi Nanad Invest)
+// Rekening tujuan deposit (SILAKAN GANTI NOMOR & NAMA SESUAI REKENING ASLI)
 const DEPOSIT_TARGETS = [
   {
-    id: "BCA-SON",
-    label: "BCA · 1234567890 · a.n. NANAD INVEST (contoh)",
+    id: "BCA-UTAMA",
+    label: "BCA · 1234567890 · a.n. Ratri Candra Agustin", // rekening utama
   },
   {
-    id: "BRI-SON",
-    label: "BRI · 9876543210 · a.n. NANAD INVEST (contoh)",
+    id: "BRI-CABANG",
+    label: "BRI · 5556667778 · a.n. Nanad Invest Bandung", // rekening cabang
+  },
+  {
+    id: "DANA-SON",
+    label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
   },
 ];
 
@@ -35,7 +39,7 @@ export default function WalletPage() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
-  // ==== Form deposit ====
+  // ==== Form DEPOSIT ====
   const [depositAmount, setDepositAmount] = useState("");
   const [depositTarget, setDepositTarget] = useState(
     DEPOSIT_TARGETS[0]?.id || ""
@@ -43,7 +47,7 @@ export default function WalletPage() {
   const [depositProofFile, setDepositProofFile] = useState(null);
   const [depositSenderName, setDepositSenderName] = useState("");
 
-  // ==== Form withdraw ====
+  // ==== Form WITHDRAW ====
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawBankName, setWithdrawBankName] = useState("");
   const [withdrawBankAccount, setWithdrawBankAccount] = useState("");
@@ -110,10 +114,11 @@ export default function WalletPage() {
 
         let currentWallet = existing;
 
+        // Jika user belum punya dompet, buat baru + simpan email
         if (!existing) {
           const { data: created, error: createErr } = await supabase
             .from("wallets")
-            .insert({ user_id: user.id })
+            .insert({ user_id: user.id, user_email: user.email })
             .select("*")
             .single();
 
@@ -450,21 +455,9 @@ export default function WalletPage() {
                       fontSize: "0.8rem",
                     }}
                   >
-                    // Rekening tujuan deposit (silakan ganti dengan rekening resmi Nanad Invest)
-                    const DEPOSIT_TARGETS = [
-                      {
-                        id: "BCA-UTAMA",
-                        label: "BCA · 1234567890 · a.n. Ratri Candra Agustin", // rekening utama
-                      },
-                      {
-                        id: "BRI-CABANG",
-                        label: "BRI · 5556667778 · a.n. Nanad Invest Bandung", // rekening cabang
-                      },
-                      {
-                        id: "DANA-SON",
-                        label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
-                      },
-                    ];
+                    {DEPOSIT_TARGETS.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.label}
                       </option>
                     ))}
                   </select>
