@@ -14,9 +14,7 @@ function formatCurrency(value) {
 }
 
 // 🔐 HANYA email di daftar ini yang boleh buka halaman admin
-const ADMIN_EMAILS = [
-  "sonnnn603@gmail.com", // email login Bang Son
-];
+const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
 
 export default function AdminTransactionsPage() {
   const router = useRouter();
@@ -31,7 +29,7 @@ export default function AdminTransactionsPage() {
   const loadPending = async () => {
     setErrorMsg("");
 
-   const { data, error } = await supabase
+    const { data, error } = await supabase
       .from("wallet_transactions")
       .select(
         "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder, deposit_target, proof_image_url"
@@ -217,36 +215,36 @@ export default function AdminTransactionsPage() {
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
-       <header className="nanad-dashboard-header">
-        <div className="nanad-dashboard-brand">
-          <div className="nanad-dashboard-logo">N</div>
-          <div>
-            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
-            <p className="nanad-dashboard-brand-sub">
-              Admin · Approval dompet
-            </p>
+        <header className="nanad-dashboard-header">
+          <div className="nanad-dashboard-brand">
+            <div className="nanad-dashboard-logo">N</div>
+            <div>
+              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-sub">
+                Admin · Approval dompet
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Tombol-tombol kanan */}
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
-            type="button"
-            className="nanad-dashboard-logout"
-            onClick={() => router.push("/admin/wallets")}
-          >
-            Edit saldo dompet
-          </button>
+          {/* Tombol-tombol kanan */}
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => router.push("/admin/wallets")}
+            >
+              Edit saldo dompet
+            </button>
 
-          <button
-            type="button"
-            className="nanad-dashboard-logout"
-            onClick={() => router.push("/")}
-          >
-            Kembali ke dashboard
-          </button>
-        </div>
-      </header>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => router.push("/")}
+            >
+              Kembali ke dashboard
+            </button>
+          </div>
+        </header>
 
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Wallet approvals</p>
@@ -308,15 +306,17 @@ export default function AdminTransactionsPage() {
                         PENDING
                       </span>
                     </div>
+
                     <div>
-                      <div>
                       {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
                       {formatCurrency(tx.amount)}
 
                       {tx.type === "DEPOSIT" && tx.deposit_target && (
                         <>
                           <br />
-                          <small>Rekening tujuan: {tx.deposit_target}</small>
+                          <small>
+                            Rekening tujuan: {tx.deposit_target}
+                          </small>
                         </>
                       )}
 
@@ -324,7 +324,8 @@ export default function AdminTransactionsPage() {
                         <>
                           <br />
                           <small>
-                            ke {tx.withdraw_bank_name} · {tx.withdraw_bank_account} (
+                            ke {tx.withdraw_bank_name} ·{" "}
+                            {tx.withdraw_bank_account} (
                             {tx.withdraw_bank_holder})
                           </small>
                         </>
@@ -332,11 +333,15 @@ export default function AdminTransactionsPage() {
 
                       {tx.proof_image_url && (
                         <>
-                         <br />
-                         <a
+                          <br />
+                          <a
+                            href={tx.proof_image_url}
                             target="_blank"
                             rel="noreferrer"
-                            style={{ fontSize: "0.75rem", textDecoration: "underline" }}
+                            style={{
+                              fontSize: "0.75rem",
+                              textDecoration: "underline",
+                            }}
                           >
                             Lihat bukti transfer
                           </a>
@@ -350,6 +355,7 @@ export default function AdminTransactionsPage() {
                         </>
                       )}
                     </div>
+
                     <div style={{ display: "flex", gap: "0.5rem" }}>
                       <button
                         type="button"
