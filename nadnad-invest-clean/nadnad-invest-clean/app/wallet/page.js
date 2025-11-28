@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../lib/supabaseClient"; // penting: 2x ".." dari /app/wallet
+import supabase from "../../lib/supabaseClient"; // dari /app/wallet ke /lib
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
@@ -22,11 +22,18 @@ export default function WalletPage() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
+  // Form deposit
   const [depositAmount, setDepositAmount] = useState("");
+
+  // Form withdraw + rekening tujuan
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawBankName, setWithdrawBankName] = useState("");
+  const [withdrawBankAccount, setWithdrawBankAccount] = useState("");
+  const [withdrawBankHolder, setWithdrawBankHolder] = useState("");
+
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Ambil user + wallet
+  // Ambil user + wallet + transaksi
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -44,7 +51,6 @@ export default function WalletPage() {
         }
 
         if (!user) {
-          // kalau tidak login, lempar ke /login
           router.push("/login");
           return;
         }
@@ -109,7 +115,6 @@ export default function WalletPage() {
         console.error("Unexpected wallet init error:", err);
         setLoadError("Terjadi kesalahan saat memuat dompet Nanad Invest.");
       } finally {
-        // apapun yang terjadi, loading dimatikan
         setLoading(false);
       }
     };
@@ -117,7 +122,7 @@ export default function WalletPage() {
     init();
   }, [router]);
 
-  // Helper refresh wallet + transaksi setelah deposit/withdraw
+  // Helper refresh setelah deposit/withdraw
   const refreshWallet = async () => {
     if (!user) return;
 
@@ -137,7 +142,7 @@ export default function WalletPage() {
     setTransactions(txs || []);
   };
 
-  // === Deposit DEV (belum pakai payment gateway) ===
+  // === Deposit DEV (langsung update saldo) =====================
   const handleDeposit = async (e) => {
     e.preventDefault();
     if (!wallet) return;
@@ -182,7 +187,7 @@ export default function WalletPage() {
     }
   };
 
-  // === Withdraw DEV ===
+  // === Withdraw DEV dengan rekening tujuan =====================
   const handleWithdraw = async (e) => {
     e.preventDefault();
     if (!wallet) return;
@@ -195,6 +200,15 @@ export default function WalletPage() {
 
     if (amount > wallet.balance) {
       alert("Saldo tidak mencukupi untuk penarikan ini.");
+      return;
+    }
+
+    if (
+      !withdrawBankName.trim() ||
+      !withdrawBankAccount.trim() ||
+      !withdrawBankHolder.trim()
+    ) {
+      alert("Lengkapi data rekening tujuan penarikan.");
       return;
     }
 
@@ -219,10 +233,17 @@ export default function WalletPage() {
           balance_after: after,
           status: "COMPLETED",
           note: "Penarikan manual (DEV, tanpa disbursement bank).",
+          withdraw_bank_name: withdrawBankName,
+          withdraw_bank_account: withdrawBankAccount,
+          withdraw_bank_holder: withdrawBankHolder,
         });
       if (txErr) throw txErr;
 
       setWithdrawAmount("");
+      setWithdrawBankName("");
+      setWithdrawBankAccount("");
+      setWithdrawBankHolder("");
+
       await refreshWallet();
     } catch (err) {
       console.error("Withdraw error:", err);
@@ -232,10 +253,9 @@ export default function WalletPage() {
     }
   };
 
-  // === RENDER ================================================
+  // === RENDER ==================================================
 
   if (loading) {
-    // loading sekarang cuma muncul sementara
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
@@ -248,7 +268,6 @@ export default function WalletPage() {
   }
 
   if (loadError) {
-    // kalau ada error, tampilkan pesan jelas di layar
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
@@ -305,9 +324,9 @@ export default function WalletPage() {
           </h1>
           <p className="nanad-dashboard-body">
             Di halaman ini kamu bisa melihat saldo, melakukan deposit
-            (mode pengembangan), dan simulasi penarikan. Untuk operasi keuangan
-            sebenarnya, integrasi ke bank atau payment gateway perlu ditambahkan
-            di sisi server &amp; disesuaikan regulasi.
+            (mode pengembangan), dan simulasi penarikan ke rekening tujuan.
+            Untuk operasi keuangan sebenarnya, integrasi ke bank/payment
+            gateway dan kepatuhan regulasi tetap diperlukan.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -328,6 +347,7 @@ export default function WalletPage() {
 
         {/* DEPOSIT & WITHDRAW */}
         <section className="nanad-dashboard-table-section">
+          {/* Deposit */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Deposit (mode pengembangan)</h3>
@@ -364,13 +384,14 @@ export default function WalletPage() {
             </form>
           </div>
 
+          {/* Withdraw */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Penarikan (mode pengembangan)</h3>
               <p>
-                Penarikan di sini hanya mengurangi saldo di database.
-                Penarikan uang nyata harus diproses lewat sistem pencairan bank
-                atau payment gateway.
+                Penarikan di sini mengurangi saldo di database, dengan mencatat
+                rekening tujuan. Pencairan uang nyata tetap perlu proses
+                terpisah lewat sistem bank/payment gateway.
               </p>
             </div>
 
@@ -387,6 +408,37 @@ export default function WalletPage() {
                   placeholder="contoh: 50000"
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
+                />
+              </label>
+
+              <div className="nanad-dashboard-deposit-row">
+                <label>
+                  Nama bank / e-wallet
+                  <input
+                    type="text"
+                    placeholder="contoh: BCA / BRI / Dana"
+                    value={withdrawBankName}
+                    onChange={(e) => setWithdrawBankName(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Nomor rekening / akun
+                  <input
+                    type="text"
+                    placeholder="contoh: 1234567890"
+                    value={withdrawBankAccount}
+                    onChange={(e) => setWithdrawBankAccount(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <label className="nanad-dashboard-deposit-amount">
+                Nama pemilik rekening
+                <input
+                  type="text"
+                  placeholder="contoh: Nama lengkap kamu"
+                  value={withdrawBankHolder}
+                  onChange={(e) => setWithdrawBankHolder(e.target.value)}
                 />
               </label>
 
@@ -410,11 +462,17 @@ export default function WalletPage() {
             </div>
 
             {transactions.length === 0 ? (
-              <p className="nanad-dashboard-body" style={{ marginTop: "0.75rem" }}>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.75rem" }}
+              >
                 Belum ada transaksi tercatat.
               </p>
             ) : (
-              <div className="nanad-dashboard-deposits-rows" style={{ marginTop: "0.75rem" }}>
+              <div
+                className="nanad-dashboard-deposits-rows"
+                style={{ marginTop: "0.75rem" }}
+              >
                 {transactions.map((tx) => (
                   <div key={tx.id} className="nanad-dashboard-deposits-row">
                     <div>
@@ -423,6 +481,17 @@ export default function WalletPage() {
                     <div>
                       {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"} ·{" "}
                       {tx.status}
+                      {tx.type === "WITHDRAW" &&
+                        tx.withdraw_bank_name && (
+                          <>
+                            <br />
+                            <small>
+                              ke {tx.withdraw_bank_name} ·{" "}
+                              {tx.withdraw_bank_account} (
+                              {tx.withdraw_bank_holder})
+                            </small>
+                          </>
+                        )}
                     </div>
                     <div>{formatCurrency(tx.amount)}</div>
                   </div>
