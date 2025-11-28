@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "../../lib/supabaseClient";
 
+// Format rupiah
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -13,7 +14,7 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-// Rekening tujuan deposit (contoh – silakan ganti datanya)
+// Rekening tujuan deposit (silakan ganti dengan rekening resmi Nanad Invest)
 const DEPOSIT_TARGETS = [
   {
     id: "BCA-SON",
@@ -34,17 +35,15 @@ export default function WalletPage() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
-  // Form deposit
+  // ==== Form deposit ====
   const [depositAmount, setDepositAmount] = useState("");
   const [depositTarget, setDepositTarget] = useState(
     DEPOSIT_TARGETS[0]?.id || ""
   );
   const [depositProofFile, setDepositProofFile] = useState(null);
-  const [depositSenderName, setDepositSenderName] = useState(""); // 👈 NEW
-  );
-  const [depositProofFile, setDepositProofFile] = useState(null);
+  const [depositSenderName, setDepositSenderName] = useState("");
 
-  // Form withdraw + rekening tujuan
+  // ==== Form withdraw ====
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawBankName, setWithdrawBankName] = useState("");
   const [withdrawBankAccount, setWithdrawBankAccount] = useState("");
@@ -52,6 +51,7 @@ export default function WalletPage() {
 
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Ambil riwayat transaksi wallet
   const loadTransactions = async (walletId) => {
     const { data, error } = await supabase
       .from("wallet_transactions")
@@ -71,7 +71,7 @@ export default function WalletPage() {
     setTransactions(data || []);
   };
 
-  // Inisialisasi: user + wallet + transaksi
+  // Inisialisasi: cek user, buat/ambil wallet, lalu load transaksi
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -94,7 +94,6 @@ export default function WalletPage() {
 
         setUser(user);
 
-        // Ambil / buat wallet
         const { data: existing, error: walletErr } = await supabase
           .from("wallets")
           .select("*")
@@ -124,9 +123,8 @@ export default function WalletPage() {
               "Gagal membuat dompet baru. Cek konfigurasi database Supabase."
             );
             return;
-          } else {
-            currentWallet = created;
           }
+          currentWallet = created;
         }
 
         setWallet(currentWallet);
@@ -142,26 +140,26 @@ export default function WalletPage() {
     init();
   }, [router]);
 
-  // === Pengajuan DEPOSIT (rekening + bukti) ===
-const handleCreateDeposit = async (e) => {
-  e.preventDefault();
-  if (!wallet || !user) return;
+  // ==== Pengajuan DEPOSIT (rekening + bukti + nama pengirim) ====
+  const handleCreateDeposit = async (e) => {
+    e.preventDefault();
+    if (!wallet || !user) return;
 
-  const amount = Number(depositAmount);
-  if (!amount || amount <= 0) {
-    alert("Nominal deposit harus lebih besar dari 0.");
-    return;
-  }
+    const amount = Number(depositAmount);
+    if (!amount || amount <= 0) {
+      alert("Nominal deposit harus lebih besar dari 0.");
+      return;
+    }
 
-  if (!depositTarget) {
-    alert("Pilih rekening tujuan deposit.");
-    return;
-  }
+    if (!depositTarget) {
+      alert("Pilih rekening tujuan deposit.");
+      return;
+    }
 
-  if (!depositSenderName.trim()) {              // 👈 NEW
-    alert("Isi nama pengirim (atas nama di rekening pengirim).");
-    return;
-  }
+    if (!depositSenderName.trim()) {
+      alert("Isi nama pengirim (atas nama di rekening pengirim).");
+      return;
+    }
 
     const targetObj =
       DEPOSIT_TARGETS.find((t) => t.id === depositTarget) || null;
@@ -213,15 +211,15 @@ const handleCreateDeposit = async (e) => {
           note: "Pengajuan deposit menunggu persetujuan admin.",
           deposit_target: targetLabel,
           proof_image_url: proofImageUrl,
-          sender_name: depositSenderName.trim(),   // 👈 NEW
-          user_email: user.email || null,          // 👈 NEW
+          sender_name: depositSenderName.trim(),
+          user_email: user.email || null,
         });
 
       if (txErr) throw txErr;
 
       setDepositAmount("");
       setDepositProofFile(null);
-      setDepositSenderName("");    // 👈 NEW
+      setDepositSenderName("");
 
       await loadTransactions(wallet.id);
       alert(
@@ -235,10 +233,10 @@ const handleCreateDeposit = async (e) => {
     }
   };
 
-  // === Pengajuan WITHDRAW (PENDING) ===
+  // ==== Pengajuan WITHDRAW (PENDING + data rekening) ====
   const handleCreateWithdraw = async (e) => {
     e.preventDefault();
-    if (!wallet) return;
+    if (!wallet || !user) return;
 
     const amount = Number(withdrawAmount);
     if (!amount || amount <= 0) {
@@ -283,7 +281,7 @@ const handleCreateDeposit = async (e) => {
           withdraw_bank_name: withdrawBankName,
           withdraw_bank_account: withdrawBankAccount,
           withdraw_bank_holder: withdrawBankHolder,
-          user_email: user?.email || null,   // 👈 tambahkan ini
+          user_email: user.email || null,
         });
 
       if (txErr) throw txErr;
@@ -303,8 +301,7 @@ const handleCreateDeposit = async (e) => {
     }
   };
 
-  // === RENDER ==================================================
-
+  // ==== RENDER: state loading / error ====
   if (loading) {
     return (
       <main className="nanad-dashboard-page">
@@ -343,9 +340,11 @@ const handleCreateDeposit = async (e) => {
     );
   }
 
+  // ==== RENDER: halaman wallet utama ====
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
+        {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
             <div className="nanad-dashboard-logo">N</div>
@@ -366,7 +365,7 @@ const handleCreateDeposit = async (e) => {
           </button>
         </header>
 
-        {/* SALDO */}
+        {/* Ringkasan saldo */}
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Wallet balance</p>
           <h1 className="nanad-dashboard-heading">
@@ -396,14 +395,15 @@ const handleCreateDeposit = async (e) => {
 
         {/* DEPOSIT & WITHDRAW */}
         <section className="nanad-dashboard-table-section">
-          {/* Pengajuan Deposit */}
+          {/* Form DEPOSIT */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Ajukan deposit</h3>
               <p>
                 Lakukan transfer ke salah satu rekening Nanad Invest di bawah
-                ini, lalu isi nominal dan (opsional) unggah bukti transfer.
-                Admin akan mengecek dan menyetujui secara manual.
+                ini, lalu isi nominal, nama pengirim, dan (opsional) unggah
+                bukti transfer. Admin akan mengecek dan menyetujui secara
+                manual.
               </p>
             </div>
 
@@ -414,24 +414,24 @@ const handleCreateDeposit = async (e) => {
               <label className="nanad-dashboard-deposit-amount">
                 Nominal deposit
                 <input
-                   type="number"
-                   min="0"
-                   step="1000"
-                   placeholder="contoh: 100000"
-                   value={depositAmount}
-                   onChange={(e) => setDepositAmount(e.target.value)}
-                 />
-               </label>
+                  type="number"
+                  min="0"
+                  step="1000"
+                  placeholder="contoh: 100000"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                />
+              </label>
 
-               <label className="nanad-dashboard-deposit-amount">
-                 Atas nama pengirim
-                 <input
-                   type="text"
-                   placeholder="nama pemilik rekening pengirim"
-                   value={depositSenderName}
-                   onChange={(e) => setDepositSenderName(e.target.value)}
-                 />
-               </label>
+              <label className="nanad-dashboard-deposit-amount">
+                Atas nama pengirim
+                <input
+                  type="text"
+                  placeholder="nama pemilik rekening pengirim"
+                  value={depositSenderName}
+                  onChange={(e) => setDepositSenderName(e.target.value)}
+                />
+              </label>
 
               <div className="nanad-dashboard-deposit-row">
                 <label>
@@ -490,7 +490,7 @@ const handleCreateDeposit = async (e) => {
             </form>
           </div>
 
-          {/* Pengajuan Withdraw */}
+          {/* Form WITHDRAW */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Ajukan penarikan</h3>
@@ -558,7 +558,7 @@ const handleCreateDeposit = async (e) => {
           </div>
         </section>
 
-        {/* RIWAYAT */}
+        {/* Riwayat transaksi dompet */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
@@ -585,6 +585,7 @@ const handleCreateDeposit = async (e) => {
                   const created = new Date(tx.created_at).toLocaleString(
                     "id-ID"
                   );
+
                   let statusLabel = tx.status;
                   let statusColor = "#e5e7eb";
 
@@ -619,6 +620,22 @@ const handleCreateDeposit = async (e) => {
                         >
                           {statusLabel}
                         </span>
+
+                        {tx.user_email && (
+                          <>
+                            <br />
+                            <small>Akun: {tx.user_email}</small>
+                          </>
+                        )}
+
+                        {tx.sender_name && (
+                          <>
+                            <br />
+                            <small>
+                              Atas nama pengirim: {tx.sender_name}
+                            </small>
+                          </>
+                        )}
 
                         {tx.type === "DEPOSIT" && tx.deposit_target && (
                           <>
@@ -673,6 +690,7 @@ const handleCreateDeposit = async (e) => {
           </div>
         </section>
 
+        {/* Footer */}
         <footer className="nanad-dashboard-footer">
           <span>
             © {new Date().getFullYear()} Nanad Invest. All rights reserved.
