@@ -12,10 +12,11 @@ function formatCurrency(value) {
     maximumFractionDigits: 0,
   }).format(value || 0);
 }
+
+// 🔐 HANYA email di daftar ini yang boleh buka halaman admin
 const ADMIN_EMAILS = [
-  "sonnnn603@gmail.com", // ganti dengan email login kamu di Nanad Invest
-  // kalau mau nambah admin lain, tambahkan di sini
-  // "admin2@contoh.com",
+  "sonnnn603@gmail.com", // TODO: GANTI dengan email login Bang Son
+  // "admin-lain@contoh.com",
 ];
 
 export default function AdminTransactionsPage() {
@@ -27,7 +28,7 @@ export default function AdminTransactionsPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [actionId, setActionId] = useState(null);
 
-  // Ambil semua transaksi berstatus PENDING
+  // Ambil semua transaksi PENDING
   const loadPending = async () => {
     setErrorMsg("");
 
@@ -49,23 +50,38 @@ export default function AdminTransactionsPage() {
     setPendingTx(data || []);
   };
 
+  // Inisialisasi halaman admin + cek akses
   useEffect(() => {
-         if (!user) {
-        router.push("/login");
-        return;
-      }
+    const init = async () => {
+      setLoading(true);
+      setErrorMsg("");
 
-      setUser(user);
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
 
-      // 🔐 CEK: apakah email user termasuk daftar ADMIN_EMAILS
-      if (!user.email || !ADMIN_EMAILS.includes(user.email)) {
-        // Kalau bukan admin, kirim balik ke dashboard & jangan load data admin
-        router.push("/");
-        return;
-      }
+        if (error) {
+          console.error("Error getUser:", error.message);
+        }
 
-      await loadPending();
+        // Belum login -> ke /login
+        if (!user) {
+          router.push("/login");
+          return;
+        }
 
+        setUser(user);
+
+        // 🔐 Cek: kalau email TIDAK ada di ADMIN_EMAILS -> balikin ke dashboard
+        if (!user.email || !sonnnn603@gmail.com.includes(user.email)) {
+          router.push("/");
+          return;
+        }
+
+        // Kalau lolos, load transaksi pending
+        await loadPending();
       } catch (err) {
         console.error("Admin init error:", err);
         setErrorMsg("Gagal memuat halaman admin.");
@@ -77,6 +93,7 @@ export default function AdminTransactionsPage() {
     init();
   }, [router]);
 
+  // APPROVE transaksi
   const handleApprove = async (tx) => {
     setActionId(tx.id);
     try {
@@ -157,6 +174,7 @@ export default function AdminTransactionsPage() {
     }
   };
 
+  // REJECT transaksi
   const handleReject = async (tx) => {
     setActionId(tx.id);
     try {
@@ -184,6 +202,7 @@ export default function AdminTransactionsPage() {
     }
   };
 
+  // ================== RENDER ===========================
   if (loading) {
     return (
       <main className="nanad-dashboard-page">
@@ -230,8 +249,8 @@ export default function AdminTransactionsPage() {
             berstatus <strong>APPROVED</strong>.
           </p>
           <p className="nanad-dashboard-body" style={{ fontSize: "0.8rem" }}>
-            Catatan: sistem role admin belum diatur. Pastikan hanya kamu yang
-            memiliki akses ke halaman ini.
+            Catatan: sistem role admin belum diatur. Pastikan hanya email yang
+            ada di daftar ADMIN_EMAILS yang memiliki akses ke halaman ini.
           </p>
         </section>
 
