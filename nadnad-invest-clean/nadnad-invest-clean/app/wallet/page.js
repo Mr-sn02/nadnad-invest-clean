@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../lib/supabaseClient"; // ← ini yang diperbaiki
+import supabase from "../../lib/supabaseClient"; // penting: 2x ".." dari /app/wallet
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
@@ -15,7 +15,9 @@ function formatCurrency(value) {
 
 export default function WalletPage() {
   const router = useRouter();
+
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [user, setUser] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -28,46 +30,65 @@ export default function WalletPage() {
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
+      setLoadError("");
 
-      if (error || !user) {
-        router.push("/login");
-        return;
-      }
-      setUser(user);
+      try {
+        // 1. Cek user login
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
 
-      // cek wallet, kalau belum ada buat
-      const { data: existing, error: walletErr } = await supabase
-        .from("wallets")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (walletErr) {
-        console.error("Error get wallet:", walletErr.message);
-      }
-
-      let currentWallet = existing;
-
-      if (!existing) {
-        const { data: created, error: createErr } = await supabase
-          .from("wallets")
-          .insert({ user_id: user.id })
-          .select("*")
-          .single();
-        if (createErr) {
-          console.error("Error create wallet:", createErr.message);
-        } else {
-          currentWallet = created;
+        if (error) {
+          console.error("Error getUser:", error.message);
         }
-      }
 
-      setWallet(currentWallet);
+        if (!user) {
+          // kalau tidak login, lempar ke /login
+          router.push("/login");
+          return;
+        }
 
-      if (currentWallet) {
+        setUser(user);
+
+        // 2. Ambil / buat wallet
+        const { data: existing, error: walletErr } = await supabase
+          .from("wallets")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (walletErr) {
+          console.error("Error get wallet:", walletErr.message);
+          setLoadError(
+            "Gagal memuat dompet. Pastikan tabel 'wallets' sudah dibuat di Supabase."
+          );
+          return;
+        }
+
+        let currentWallet = existing;
+
+        if (!existing) {
+          const { data: created, error: createErr } = await supabase
+            .from("wallets")
+            .insert({ user_id: user.id })
+            .select("*")
+            .single();
+
+          if (createErr) {
+            console.error("Error create wallet:", createErr.message);
+            setLoadError(
+              "Gagal membuat dompet baru. Cek konfigurasi database Supabase."
+            );
+            return;
+          } else {
+            currentWallet = created;
+          }
+        }
+
+        setWallet(currentWallet);
+
+        // 3. Ambil transaksi
         const { data: txs, error: txErr } = await supabase
           .from("wallet_transactions")
           .select("*")
@@ -75,19 +96,31 @@ export default function WalletPage() {
           .order("created_at", { ascending: false })
           .limit(20);
 
-        if (txErr) console.error("Error load tx:", txErr.message);
-        setTransactions(txs || []);
-      }
+        if (txErr) {
+          console.error("Error load transactions:", txErr.message);
+          setLoadError(
+            "Gagal memuat transaksi dompet. Pastikan tabel 'wallet_transactions' sudah ada."
+          );
+          return;
+        }
 
-      setLoading(false);
+        setTransactions(txs || []);
+      } catch (err) {
+        console.error("Unexpected wallet init error:", err);
+        setLoadError("Terjadi kesalahan saat memuat dompet Nanad Invest.");
+      } finally {
+        // apapun yang terjadi, loading dimatikan
+        setLoading(false);
+      }
     };
 
     init();
   }, [router]);
 
-  // Helper refresh wallet + transaksi
+  // Helper refresh wallet + transaksi setelah deposit/withdraw
   const refreshWallet = async () => {
     if (!user) return;
+
     const { data: w } = await supabase
       .from("wallets")
       .select("*")
@@ -104,7 +137,7 @@ export default function WalletPage() {
     setTransactions(txs || []);
   };
 
-  // === Deposit "langsung" (belum pakai payment gateway) ===
+  // === Deposit DEV (belum pakai payment gateway) ===
   const handleDeposit = async (e) => {
     e.preventDefault();
     if (!wallet) return;
@@ -115,47 +148,41 @@ export default function WalletPage() {
       return;
     }
 
-    // *** CATATAN ***
-    // Di produksi, di sini seharusnya deposit dilakukan lewat payment gateway/bank,
-    // lalu callback dari gateway yang mengubah saldo. Ini hanya shortcut DEV.
-
     try {
       setActionLoading(true);
       const before = wallet.balance;
       const after = before + amount;
 
-      // update saldo
       const { error: updErr } = await supabase
         .from("wallets")
         .update({ balance: after })
         .eq("id", wallet.id);
-
       if (updErr) throw updErr;
 
-      // insert transaksi
-      const { error: txErr } = await supabase.from("wallet_transactions").insert({
-        wallet_id: wallet.id,
-        type: "DEPOSIT",
-        amount,
-        balance_before: before,
-        balance_after: after,
-        status: "COMPLETED",
-        note: "Deposit manual (DEV, tanpa gateway).",
-      });
-
+      const { error: txErr } = await supabase
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          type: "DEPOSIT",
+          amount,
+          balance_before: before,
+          balance_after: after,
+          status: "COMPLETED",
+          note: "Deposit manual (DEV, tanpa gateway).",
+        });
       if (txErr) throw txErr;
 
       setDepositAmount("");
       await refreshWallet();
     } catch (err) {
-      console.error("Deposit error:", err.message);
+      console.error("Deposit error:", err);
       alert("Gagal memproses deposit (mode dev).");
     } finally {
       setActionLoading(false);
     }
   };
 
-  // === Withdraw ===
+  // === Withdraw DEV ===
   const handleWithdraw = async (e) => {
     e.preventDefault();
     if (!wallet) return;
@@ -171,7 +198,6 @@ export default function WalletPage() {
       return;
     }
 
-    // Di produksi, ini sebaiknya kirim request ke back-end untuk proses disbursement bank.
     try {
       setActionLoading(true);
       const before = wallet.balance;
@@ -181,38 +207,68 @@ export default function WalletPage() {
         .from("wallets")
         .update({ balance: after })
         .eq("id", wallet.id);
-
       if (updErr) throw updErr;
 
-      const { error: txErr } = await supabase.from("wallet_transactions").insert({
-        wallet_id: wallet.id,
-        type: "WITHDRAW",
-        amount,
-        balance_before: before,
-        balance_after: after,
-        status: "COMPLETED",
-        note: "Penarikan manual (DEV, tanpa disbursement bank).",
-      });
-
+      const { error: txErr } = await supabase
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          type: "WITHDRAW",
+          amount,
+          balance_before: before,
+          balance_after: after,
+          status: "COMPLETED",
+          note: "Penarikan manual (DEV, tanpa disbursement bank).",
+        });
       if (txErr) throw txErr;
 
       setWithdrawAmount("");
       await refreshWallet();
     } catch (err) {
-      console.error("Withdraw error:", err.message);
+      console.error("Withdraw error:", err);
       alert("Gagal memproses penarikan (mode dev).");
     } finally {
       setActionLoading(false);
     }
   };
 
+  // === RENDER ================================================
+
   if (loading) {
+    // loading sekarang cuma muncul sementara
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p className="text-sm text-slate-200">
+          <p className="nanad-dashboard-body">
             Memuat dompet Nanad Invest...
           </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    // kalau ada error, tampilkan pesan jelas di layar
+    return (
+      <main className="nanad-dashboard-page">
+        <div className="nanad-dashboard-shell">
+          <section className="nanad-dashboard-welcome">
+            <p className="nanad-dashboard-eyebrow">Wallet error</p>
+            <h1 className="nanad-dashboard-heading">
+              Gagal memuat dompet Nanad Invest.
+            </h1>
+            <p className="nanad-dashboard-body" style={{ color: "#fecaca" }}>
+              {loadError}
+            </p>
+            <button
+              type="button"
+              className="nanad-dashboard-deposit-submit"
+              onClick={() => router.push("/")}
+              style={{ marginTop: "0.75rem" }}
+            >
+              Kembali ke dashboard
+            </button>
+          </section>
         </div>
       </main>
     );
@@ -241,17 +297,17 @@ export default function WalletPage() {
           </button>
         </header>
 
-        {/* Saldo utama */}
+        {/* SALDO */}
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Wallet balance</p>
           <h1 className="nanad-dashboard-heading">
             Saldo dompet Nanad Invest kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Di halaman ini kamu bisa melihat saldo, melakukan deposit (mode
-            pengembangan), dan simulasi penarikan. Untuk operasi keuangan
+            Di halaman ini kamu bisa melihat saldo, melakukan deposit
+            (mode pengembangan), dan simulasi penarikan. Untuk operasi keuangan
             sebenarnya, integrasi ke bank atau payment gateway perlu ditambahkan
-            di sisi server.
+            di sisi server &amp; disesuaikan regulasi.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -270,19 +326,22 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* Deposit & Withdraw */}
+        {/* DEPOSIT & WITHDRAW */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Deposit (mode pengembangan)</h3>
               <p>
-                Untuk tahap awal, deposit di sini hanya mengubah saldo di
-                database sebagai simulasi. Untuk uang nyata, harus dihubungkan
-                dengan payment gateway / bank dan dikonfirmasi lewat callback.
+                Deposit di sini hanya mengubah saldo di database untuk keperluan
+                simulasi/pengembangan. Untuk uang nyata, perlu integrasi resmi
+                dengan payment gateway / bank.
               </p>
             </div>
 
-            <form onSubmit={handleDeposit} className="nanad-dashboard-deposit-form">
+            <form
+              onSubmit={handleDeposit}
+              className="nanad-dashboard-deposit-form"
+            >
               <label className="nanad-dashboard-deposit-amount">
                 Nominal deposit
                 <input
@@ -309,9 +368,9 @@ export default function WalletPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Penarikan (mode pengembangan)</h3>
               <p>
-                Penarikan di sini hanya mengurangi saldo sebagai simulasi. Untuk
-                penarikan nyata, biasanya diperlukan verifikasi tambahan dan
-                pencairan lewat sistem bank.
+                Penarikan di sini hanya mengurangi saldo di database.
+                Penarikan uang nyata harus diproses lewat sistem pencairan bank
+                atau payment gateway.
               </p>
             </div>
 
@@ -342,7 +401,7 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* Riwayat */}
+        {/* RIWAYAT */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
@@ -351,14 +410,16 @@ export default function WalletPage() {
             </div>
 
             {transactions.length === 0 ? (
-              <p className="nanad-dashboard-body mt-3">
+              <p className="nanad-dashboard-body" style={{ marginTop: "0.75rem" }}>
                 Belum ada transaksi tercatat.
               </p>
             ) : (
-              <div className="nanad-dashboard-deposits-rows mt-3">
+              <div className="nanad-dashboard-deposits-rows" style={{ marginTop: "0.75rem" }}>
                 {transactions.map((tx) => (
                   <div key={tx.id} className="nanad-dashboard-deposits-row">
-                    <div>{new Date(tx.created_at).toLocaleString("id-ID")}</div>
+                    <div>
+                      {new Date(tx.created_at).toLocaleString("id-ID")}
+                    </div>
                     <div>
                       {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"} ·{" "}
                       {tx.status}
@@ -371,7 +432,7 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* FOOTER DOMPET */}
         <footer className="nanad-dashboard-footer">
           <span>
             © {new Date().getFullYear()} Nanad Invest. All rights reserved.
