@@ -453,6 +453,13 @@ export default function DashboardPage() {
                     <span className="nanad-dashboard-package-badge">
                       {pack.badge}
                     </span>
+                <button
+                    type="button"
+                    className="nanad-dashboard-logout" // atau bikin class baru
+                    onClick={() => router.push("/wallet")}
+                   >
+                    Buka Wallet
+                   </button>
                   </header>
 
                   <dl className="nanad-dashboard-package-meta">
