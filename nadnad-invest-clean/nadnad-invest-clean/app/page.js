@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../lib/supabaseClient";
+import supabase from "../lib/supabaseClient";
 
 // === Paket simulasi contoh (ILUSTRASI SAJA) ====================
 const examplePackages = [
@@ -105,7 +105,7 @@ export default function DashboardPage() {
 
   // Form setoran baru
   const [newDepositDate, setNewDepositDate] = useState("");
-  theconst [newDepositPlanId, setNewDepositPlanId] = useState("emergency");
+  const [newDepositPlanId, setNewDepositPlanId] = useState("emergency");
   const [newDepositAmount, setNewDepositAmount] = useState("");
 
   // === STATE SALDO DOMPET (diambil dari tabel wallets) ========
