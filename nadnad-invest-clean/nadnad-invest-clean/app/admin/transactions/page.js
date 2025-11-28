@@ -217,16 +217,26 @@ export default function AdminTransactionsPage() {
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
-        <header className="nanad-dashboard-header">
-          <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
-            <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
-              <p className="nanad-dashboard-brand-sub">
-                Admin · Approval dompet
-              </p>
-            </div>
+       <header className="nanad-dashboard-header">
+        <div className="nanad-dashboard-brand">
+          <div className="nanad-dashboard-logo">N</div>
+          <div>
+            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+            <p className="nanad-dashboard-brand-sub">
+              Admin · Approval dompet
+            </p>
           </div>
+        </div>
+
+        {/* Tombol-tombol kanan */}
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button
+            type="button"
+            className="nanad-dashboard-logout"
+            onClick={() => router.push("/admin/wallets")}
+          >
+            Edit saldo dompet
+          </button>
 
           <button
             type="button"
@@ -235,7 +245,8 @@ export default function AdminTransactionsPage() {
           >
             Kembali ke dashboard
           </button>
-        </header>
+        </div>
+      </header>
 
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Wallet approvals</p>
