@@ -32,7 +32,7 @@ export default function AdminTransactionsPage() {
     const { data, error } = await supabase
       .from("wallet_transactions")
       .select(
-        "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder, deposit_target, proof_image_url"
+        "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder, deposit_target, proof_image_url, sender_name, user_email"
       )
       .eq("status", "PENDING")
       .order("created_at", { ascending: true })
@@ -311,12 +311,24 @@ export default function AdminTransactionsPage() {
                       {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
                       {formatCurrency(tx.amount)}
 
+                      {tx.user_email && (
+                        <>
+                          <br />
+                          <small>Akun: {tx.user_email}</small>
+                        </>
+                      )}
+
+                      {tx.sender_name && (
+                        <>
+                          <br />
+                          <small>Atas nama pengirim: {tx.sender_name}</small>
+                        </>
+                      )}
+
                       {tx.type === "DEPOSIT" && tx.deposit_target && (
                         <>
                           <br />
-                          <small>
-                            Rekening tujuan: {tx.deposit_target}
-                          </small>
+                          <small>Rekening tujuan: {tx.deposit_target}</small>
                         </>
                       )}
 
@@ -324,8 +336,7 @@ export default function AdminTransactionsPage() {
                         <>
                           <br />
                           <small>
-                            ke {tx.withdraw_bank_name} ·{" "}
-                            {tx.withdraw_bank_account} (
+                            ke {tx.withdraw_bank_name} · {tx.withdraw_bank_account} (
                             {tx.withdraw_bank_holder})
                           </small>
                         </>
