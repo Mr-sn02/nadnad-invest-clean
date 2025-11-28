@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../lib/supabaseClient";
+import supabase from "../../lib/supabaseClient";
 
 // === Paket simulasi contoh (ILUSTRASI SAJA) ====================
 const examplePackages = [
