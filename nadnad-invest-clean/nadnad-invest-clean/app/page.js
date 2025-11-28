@@ -32,8 +32,7 @@ const examplePackages = [
   {
     id: "monthly-10",
     name: "Paket Bulanan Contoh",
-    description:
-      "Contoh target tahunan dengan setoran bulanan tetap.",
+    description: "Contoh target tahunan dengan setoran bulanan tetap.",
     depositTotal: 2400000, // Rp 200.000 per bulan x 12 bulan
     durationLabel: "12 bulan (setoran Rp 200.000 per bulan)",
     returnPercent: 10,
@@ -106,8 +105,11 @@ export default function DashboardPage() {
 
   // Form setoran baru
   const [newDepositDate, setNewDepositDate] = useState("");
-  const [newDepositPlanId, setNewDepositPlanId] = useState("emergency");
+  theconst [newDepositPlanId, setNewDepositPlanId] = useState("emergency");
   const [newDepositAmount, setNewDepositAmount] = useState("");
+
+  // === STATE SALDO DOMPET (diambil dari tabel wallets) ========
+  const [walletBalance, setWalletBalance] = useState(null);
 
   // === RINGKASAN TOTAL ========================================
   const totalTarget = plans.reduce((sum, p) => sum + (p.targetAmount || 0), 0);
@@ -116,7 +118,7 @@ export default function DashboardPage() {
     ? Math.round((totalSaved / totalTarget) * 100)
     : 0;
 
-  // === CEK USER SUPABASE ======================================
+  // === CEK USER SUPABASE + AMBIL SALDO DOMPET =================
   useEffect(() => {
     const checkUser = async () => {
       try {
@@ -135,6 +137,23 @@ export default function DashboardPage() {
         }
 
         setUserEmail(user.email || "");
+
+        // === ambil saldo wallet dari tabel wallets ===
+        try {
+          const { data: wallet, error: walletErr } = await supabase
+            .from("wallets")
+            .select("balance")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+          if (walletErr) {
+            console.error("Error get wallet balance:", walletErr.message);
+          }
+
+          setWalletBalance(wallet?.balance ?? 0);
+        } catch (e) {
+          console.error("Unexpected wallet fetch error:", e);
+        }
       } catch (err) {
         console.error("Unexpected error getUser:", err);
       } finally {
@@ -297,6 +316,18 @@ export default function DashboardPage() {
               <p className="nanad-dashboard-stat-label">Perkiraan progres</p>
               <p className="nanad-dashboard-stat-number">
                 {overallProgress}%
+              </p>
+            </div>
+
+            {/* Kartu saldo dompet */}
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">
+                Saldo dompet (mode dev)
+              </p>
+              <p className="nanad-dashboard-stat-number">
+                {walletBalance == null
+                  ? "—"
+                  : formatCurrency(walletBalance)}
               </p>
             </div>
           </div>
