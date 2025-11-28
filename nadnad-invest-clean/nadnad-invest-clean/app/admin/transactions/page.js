@@ -31,10 +31,10 @@ export default function AdminTransactionsPage() {
   const loadPending = async () => {
     setErrorMsg("");
 
-    const { data, error } = await supabase
+   const { data, error } = await supabase
       .from("wallet_transactions")
       .select(
-        "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder"
+        "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder, deposit_target, proof_image_url"
       )
       .eq("status", "PENDING")
       .order("created_at", { ascending: true })
