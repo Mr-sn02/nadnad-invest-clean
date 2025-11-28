@@ -12,6 +12,11 @@ function formatCurrency(value) {
     maximumFractionDigits: 0,
   }).format(value || 0);
 }
+const ADMIN_EMAILS = [
+  "sonnnn603@gmail.com", // ganti dengan email login kamu di Nanad Invest
+  // kalau mau nambah admin lain, tambahkan di sini
+  // "admin2@contoh.com",
+];
 
 export default function AdminTransactionsPage() {
   const router = useRouter();
