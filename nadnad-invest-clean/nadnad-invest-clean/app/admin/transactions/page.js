@@ -309,18 +309,40 @@ export default function AdminTransactionsPage() {
                       </span>
                     </div>
                     <div>
+                      <div>
                       {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
                       {formatCurrency(tx.amount)}
+
+                      {tx.type === "DEPOSIT" && tx.deposit_target && (
+                        <>
+                          <br />
+                          <small>Rekening tujuan: {tx.deposit_target}</small>
+                        </>
+                      )}
+
                       {tx.type === "WITHDRAW" && tx.withdraw_bank_name && (
                         <>
                           <br />
                           <small>
-                            ke {tx.withdraw_bank_name} ·{" "}
-                            {tx.withdraw_bank_account} (
+                            ke {tx.withdraw_bank_name} · {tx.withdraw_bank_account} (
                             {tx.withdraw_bank_holder})
                           </small>
                         </>
                       )}
+
+                      {tx.proof_image_url && (
+                        <>
+                         <br />
+                         <a
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ fontSize: "0.75rem", textDecoration: "underline" }}
+                          >
+                            Lihat bukti transfer
+                          </a>
+                        </>
+                      )}
+
                       {tx.note && (
                         <>
                           <br />
