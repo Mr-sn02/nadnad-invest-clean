@@ -1,4 +1,30 @@
-/* ====== GLOBAL STYLE NADNAD INVEST ====== */
+/* ========== NANAD INVEST LUXE THEME ========== */
+
+:root {
+  --nanad-bg: #050816;
+  --nanad-bg-soft: radial-gradient(circle at top, #0b1220 0%, #020617 55%, #000 100%);
+  --nanad-card: rgba(15, 23, 42, 0.96);
+  --nanad-card-soft: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+  --nanad-border: rgba(148, 163, 184, 0.45);
+  --nanad-border-soft: rgba(148, 163, 184, 0.25);
+
+  --nanad-gold: #f5d17a;
+  --nanad-gold-soft: #e8c885;
+  --nanad-gold-deep: #d4a63f;
+  --nanad-silver: #f3f4f6;
+  --nanad-silver-soft: #e5e7eb;
+
+  --nanad-text-main: #f9fafb;
+  --nanad-text-muted: #9ca3af;
+  --nanad-text-soft: #6b7280;
+
+  --nanad-radius-xl: 1.75rem;
+  --nanad-radius-lg: 1.25rem;
+  --nanad-radius-pill: 999px;
+
+  --nanad-shadow-soft: 0 28px 60px rgba(0, 0, 0, 0.7);
+  --nanad-shadow-subtle: 0 16px 40px rgba(15, 23, 42, 0.85);
+}
 
 *,
 *::before,
@@ -10,4489 +36,489 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
 }
 
-/* Palet warna utama */
-:root {
-  --nad-bg: #020617;           /* hitam navy gelap */
-  --nad-bg-soft: #030712;
-  --nad-gold: #d4af37;         /* gold elegan */
-  --nad-gold-soft: #f4d88a;
-  --nad-silver: #e5e7eb;       /* abu terang */
-  --nad-silver-soft: #9ca3af;  /* abu medium */
-  --nad-white: #ffffff;
-}
-
-/* Wrapper halaman */
-.page {
+body {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, var(--nad-bg));
-  color: var(--nad-white);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Inter", sans-serif;
+  color: var(--nanad-text-main);
+  background: var(--nanad-bg-soft);
 }
 
-/* Container */
-.container {
-  width: 100%;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 1.5rem 1.25rem 3rem;
-}
-
-/* ===== BUTTONS ===== */
-
-.btn-main {
-  padding: 0.7rem 1.6rem;
-  border-radius: 999px;
-  border: none;
-  background: linear-gradient(135deg, var(--nad-gold), var(--nad-gold-soft));
-  color: #111827;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.35);
-}
-
-.btn-main:hover {
-  filter: brightness(1.05);
-}
-
-.btn-ghost {
-  padding: 0.7rem 1.4rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background: transparent;
-  color: var(--nad-silver);
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.btn-ghost:hover {
-  background: rgba(15, 23, 42, 0.8);
-}
-
-.btn-small {
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  border: none;
-  background: rgba(212, 175, 55, 0.1);
-  color: var(--nad-gold-soft);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-/* ===== HERO ===== */
-
-.hero {
-  padding-top: 2.5rem;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.3fr);
-  gap: 2.5rem;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  color: var(--nad-silver-soft);
-  font-size: 0.78rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(
-    90deg,
-    rgba(15, 23, 42, 0.9),
-    rgba(15, 23, 42, 0.3)
-  );
-}
-
-.hero-title {
-  font-size: 2.3rem;
-  line-height: 1.2;
-  margin: 0 0 0.75rem;
-}
-
-.hero-title span {
-  color: var(--nad-gold-soft);
-}
-
-.hero-sub {
-  max-width: 30rem;
-  color: var(--nad-silver);
-  font-size: 0.98rem;
-  margin-bottom: 1.25rem;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.4rem;
-}
-
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-}
-
-/* Kartu hero kanan */
-.hero-card {
-  border-radius: 1.2rem;
-  padding: 1.5rem 1.4rem;
-  background: radial-gradient(circle at top left, #1f2937, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.8);
-}
-
-.hero-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.hero-card-title {
-  font-size: 0.95rem;
-  color: var(--nad-silver);
-}
-
-.pill-safe {
-  padding: 0.2rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid rgba(22, 163, 74, 0.7);
-  font-size: 0.75rem;
-  color: #bbf7d0;
-}
-
-.hero-card-amount {
-  font-size: 1.7rem;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-}
-
-.hero-card-caption {
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-  margin-bottom: 1.1rem;
-}
-
-/* ===== SECTION GENERIC ===== */
-
-.section {
-  padding-top: 2rem;
-}
-
-.section-header {
-  margin-bottom: 1.5rem;
-}
-
-.section-eyebrow {
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--nad-silver-soft);
-  margin-bottom: 0.25rem;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  margin: 0 0 0.4rem;
-}
-
-.section-subtitle {
-  font-size: 0.9rem;
-  color: var(--nad-silver-soft);
-  max-width: 32rem;
-}
-
-/* ===== FOOTER ===== */
-
-.footer {
-  border-top: 1px solid rgba(148, 163, 184, 0.25);
-  padding: 1.25rem 0 1.5rem;
-  color: var(--nad-silver-soft);
-  font-size: 0.8rem;
-}
-
-.footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.footer-links {
-  display: flex;
-  gap: 0.9rem;
-}
-
-.footer-links a {
-  color: var(--nad-silver-soft);
-  text-decoration: none;
-  font-size: 0.8rem;
-}
-
-.footer-links a:hover {
-  color: var(--nad-gold-soft);
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 900px) {
-  .hero-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .hero-card {
-    order: -1;
-  }
-
-  .package-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .footer-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* ===== NAVBAR PREMIUM ===== */
-
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  padding: 0.7rem 0;
-  background: rgba(2, 6, 23, 0.55);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.navbar.scrolled {
-  background: rgba(2, 6, 23, 0.9);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.45);
-}
-
-.navbar-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 0%, var(--nad-gold-soft), #4b2e00);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #111827;
-  border: 1px solid rgba(212, 175, 55, 0.6);
-  box-shadow: 0 0 14px rgba(212, 175, 55, 0.55);
-}
-
-.brand-text {
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-}
-
-.brand-tagline {
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-  opacity: 0.9;
-}
-
-.btn-ghost {
-  padding: 0.7rem 1.4rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background: transparent;
-  color: var(--nad-silver);
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: all 0.25s ease;
-}
-
-.btn-ghost:hover {
-  border-color: var(--nad-gold-soft);
-  color: var(--nad-gold-soft);
-  transform: translateY(-1px);
-  background: rgba(15, 23, 42, 0.8);
-}
-
-@media (max-width: 700px) {
-  .navbar-inner {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  .brand-block {
-    max-width: 70%;
-  }
-}
-
-/* ===== PACKAGE GRID & CARDS (PREMIUM) ===== */
-
-.package-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.4rem;
-  align-items: stretch;
-}
-
-.card {
-  position: relative;
-  border-radius: 1.2rem;
-  padding: 1.2rem 1.1rem 1.1rem;
-  background:
-    radial-gradient(circle at top, rgba(148, 163, 184, 0.1), transparent),
-    linear-gradient(to bottom right, #020617, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.9);
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  transition: transform 0.22s ease, box-shadow 0.22s ease,
-    border-color 0.22s ease, background 0.22s ease;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(212, 175, 55, 0.7);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.95);
-  background:
-    radial-gradient(circle at top, rgba(212, 175, 55, 0.35), transparent),
-    linear-gradient(to bottom right, #020617, #020617);
-}
-
-.card-highlight {
-  border-color: rgba(212, 175, 55, 0.9);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 1);
-  background:
-    radial-gradient(circle at top, rgba(212, 175, 55, 0.4), transparent),
-    linear-gradient(to bottom right, #020617, #020617);
-}
-
-.card-ribbon {
-  position: absolute;
-  top: 0.9rem;
-  right: 1rem;
-  padding: 0.15rem 0.55rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-radius: 999px;
-  background: linear-gradient(to right, #facc15, #eab308, #f97316);
-  color: #111827;
-  font-weight: 600;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  color: var(--nad-silver-soft);
-}
-
-.card-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin-top: 0.25rem;
-}
-
-.card-text {
-  font-size: 0.86rem;
-  color: var(--nad-silver);
-}
-
-.card-bullets {
-  margin: 0.2rem 0 0.4rem;
-  padding-left: 1.1rem;
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-}
-
-.card-bullets li + li {
-  margin-top: 0.15rem;
-}
-
-.card-meta {
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-  margin-top: 0.2rem;
-}
-
-.package-footer {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.7rem;
-}
-
-.price {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--nad-gold-soft);
-}
-
-.btn-small {
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.8);
-  background: transparent;
-  color: var(--nad-silver);
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-small:hover {
-  border-color: var(--nad-gold-soft);
-  color: var(--nad-gold-soft);
-  background: rgba(15, 23, 42, 0.9);
-}
-
-.btn-main-small {
-  border-color: rgba(212, 175, 55, 0.9);
-  background: linear-gradient(to right, #facc15, #eab308, #f97316);
-  color: #111827;
-  font-weight: 600;
-}
-
-.btn-main-small:hover {
-  filter: brightness(1.05);
-}
-
-/* Responsif package */
-@media (max-width: 900px) {
-  .package-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* ===== TESTIMONIALS ===== */
-
-.testimonials {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.4rem;
-}
-
-.testimonial-card {
-  border-radius: 1rem;
-  padding: 1.2rem 1.1rem 1rem;
-  background: radial-gradient(circle at top, #111827, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.85);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 180px;
-}
-
-.testimonial-text {
-  font-size: 0.88rem;
-  color: var(--nad-silver);
-  margin-bottom: 0.9rem;
-}
-
-.testimonial-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-}
-
-.testimonial-name {
-  font-weight: 600;
-  color: var(--nad-white);
-}
-
-.testimonial-role {
-  font-size: 0.78rem;
-}
-
-/* ===== CTA ===== */
-
-.cta {
-  border-radius: 1.3rem;
-  padding: 1.6rem 1.5rem;
-  background: radial-gradient(circle at top right, #1f2937, #020617);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  box-shadow: 0 22px 40px rgba(15, 23, 42, 0.95);
-  display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.cta-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-}
-
-.cta-sub {
-  font-size: 0.9rem;
-  color: var(--nad-silver);
-  max-width: 26rem;
-}
-
-.cta-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-@media (max-width: 900px) {
-  .testimonials {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .cta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* =========================================
-   DASHBOARD NADNAD INVEST
-========================================= */
-
-.dashboard-shell {
-  padding-top: 1.2rem;
-  padding-bottom: 3rem;
-}
-
-/* Header dashboard */
-.dash-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
-  align-items: flex-start;
-  margin-bottom: 1.6rem;
-}
-
-.dash-eyebrow {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--nad-silver-soft);
-  margin-bottom: 0.25rem;
-}
-
-.dash-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.dash-sub {
-  font-size: 0.9rem;
-  color: var(--nad-silver);
-  max-width: 32rem;
-}
-
-.dash-badge {
-  font-size: 0.8rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 175, 55, 0.7);
-  background: radial-gradient(circle at top, rgba(212, 175, 55, 0.23), #020617);
-  color: var(--nad-gold-soft);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.dash-badge span {
-  color: var(--nad-silver-soft);
-}
-
-/* Ringkasan kartu atas */
-.dash-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.1rem;
-  margin-bottom: 1.8rem;
-}
-
-.dash-card {
-  border-radius: 1rem;
-  padding: 1rem 1rem 0.95rem;
-  background:
-    radial-gradient(circle at top left, rgba(15, 23, 42, 0.7), transparent),
-    linear-gradient(to bottom right, #020617, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.55);
-  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.9);
-}
-
-.dash-card-label {
-  font-size: 0.8rem;
-  color: var(--nad-silver-soft);
-  margin-bottom: 0.4rem;
-}
-
-.dash-card-value {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.dash-card-hint {
-  font-size: 0.78rem;
-  color: var(--nad-silver-soft);
-}
-
-/* Grid utama */
-.dash-main-grid {
-  display: grid;
-  grid-template-columns: 1.6fr 1.1fr;
-  gap: 1.4rem;
-  margin-bottom: 1.9rem;
-}
-
-.dash-panel {
-  border-radius: 1.1rem;
-  padding: 1.1rem 1.1rem 1rem;
-  background:
-    radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
-  border: 1px solid rgba(148, 163, 184, 0.55);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
-}
-
-.dash-panel-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-start;
-  margin-bottom: 0.9rem;
-}
-
-.dash-panel-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.15rem;
-}
-
-.dash-panel-sub {
-  font-size: 0.82rem;
-  color: var(--nad-silver-soft);
-  max-width: 21rem;
-}
-
-.dash-chip {
-  font-size: 0.75rem;
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 175, 55, 0.7);
-  color: var(--nad-gold-soft);
-  background: rgba(15, 23, 42, 0.85);
-}
-
-/* “Chart” simulasi */
-.dash-chart {
-  margin-top: 0.4rem;
-}
-
-.dash-chart-grid {
-  position: relative;
-  height: 150px;
-  border-radius: 0.6rem;
-  overflow: hidden;
-  background: radial-gradient(circle at top, #020617, #020617);
-  border: 1px solid rgba(31, 41, 55, 0.9);
-}
-
-.dash-chart-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  border-top: 1px dashed rgba(55, 65, 81, 0.7);
-}
-
-.dash-chart-line:nth-child(1) {
-  top: 25%;
-}
-.dash-chart-line:nth-child(2) {
-  top: 50%;
-}
-.dash-chart-line:nth-child(3) {
-  top: 75%;
-}
-.dash-chart-line:nth-child(4) {
-  top: 90%;
-}
-
-.dash-chart-bars {
-  position: relative;
-  z-index: 2;
-  height: 150px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: 0.7rem 0.7rem 0.6rem;
-}
-
-.dash-chart-bars .bar {
-  width: 9%;
-  border-radius: 999px;
-  background: linear-gradient(to top, #facc15, #eab308, #f97316);
-  box-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
-}
-
-.bar-1 {
-  height: 18%;
-}
-.bar-2 {
-  height: 26%;
-}
-.bar-3 {
-  height: 34%;
-}
-.bar-4 {
-  height: 45%;
-}
-.bar-5 {
-  height: 56%;
-}
-.bar-6 {
-  height: 64%;
-}
-.bar-7 {
-  height: 75%;
-}
-.bar-8 {
-  height: 82%;
-}
-
-.dash-chart-caption {
-  font-size: 0.78rem;
-  color: var(--nad-silver-soft);
-  margin-top: 0.4rem;
-}
-
-/* Profil rencana */
-.dash-profile {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  font-size: 0.84rem;
-}
-
-.dash-profile-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
-.dash-profile-row dt {
-  color: var(--nad-silver-soft);
-}
-
-.dash-profile-row dd {
-  margin: 0;
-  font-weight: 500;
-}
-
-/* Progress */
-.dash-progress-block {
-  margin-top: 0.9rem;
-}
-
-.dash-progress-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  margin-bottom: 0.3rem;
-}
-
-.dash-progress-value {
-  color: var(--nad-gold-soft);
-  font-weight: 600;
-}
-
-.dash-progress-track {
-  width: 100%;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(30, 64, 175, 0.7);
-  overflow: hidden;
-}
-
-.dash-progress-fill {
-  width: 60%;
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(to right, #facc15, #eab308, #f97316);
-  box-shadow: 0 0 14px rgba(250, 204, 21, 0.7);
-}
-
-.dash-progress-note {
-  font-size: 0.76rem;
-  color: var(--nad-silver-soft);
-  margin-top: 0.3rem;
-}
-
-/* TABEL RIWAYAT */
-.dash-table-section {
-  margin-top: 0.6rem;
-}
-
-.dash-table-header {
-  margin-bottom: 0.6rem;
-}
-
-.dash-table-wrapper {
-  border-radius: 0.9rem;
-  border: 1px solid rgba(31, 41, 55, 0.9);
-  overflow: hidden;
-  background: radial-gradient(circle at top, #020617, #020617);
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.96);
-}
-
-.dash-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
-
-.dash-table thead {
-  background: rgba(15, 23, 42, 0.95);
-}
-
-.dash-table th,
-.dash-table td {
-  padding: 0.6rem 0.8rem;
-  text-align: left;
-}
-
-.dash-table th {
-  font-weight: 500;
-  color: var(--nad-silver);
-  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
-}
-
-.dash-table tbody tr:nth-child(odd) {
-  background: rgba(15, 23, 42, 0.8);
-}
-
-.dash-table tbody tr:nth-child(even) {
-  background: rgba(15, 23, 42, 0.95);
-}
-
-.dash-table td {
-  color: var(--nad-silver-soft);
-}
-
-.dash-table-note {
-  font-size: 0.78rem;
-  color: var(--nad-silver-soft);
-  margin-top: 0.4rem;
-}
-
-/* RESPONSIVE DASHBOARD */
-@media (max-width: 900px) {
-  .dash-cards {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .dash-main-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .dash-header {
-    flex-direction: column;
-  }
-}
-
-/* =========================================
-   ABOUT NADNAD INVEST
-========================================= */
-
-.about-shell {
-  padding-top: 1.6rem;
-  padding-bottom: 3rem;
-}
-
-.about-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
-  align-items: flex-start;
-  margin-bottom: 1.8rem;
-}
-
-.about-eyebrow {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--nad-silver-soft);
-  margin-bottom: 0.3rem;
-}
-
-.about-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-}
-
-.about-sub {
-  font-size: 0.9rem;
-  color: var(--nad-silver);
-  max-width: 36rem;
-}
-
-.about-tag {
-  font-size: 0.78rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 175, 55, 0.7);
-  background: radial-gradient(circle at top, rgba(212, 175, 55, 0.25), #020617);
-  color: var(--nad-gold-soft);
-  align-self: flex-start;
-}
-
-/* GRID ATAS */
-.about-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.4rem;
-  margin-bottom: 1.8rem;
-}
-
-.about-block {
-  border-radius: 1rem;
-  padding: 1.1rem 1.1rem;
-  background: radial-gradient(circle at top, #020617, #020617);
-  border: 1px solid rgba(31, 41, 55, 0.9);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.96);
-  font-size: 0.88rem;
-  color: var(--nad-silver);
-}
-
-.about-block-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-}
-
-/* SECTION GENERIC */
-.about-section {
-  margin-bottom: 1.9rem;
-}
-
-/* PILAR */
-.about-pillars {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.2rem;
-}
-
-.about-pillar-card {
-  border-radius: 1rem;
-  padding: 1rem 1rem 0.9rem;
-  background: radial-gradient(circle at top, #020617, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.9);
-  font-size: 0.85rem;
-  color: var(--nad-silver);
-}
-
-.about-pillar-card h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-}
-
-/* LISTS */
-.about-list {
-  margin: 0.3rem 0 0;
-  padding-left: 1.1rem;
-  font-size: 0.86rem;
-  color: var(--nad-silver);
-}
-
-.about-list li + li {
-  margin-top: 0.25rem;
-}
-
-/* UNTUK SIAPA */
-.about-forwho {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  gap: 1.2rem;
-}
-
-.about-forwho-col.note {
-  font-size: 0.86rem;
-  color: var(--nad-silver-soft);
-  border-radius: 0.9rem;
-  padding: 0.9rem 0.95rem;
-  border: 1px dashed rgba(148, 163, 184, 0.7);
-  background: rgba(15, 23, 42, 0.85);
-}
-
-/* BACKLINK */
-.about-backlink {
-  margin-top: 1rem;
-}
-
-/* RESPONSIVE ABOUT */
-@media (max-width: 900px) {
-  .about-header {
-    flex-direction: column;
-  }
-
-  .about-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .about-pillars {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .about-forwho {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* =========================================
-   ANIMASI HALUS NADNAD INVEST
-========================================= */
-
-@keyframes nad-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-up {
-  opacity: 0;
-  transform: translateY(14px);
-  animation-name: nad-fade-up;
-  animation-duration: 0.7s;
-  animation-timing-function: ease-out;
-  animation-fill-mode: forwards;
-}
-
-.animate-delay-1 {
-  animation-delay: 0.08s;
-}
-
-.animate-delay-2 {
-  animation-delay: 0.16s;
-}
-
-.animate-delay-3 {
-  animation-delay: 0.24s;
-}
-
-.animate-delay-4 {
-  animation-delay: 0.32s;
-}
-
-.animate-delay-5 {
-  animation-delay: 0.4s;
-}
-
-/* ========== NANAD INVEST LOGIN ========== */
-
-.nanad-login-page {
-  min-height: 100vh;
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  color: #f9fafb;
-  background:
-    radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%),
-    #020617;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2.5rem 1.5rem;
-  box-sizing: border-box;
-}
-
-.nanad-login-shell {
-  width: 100%;
-  max-width: 1120px;
-}
-
-.nanad-login-brand {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-.nanad-login-brand-left {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.nanad-login-logo {
-  height: 2rem;
-  width: 2rem;
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(251, 191, 36, 0.8); /* gold */
-  color: #facc15; /* gold terang */
-  font-weight: 600;
-}
-
-.nanad-login-brand-text {}
-
-.nanad-login-brand-title {
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.nanad-login-brand-sub {
-  font-size: 0.68rem;
-  color: #94a3b8;
-}
-
-.nanad-login-badge {
-  border-radius: 999px;
-  border: 1px solid rgba(251, 191, 36, 0.75); /* gold */
-  background-color: rgba(251, 191, 36, 0.12);
-  padding: 0.3rem 0.9rem;
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: #fef3c7;
-}
-
-.nanad-login-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 2rem;
-  padding: 2rem;
-  border-radius: 2rem;
-  border: 1px solid rgba(15, 23, 42, 0.9);
-  background-color: rgba(15, 23, 42, 0.9);
-  box-shadow: 0 28px 90px rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(22px);
-}
-
-@media (max-width: 768px) {
-  .nanad-login-main {
-    grid-template-columns: 1fr;
-    padding: 1.5rem;
-  }
-}
-
-/* Left copy */
-
-.nanad-login-copy {
-  border-right: 1px solid rgba(30, 64, 175, 0.35);
-  padding-right: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-@media (max-width: 768px) {
-  .nanad-login-copy {
-    border-right: none;
-    border-bottom: 1px solid rgba(30, 64, 175, 0.35);
-    padding-right: 0;
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-}
-
-.nanad-login-eyebrow {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.32em;
-  color: rgba(250, 204, 21, 0.85); /* gold accent */
-  font-weight: 500;
-}
-
-.nanad-login-heading {
-  margin-top: 0.75rem;
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.nanad-login-heading span {
-  display: block;
-  background: linear-gradient(
-    90deg,
-    #fbbf24,
-    #facc15,
-    #fef3c7
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.nanad-login-text {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #cbd5f5;
-}
-
-/* Highlights */
-
-.nanad-login-highlights {
-  margin-top: 1.5rem;
-  display: grid;
-  gap: 0.9rem;
-}
-
-@media (min-width: 640px) {
-  .nanad-login-highlights {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.nanad-login-highlight-card {
-  border-radius: 1.25rem;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.95);
-  padding: 0.85rem 1rem;
-  font-size: 0.75rem;
-  color: #e5e7eb;
-}
-
-.nanad-login-highlight-primary {
-  border-color: rgba(251, 191, 36, 0.75); /* gold */
-  background: radial-gradient(
-    circle at top left,
-    rgba(251, 191, 36, 0.3),
-    #020617
-  );
-}
-
-.nanad-login-highlight-title {
-  font-size: 0.78rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.nanad-login-highlight-body {
-  font-size: 0.72rem;
-  color: #fef3c7; /* soft gold text */
-}
-
-/* Right card */
-
-.nanad-login-card {
-  border-radius: 1.7rem;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.96);
-  padding: 1.5rem 1.6rem;
-  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.95);
-}
-
-.nanad-login-card-header p {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: #9ca3af;
-}
-
-.nanad-login-card-header h2 {
-  margin-top: 0.4rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.nanad-login-card-header > p:nth-of-type(2) {
-  margin-top: 0.35rem;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-/* Form */
-
-.nanad-login-form {
-  margin-top: 1.1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  font-size: 0.8rem;
-}
-
-.nanad-login-field label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #e5e7eb;
-  margin-bottom: 0.2rem;
-  display: block;
-}
-
-.nanad-login-input-wrapper {
-  border-radius: 1.3rem;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 0.55rem 0.85rem;
-  transition: border 0.15s ease, box-shadow 0.15s ease;
-}
-
-.nanad-login-input-wrapper:focus-within {
-  border-color: rgba(251, 191, 36, 0.9); /* gold */
-  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.4);
-}
-
-.nanad-login-input-wrapper input {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 0.8rem;
-  color: #f9fafb;
-}
-
-.nanad-login-input-wrapper input::placeholder {
-  color: #6b7280;
-}
-
-.nanad-login-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: #9ca3af;
-  gap: 0.75rem;
-}
-
-.nanad-login-remember {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.nanad-login-remember input {
-  width: 0.85rem;
-  height: 0.85rem;
-}
-
-.nanad-login-forgot {
-  background: none;
-  border: none;
-  padding: 0;
-  color: #facc15; /* gold */
-  cursor: pointer;
-  font-size: 0.7rem;
-}
-
-.nanad-login-forgot:hover {
-  color: #fef3c7;
-}
-
-.nanad-login-error {
-  font-size: 0.72rem;
-  color: #fecaca;
-}
-
-.nanad-login-submit {
-  margin-top: 0.4rem;
-  width: 100%;
-  border-radius: 999px;
-  border: none;
-  padding: 0.55rem 1rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: #020617;
-  background-image: linear-gradient(
-    90deg,
-    #fbbf24,
-    #facc15,
-    #fef3c7
-  );
-  box-shadow: 0 18px 40px rgba(234, 179, 8, 0.6); /* gold shadow */
-}
-
-.nanad-login-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.nanad-login-bottom-text {
-  margin-top: 1rem;
-  font-size: 0.7rem;
-  text-align: center;
-  color: #9ca3af;
-}
-
-.nanad-login-bottom-text a {
-  color: #facc15;
-  font-weight: 600;
-}
-
-.nanad-login-bottom-text a:hover {
-  color: #fef3c7;
-}
-
-.nanad-login-bottom-sub {
-  margin-top: 0.3rem;
-  font-size: 0.65rem;
-  text-align: center;
-  color: #6b7280;
-}
-
-/* ========== NANAD INVEST DASHBOARD ========== */
+/* ================== LUXE DASHBOARD / CONTAINER ================== */
 
 .nanad-dashboard-page {
   min-height: 100vh;
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  color: #f9fafb;
-  background:
-    radial-gradient(circle at top, #020617 0, #020617 45%, #000 100%),
-    #020617;
   display: flex;
-  align-items: flex-start;
   justify-content: center;
-  padding: 2.5rem 1.5rem 3rem;
-  box-sizing: border-box;
+  padding: 2.5rem 1.25rem;
+  background: radial-gradient(circle at top, #020617 0%, #000 55%);
 }
 
 .nanad-dashboard-shell {
   width: 100%;
   max-width: 1120px;
+  border-radius: 2rem;
+  padding: 1.75rem 1.9rem 1.75rem 1.9rem;
+  background:
+    radial-gradient(circle at top left, rgba(245, 209, 122, 0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(148, 163, 184, 0.18), transparent 55%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.97), rgba(2, 6, 23, 0.98));
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  box-shadow: var(--nanad-shadow-soft);
+  backdrop-filter: blur(30px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
 }
 
-/* Header */
+/* Header brand */
 
 .nanad-dashboard-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  margin-bottom: 1.9rem;
 }
 
-.nanad-dashboard-header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.nanad-dashboard-logo {
-  height: 2rem;
-  width: 2rem;
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(251, 191, 36, 0.8);
-  color: #facc15;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.nanad-dashboard-brand-title {
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-brand-sub {
-  font-size: 0.7rem;
-  color: #94a3b8;
-}
-
-.nanad-dashboard-header-right {
+.nanad-dashboard-brand {
   display: flex;
   align-items: center;
   gap: 0.9rem;
 }
 
-.nanad-dashboard-demo-badge {
+.nanad-dashboard-logo {
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
-  border: 1px solid rgba(251, 191, 36, 0.7);
-  background-color: rgba(251, 191, 36, 0.12);
-  padding: 0.25rem 0.7rem;
-  font-size: 0.65rem;
-  color: #fef3c7;
-}
-
-.nanad-dashboard-account {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
+  background:
+    conic-gradient(from 220deg, #f9fafb, #f5d17a, #cbd5f5, #f9fafb);
+  color: #020617;
+  font-weight: 700;
+  font-size: 1.2rem;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.85);
 }
 
-.nanad-dashboard-account-label {
-  font-size: 0.65rem;
+.nanad-dashboard-brand-title {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: #9ca3af;
+  font-size: 0.78rem;
+  color: var(--nanad-silver-soft);
 }
 
-.nanad-dashboard-account-email {
+.nanad-dashboard-brand-sub {
+  margin: 0.1rem 0 0;
+  font-size: 0.76rem;
+  color: var(--nanad-text-soft);
+}
+
+/* Tombol umum */
+
+.nanad-dashboard-logout,
+.nanad-dashboard-deposit-submit {
+  border: none;
+  cursor: pointer;
+  border-radius: var(--nanad-radius-pill);
+  padding: 0.55rem 1.4rem;
   font-size: 0.78rem;
-  font-weight: 500;
-  color: #fbbf24;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.18s ease-out;
+  white-space: nowrap;
 }
 
 .nanad-dashboard-logout {
-  border-radius: 999px;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.95);
-  padding: 0.35rem 0.95rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
+  color: var(--nanad-silver-soft);
+  background: radial-gradient(circle at top, #020617, #020617);
+  border: 1px solid rgba(148, 163, 184, 0.85);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.9);
 }
 
 .nanad-dashboard-logout:hover {
-  border-color: rgba(248, 250, 252, 0.5);
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+}
+
+.nanad-dashboard-deposit-submit {
+  color: #020617;
+  background: linear-gradient(135deg, var(--nanad-gold), var(--nanad-gold-deep));
+  border: 1px solid rgba(245, 209, 122, 0.95);
+  box-shadow: 0 18px 42px rgba(245, 209, 122, 0.7);
+}
+
+.nanad-dashboard-deposit-submit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 22px 52px rgba(245, 209, 122, 0.85);
+}
+
+.nanad-dashboard-deposit-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  box-shadow: none;
 }
 
 /* Welcome section */
 
 .nanad-dashboard-welcome {
-  border-radius: 1.9rem;
-  border: 1px solid #020617;
-  background: radial-gradient(
-      circle at top left,
-      rgba(15, 23, 42, 0.9),
-      #020617
-    ),
-    rgba(15, 23, 42, 0.98);
-  padding: 1.6rem 1.8rem;
-  margin-bottom: 1.8rem;
-  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.9);
-}
-
-.nanad-dashboard-eyebrow {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.32em;
-  color: rgba(250, 204, 21, 0.85);
-}
-
-.nanad-dashboard-heading {
-  margin-top: 0.7rem;
-  font-size: 1.6rem;
-  font-weight: 600;
-}
-
-.nanad-dashboard-text {
-  margin-top: 0.6rem;
-  font-size: 0.86rem;
-  line-height: 1.6;
-  color: #cbd5f5;
-}
-
-/* Stats */
-
-.nanad-dashboard-stats {
-  margin-top: 1.4rem;
-  display: grid;
-  gap: 0.8rem;
-}
-
-@media (min-width: 640px) {
-  .nanad-dashboard-stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.nanad-dashboard-stat-card {
-  border-radius: 1.2rem;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 0.75rem 0.9rem;
-}
-
-.nanad-dashboard-stat-number {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fbbf24;
-}
-
-.nanad-dashboard-stat-label {
-  margin-top: 0.18rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
-/* Three info cards */
-
-.nanad-dashboard-grid {
-  display: grid;
-  gap: 1.1rem;
-  margin-bottom: 1.9rem;
-}
-
-@media (min-width: 768px) {
-  .nanad-dashboard-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.nanad-dashboard-card {
-  border-radius: 1.6rem;
-  border: 1px solid #111827;
-  background-color: rgba(15, 23, 42, 0.97);
-  padding: 1rem 1.05rem;
-  font-size: 0.8rem;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-card h2 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  color: #fef3c7;
-}
-
-.nanad-dashboard-card p {
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: #d1d5db;
-}
-
-/* Plan section */
-
-.nanad-dashboard-plan {
-  border-radius: 1.9rem;
-  border: 1px solid #111827;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 1.6rem 1.7rem 1.4rem;
-}
-
-.nanad-dashboard-plan-header h2 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 0.4rem;
-}
-
-.nanad-dashboard-plan-header p {
-  margin-top: 0.35rem;
-  font-size: 0.78rem;
-  color: #9ca3af;
-}
-
-/* Table */
-
-.nanad-dashboard-table {
-  margin-top: 1.1rem;
-  border-radius: 1.2rem;
-  border: 1px solid #020617;
-  background-color: rgba(15, 23, 42, 0.98);
-  overflow: hidden;
-  font-size: 0.78rem;
-}
-
-.nanad-dashboard-table-header,
-.nanad-dashboard-table-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1.1fr 1.3fr 0.8fr;
-  gap: 0.4rem;
-  padding: 0.55rem 0.9rem;
-}
-
-.nanad-dashboard-table-header {
-  background: linear-gradient(
-    90deg,
-    rgba(15, 23, 42, 0.98),
-    rgba(30, 64, 175, 0.35)
-  );
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-table-row:nth-child(odd) {
-  background-color: rgba(15, 23, 42, 0.98);
-}
-
-.nanad-dashboard-table-row:nth-child(even) {
-  background-color: rgba(15, 23, 42, 0.92);
-}
-
-.nanad-dashboard-table-row div:nth-child(1) {
-  font-weight: 500;
-}
-
-/* Plan delete button */
-
-.nanad-dashboard-plan-delete {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  font-size: 0.7rem;
-  padding: 0.25rem 0.6rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-delete:hover {
-  border-color: #fca5a5;
-  color: #fecaca;
-}
-
-.nanad-dashboard-plan-footnote {
-  margin-top: 0.8rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
-/* Plan form */
-
-.nanad-dashboard-plan-form {
-  margin-top: 1.1rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid #111827;
-}
-
-.nanad-dashboard-plan-form h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.6rem;
-  color: #fef3c7;
-}
-
-.nanad-dashboard-plan-form-grid {
-  display: grid;
-  gap: 0.8rem;
-}
-
-@media (min-width: 768px) {
-  .nanad-dashboard-plan-form-grid {
-    grid-template-columns: 1.8fr 0.9fr 1.1fr;
-  }
-}
-
-.nanad-dashboard-plan-form-field label {
-  display: block;
-  font-size: 0.75rem;
-  margin-bottom: 0.2rem;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-plan-form-field input {
-  width: 100%;
-  border-radius: 0.9rem;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 0.45rem 0.7rem;
-  font-size: 0.78rem;
-  color: #f9fafb;
-  outline: none;
-}
-
-.nanad-dashboard-plan-form-field input::placeholder {
-  color: #6b7280;
-}
-
-.nanad-dashboard-plan-form-field input:focus {
-  border-color: rgba(251, 191, 36, 0.9);
-  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
-}
-
-.nanad-dashboard-plan-error {
-  margin-top: 0.5rem;
-  font-size: 0.72rem;
-  color: #fecaca;
-}
-
-.nanad-dashboard-plan-submit {
-  margin-top: 0.7rem;
-  border-radius: 999px;
-  border: none;
-  padding: 0.45rem 1.1rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: #020617;
-  background-image: linear-gradient(
-    90deg,
-    #fbbf24,
-    #facc15,
-    #fef3c7
-  );
-  box-shadow: 0 12px 30px rgba(234, 179, 8, 0.55);
-}
-
-.nanad-dashboard-plan-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Packages section */
-
-.nanad-dashboard-packages {
-  margin-top: 1.9rem;
-  border-radius: 1.9rem;
-  border: 1px solid #111827;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 1.6rem 1.7rem 1.4rem;
-}
-
-.nanad-dashboard-packages-header h2 {
-  font-size: 0.98rem;
-  font-weight: 600;
-  margin-top: 0.4rem;
-}
-
-.nanad-dashboard-packages-header p {
-  margin-top: 0.35rem;
-  font-size: 0.78rem;
-  color: #9ca3af;
-}
-
-.nanad-dashboard-packages-grid {
-  margin-top: 1.1rem;
-  display: grid;
-  gap: 1rem;
-}
-
-@media (min-width: 768px) {
-  .nanad-dashboard-packages-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.nanad-dashboard-package-card {
-  border-radius: 1.3rem;
-  border: 1px solid #111827;
-  background-color: rgba(15, 23, 42, 0.97);
-  padding: 1rem 1rem 0.9rem;
-  font-size: 0.78rem;
-}
-
-.nanad-dashboard-package-card-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.nanad-dashboard-package-name {
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: #fef3c7;
-}
-
-.nanad-dashboard-package-badge {
-  border-radius: 999px;
-  border: 1px solid rgba(251, 191, 36, 0.7);
-  background-color: rgba(251, 191, 36, 0.12);
-  padding: 0.22rem 0.6rem;
-  font-size: 0.65rem;
-  color: #fef3c7;
-}
-
-.nanad-dashboard-package-desc {
-  margin-top: 0.4rem;
-  color: #d1d5db;
-  font-size: 0.76rem;
-}
-
-.nanad-dashboard-package-rows {
-  margin-top: 0.6rem;
-  display: grid;
-  gap: 0.35rem;
-}
-
-.nanad-dashboard-package-row {
-  display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 0.75rem;
 }
 
-.nanad-dashboard-package-row dt {
-  color: #9ca3af;
-}
-
-.nanad-dashboard-package-row dd {
-  text-align: right;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-package-note {
-  margin-top: 0.6rem;
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.nanad-dashboard-package-disclaimer {
-  margin-top: 0.9rem;
-  font-size: 0.7rem;
-  color: #6b7280;
-}
-
-/* Responsive tweaks */
-
-@media (max-width: 640px) {
-  .nanad-dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .nanad-dashboard-header-right {
-    align-self: stretch;
-    justify-content: space-between;
-  }
-
-  .nanad-dashboard-table-header,
-  .nanad-dashboard-table-row {
-    grid-template-columns: 1.7fr 0.9fr 1fr 1.2fr 0.9fr;
-  }
-}
-
-/* Progress bar pada kolom Progres tabungan */
-.nanad-dashboard-progress-bar {
-  margin-top: 0.25rem;
-  width: 100%;
-  height: 0.35rem;
-  border-radius: 999px;
-  background-color: #020617;
-  overflow: hidden;
-}
-
-.nanad-dashboard-progress-fill {
-  height: 100%;
-  border-radius: 999px;
-  background-image: linear-gradient(
-    90deg,
-    #fbbf24,
-    #facc15,
-    #fef3c7
-  );
-}
-
-/* Form setoran / tabungan */
-.nanad-dashboard-deposit-form {
-  margin-top: 1.2rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid #111827;
-}
-
-.nanad-dashboard-deposit-form h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: #fef3c7;
-}
-
-.nanad-dashboard-deposit-caption {
-  font-size: 0.72rem;
-  color: #9ca3af;
-  margin-bottom: 0.6rem;
-}
-
-.nanad-dashboard-deposit-grid {
-  display: grid;
-  gap: 0.8rem;
-}
-
-@media (min-width: 768px) {
-  .nanad-dashboard-deposit-grid {
-    grid-template-columns: 1.5fr 1.1fr 1.4fr;
-  }
-}
-
-.nanad-dashboard-deposit-field label {
-  display: block;
-  font-size: 0.75rem;
-  margin-bottom: 0.2rem;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-deposit-field input,
-.nanad-dashboard-deposit-field select {
-  width: 100%;
-  border-radius: 0.9rem;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 0.45rem 0.7rem;
-  font-size: 0.78rem;
-  color: #f9fafb;
-  outline: none;
-}
-
-.nanad-dashboard-deposit-field input::placeholder {
-  color: #6b7280;
-}
-
-.nanad-dashboard-deposit-field input:focus,
-.nanad-dashboard-deposit-field select:focus {
-  border-color: rgba(251, 191, 36, 0.9);
-  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
-}
-
-.nanad-dashboard-deposit-error {
-  margin-top: 0.5rem;
-  font-size: 0.72rem;
-  color: #fecaca;
-}
-
-.nanad-dashboard-deposit-submit {
-  margin-top: 0.7rem;
-  border-radius: 999px;
-  border: none;
-  padding: 0.45rem 1.1rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: #020617;
-  background-image: linear-gradient(
-    90deg,
-    #fbbf24,
-    #facc15,
-    #fef3c7
-  );
-  box-shadow: 0 12px 30px rgba(234, 179, 8, 0.55);
-}
-
-.nanad-dashboard-deposit-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Riwayat setoran */
-
-.nanad-dashboard-deposits-history {
-  margin-top: 1.3rem;
-}
-
-.nanad-dashboard-deposits-history h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #fef3c7;
-  margin-bottom: 0.4rem;
-}
-
-.nanad-dashboard-deposits-filter {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  color: #e5e7eb;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-dashboard-deposits-filter select {
-  border-radius: 999px;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 0.3rem 0.7rem;
-  font-size: 0.75rem;
-  color: #f9fafb;
-  outline: none;
-}
-
-.nanad-dashboard-deposits-filter select:focus {
-  border-color: rgba(251, 191, 36, 0.9);
-  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
-}
-
-.nanad-dashboard-deposits-table {
-  border-radius: 1rem;
-  border: 1px solid #020617;
-  background-color: rgba(15, 23, 42, 0.98);
-  font-size: 0.78rem;
-  overflow: hidden;
-}
-
-.nanad-dashboard-deposits-header,
-.nanad-dashboard-deposits-row {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr 1fr 1.8fr 0.8fr;
-  gap: 0.4rem;
-  padding: 0.5rem 0.8rem;
-}
-
-.nanad-dashboard-deposits-header {
-  background: linear-gradient(
-    90deg,
-    rgba(15, 23, 42, 0.98),
-    rgba(30, 64, 175, 0.35)
-  );
-  font-weight: 600;
-}
-
-.nanad-dashboard-deposits-row:nth-child(odd) {
-  background-color: rgba(15, 23, 42, 0.98);
-}
-
-.nanad-dashboard-deposits-row:nth-child(even) {
-  background-color: rgba(15, 23, 42, 0.93);
-}
-
-.nanad-dashboard-deposit-delete {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.55rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposit-delete:hover {
-  border-color: #fca5a5;
-  color: #fecaca;
-}
-
-.nanad-dashboard-deposits-footnote {
-  margin-top: 0.5rem;
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.nanad-dashboard-package-use {
-  margin-top: 0.6rem;
-  border-radius: 999px;
-  border: 1px solid rgba(251, 191, 36, 0.7);
-  background-color: transparent;
-  padding: 0.32rem 0.9rem;
-  font-size: 0.74rem;
-  font-weight: 500;
-  color: #fef3c7;
-  cursor: pointer;
-}
-
-.nanad-dashboard-package-use:hover {
-  background-color: rgba(251, 191, 36, 0.12);
-}
-
-.nanad-dashboard-plan-actions {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.nanad-dashboard-plan-quick {
-  border-radius: 999px;
-  border: 1px solid rgba(251, 191, 36, 0.7);
-  background-color: transparent;
-  padding: 0.22rem 0.7rem;
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: #fef3c7;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-quick:hover {
-  background-color: rgba(251, 191, 36, 0.12);
-}
-
-.nanad-dashboard-deposits-export {
-  margin-left: auto;
-  border-radius: 999px;
-  border: 1px solid #1f2937;
-  background-color: rgba(15, 23, 42, 0.98);
-  padding: 0.25rem 0.8rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposits-export:hover {
-  border-color: rgba(251, 191, 36, 0.9);
-  color: #fef3c7;
-}
-
-/* Detail rencana */
-
-.nanad-plan-detail {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
-  gap: 1.4rem;
-  margin-top: 1.2rem;
-}
-
-.nanad-plan-detail-main {
-  padding: 1rem 1.2rem;
-  border-radius: 1.4rem;
-  border: 1px solid rgba(15, 23, 42, 0.95);
-  background: radial-gradient(
-      circle at top left,
-      rgba(251, 191, 36, 0.09),
-      transparent 55%
-    ),
-    rgba(15, 23, 42, 0.98);
-}
-
-.nanad-plan-detail-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fefce8;
-  margin-bottom: 0.2rem;
-}
-
-.nanad-plan-detail-sub {
-  font-size: 0.78rem;
-  color: #e5e7eb;
-  margin-bottom: 0.7rem;
-}
-
-.nanad-plan-detail-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
-}
-
-.nanad-plan-detail-summary-item span {
-  font-size: 0.65rem;
-  color: #9ca3af;
-  display: block;
-}
-
-.nanad-plan-detail-summary-item strong {
-  font-size: 0.8rem;
-  color: #fef3c7;
-}
-
-.nanad-plan-detail-footnote {
-  margin-top: 0.4rem;
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.nanad-plan-detail-side {
-  padding: 0.9rem 1rem;
-  border-radius: 1.4rem;
-  border: 1px solid rgba(15, 23, 42, 0.95);
-  background-color: rgba(15, 23, 42, 0.96);
-}
-
-.nanad-plan-detail-side h2 {
-  font-size: 0.9rem;
-  color: #fef3c7;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-plan-detail-side-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-  font-size: 0.72rem;
-}
-
-.nanad-plan-detail-side-grid span {
-  display: block;
-  color: #9ca3af;
-}
-
-.nanad-plan-detail-side-grid strong {
-  display: block;
-  color: #e5e7eb;
-}
-
-.nanad-plan-detail-side-note {
-  margin-top: 0.5rem;
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.nanad-plan-detail-history {
-  margin-top: 1.4rem;
-}
-
-.nanad-plan-detail-history h2 {
-  font-size: 0.9rem;
-  color: #fef3c7;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-plan-detail-empty {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-/* Tombol detail di tabel rencana */
-
-.nanad-dashboard-plan-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.nanad-dashboard-plan-detail {
-  border-radius: 999px;
-  border: 1px solid #374151;
-  background-color: transparent;
-  padding: 0.22rem 0.7rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-detail:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-/* tombol EDIT */
-.nanad-dashboard-plan-edit {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  padding: 0.22rem 0.7rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-edit:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-/* tombol DETAIL sudah ada, biarkan atau samakan gaya dengan edit */
-.nanad-dashboard-plan-detail {
-  border-radius: 999px;
-  border: 1px solid #374151;
-  background-color: transparent;
-  padding: 0.22rem 0.7rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-detail:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-/* tombol BATALKAN EDIT di bawah form */
-.nanad-dashboard-plan-form-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-}
-
-.nanad-dashboard-plan-cancel {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-cancel:hover {
-  border-color: #9ca3af;
-  color: #f9fafb;
-}
-
-/* Aksi di baris riwayat setoran */
-
-.nanad-dashboard-deposit-row-actions {
-  display: flex;
-  gap: 0.3rem;
-}
-
-/* tombol EDIT setoran */
-
-.nanad-dashboard-deposit-edit {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.55rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposit-edit:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-/* area tombol di form setoran */
-
-.nanad-dashboard-deposit-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-}
-
-/* tombol batal edit setoran */
-
-.nanad-dashboard-deposit-cancel {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.72rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposit-cancel:hover {
-  border-color: #9ca3af;
-  color: #f9fafb;
-}
-
-/* ========== RESPONSIVE NANAD INVEST ========== */
-
-@media (max-width: 1024px) {
-  .nanad-dashboard-shell {
-    padding: 1.4rem;
-  }
-
-  .nanad-dashboard-header {
-    gap: 0.75rem;
-  }
-
-  .nanad-dashboard-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .nanad-dashboard-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-plan-detail {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .nanad-dashboard-shell {
-    padding: 1rem 1.1rem;
-  }
-
-  /* Header jadi vertikal di mobile */
-  .nanad-dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-
-  .nanad-dashboard-header-right {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .nanad-dashboard-account {
-    flex: 1;
-  }
-
-  .nanad-dashboard-logout {
-    margin-left: auto;
-  }
-
-  /* Stats jadi 1 kolom */
-  .nanad-dashboard-stats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  /* Kartu info */
-  .nanad-dashboard-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  /* Form rencana & setoran: 1 kolom */
-  .nanad-dashboard-plan-form-grid,
-  .nanad-dashboard-deposit-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  /* Detail rencana: tumpuk */
-  .nanad-plan-detail {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-
-  .nanad-plan-detail-main,
-  .nanad-plan-detail-side {
-    padding: 0.9rem 1rem;
-  }
-
-  .nanad-plan-detail-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* Tombol aksi plan & setoran lebih rapi di HP */
-  .nanad-dashboard-plan-actions,
-  .nanad-dashboard-deposit-row-actions {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 600px) {
-  .nanad-dashboard-heading {
-    font-size: 1.1rem;
-  }
-
-  .nanad-dashboard-text {
-    font-size: 0.8rem;
-  }
-
-  .nanad-dashboard-card h2 {
-    font-size: 0.9rem;
-  }
-
-  .nanad-dashboard-plan-form h3,
-  .nanad-dashboard-deposit-form h3,
-  .nanad-dashboard-deposits-history h3 {
-    font-size: 0.9rem;
-  }
-
-  /* Ringkasan di detail rencana jadi 2 kolom */
-  .nanad-plan-detail-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* Tabel boleh di-scroll horizontal pada layar kecil */
-
-.nanad-dashboard-table,
-.nanad-dashboard-deposits-table {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.nanad-dashboard-deposits-header,
-.nanad-dashboard-deposits-row {
-  min-width: 520px; /* biar kolom tidak terlalu sempit */
-}
-
-@media (max-width: 600px) {
-  .nanad-dashboard-deposits-header,
-  .nanad-dashboard-deposits-row {
-    min-width: 460px;
-  }
-}
-
-/* Glow halus tombol utama */
-
-.nanad-dashboard-plan-submit,
-.nanad-dashboard-deposit-submit,
-.nanad-dashboard-package-use {
-  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.1),
-    0 18px 45px rgba(15, 23, 42, 0.9);
-  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
-}
-
-.nanad-dashboard-plan-submit:hover,
-.nanad-dashboard-deposit-submit:hover,
-.nanad-dashboard-package-use:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.35),
-    0 20px 55px rgba(15, 23, 42, 0.9);
-}
-
-/* =======================================================
-   NANAD INVEST · PREMIUM GOLD THEME
-   Tempel di PALING BAWAH globals.css
-   ======================================================= */
-
-/* Body & page background */
-body {
-  background:
-    radial-gradient(circle at top left, rgba(250, 204, 21, 0.12), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(55, 65, 81, 0.4), transparent 55%),
-    #020617;
-  color: #e5e7eb;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", sans-serif;
-}
-
-/* Halaman utama Nanad */
-.nanad-dashboard-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 2.8rem 1.2rem;
-}
-
-.nanad-dashboard-shell {
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  border-radius: 1.8rem;
-  padding: 1.8rem 1.7rem 2.1rem;
-  background:
-    radial-gradient(circle at top left, rgba(250, 204, 21, 0.07), transparent 60%),
-    radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.98));
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.75),
-    0 0 0 1px rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(18px);
-}
-
-/* HEADER ================================================= */
-
-.nanad-dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 1.6rem;
-}
-
-.nanad-dashboard-header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.nanad-dashboard-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  font-size: 0.9rem;
-  color: #0f172a;
-  background:
-    radial-gradient(circle at 20% 0, #fef9c3, #facc15 55%, #f97316 100%);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.25),
-    0 12px 30px rgba(15, 23, 42, 0.9);
-}
-
-.nanad-dashboard-brand-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #fefce8;
-}
-
-.nanad-dashboard-brand-sub {
-  font-size: 0.78rem;
-  color: #9ca3af;
-}
-
-.nanad-dashboard-header-right {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.nanad-dashboard-demo-badge {
-  border-radius: 999px;
-  padding: 0.2rem 0.7rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #0f172a;
-  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.35),
-    0 10px 25px rgba(15, 23, 42, 0.9);
-}
-
-.nanad-dashboard-account {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.nanad-dashboard-account-label {
-  font-size: 0.7rem;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.nanad-dashboard-account-email {
-  font-size: 0.8rem;
-  color: #e5e7eb;
-}
-
-/* Tombol logout */
-.nanad-dashboard-logout {
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  background-color: rgba(15, 23, 42, 0.85);
-  color: #e5e7eb;
-  font-size: 0.75rem;
-  padding: 0.35rem 0.9rem;
-  cursor: pointer;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: background-color 0.15s ease, border-color 0.15s ease,
-    transform 0.12s ease, box-shadow 0.12s ease;
-}
-
-.nanad-dashboard-logout:hover {
-  background-color: rgba(30, 64, 175, 0.8);
-  border-color: rgba(191, 219, 254, 0.9);
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.85);
-  transform: translateY(-1px);
-}
-
-/* HERO / SELAMAT DATANG ================================= */
-
-.nanad-dashboard-welcome {
-  display: flex;
-  justify-content: space-between;
-  gap: 1.4rem;
-  margin-bottom: 1.6rem;
-}
-
 .nanad-dashboard-eyebrow {
-  font-size: 0.74rem;
-  letter-spacing: 0.18em;
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #93c5fd;
-  margin-bottom: 0.4rem;
+  color: var(--nanad-gold-soft);
 }
 
 .nanad-dashboard-heading {
-  font-size: 1.35rem;
+  margin: 0;
+  font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #fefce8;
-  margin-bottom: 0.4rem;
-}
-
-.nanad-dashboard-text {
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: #cbd5f5;
-  max-width: 520px;
-}
-
-/* STAT CARDS ============================================ */
-
-.nanad-dashboard-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
-}
-
-.nanad-dashboard-stat-card {
-  position: relative;
-  border-radius: 1.1rem;
-  padding: 0.8rem 0.9rem;
-  background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.96)),
-    radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 65%);
-  border: 1px solid rgba(148, 163, 184, 0.55);
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.85);
-  overflow: hidden;
-}
-
-.nanad-dashboard-stat-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(circle at top right, rgba(250, 204, 21, 0.22), transparent 60%);
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.nanad-dashboard-stat-number {
-  position: relative;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #fef9c3;
-}
-
-.nanad-dashboard-stat-label {
-  position: relative;
-  margin-top: 0.15rem;
-  font-size: 0.76rem;
-  color: #9ca3af;
-}
-
-/* KARTU PENJELASAN ====================================== */
-
-.nanad-dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-  margin-bottom: 1.5rem;
-}
-
-.nanad-dashboard-card {
-  border-radius: 1.1rem;
-  padding: 0.9rem 1rem;
-  background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.06), transparent 60%),
-    rgba(15, 23, 42, 0.96);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.9);
-}
-
-.nanad-dashboard-card h2 {
-  font-size: 0.92rem;
-  color: #fefce8;
-  margin-bottom: 0.25rem;
-}
-
-.nanad-dashboard-card p {
-  font-size: 0.8rem;
-  color: #cbd5f5;
-  line-height: 1.6;
-}
-
-/* TABEL RENCANA ========================================= */
-
-.nanad-dashboard-plan-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 0.7rem;
-}
-
-.nanad-dashboard-plan {
-  margin-bottom: 1.6rem;
-}
-
-.nanad-dashboard-table {
-  margin-top: 0.6rem;
-  border-radius: 1.1rem;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background-color: rgba(15, 23, 42, 0.98);
-  overflow: hidden;
-}
-
-/* bisa di-scroll horizontal di layar kecil, sudah ditambah sebelumnya */
-.nanad-dashboard-table-header,
-.nanad-dashboard-table-row {
-  display: grid;
-  grid-template-columns: 1.4fr 0.9fr 1.1fr 1.6fr 1.1fr;
-  gap: 0.5rem;
-  padding: 0.55rem 0.9rem;
-  font-size: 0.78rem;
-}
-
-.nanad-dashboard-table-header {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.55));
-  border-bottom: 1px solid rgba(51, 65, 85, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #cbd5f5;
-}
-
-.nanad-dashboard-table-row:nth-child(odd) {
-  background-color: rgba(15, 23, 42, 0.96);
-}
-
-.nanad-dashboard-table-row:nth-child(even) {
-  background-color: rgba(15, 23, 42, 0.92);
-}
-
-.nanad-dashboard-table-row:hover {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 1), rgba(30, 64, 175, 0.3));
-}
-
-/* Progress bar */
-.nanad-dashboard-progress-bar {
-  margin-top: 0.25rem;
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  background-color: rgba(30, 64, 175, 0.4);
-  overflow: hidden;
-}
-
-.nanad-dashboard-progress-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #facc15, #f97316);
-  box-shadow: 0 0 10px rgba(250, 204, 21, 0.8);
-}
-
-/* Aksi rencana */
-.nanad-dashboard-plan-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.nanad-dashboard-plan-detail,
-.nanad-dashboard-plan-edit,
-.nanad-dashboard-plan-quick,
-.nanad-dashboard-plan-delete {
-  border-radius: 999px;
-  font-size: 0.72rem;
-  padding: 0.22rem 0.65rem;
-  cursor: pointer;
-  border: 1px solid #374151;
-  background-color: transparent;
-  color: #e5e7eb;
-  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease,
-    transform 0.12s ease;
-}
-
-.nanad-dashboard-plan-detail:hover,
-.nanad-dashboard-plan-edit:hover,
-.nanad-dashboard-plan-quick:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-  transform: translateY(-0.5px);
-}
-
-.nanad-dashboard-plan-delete {
-  border-color: rgba(127, 29, 29, 0.9);
-  color: #fecaca;
-}
-
-.nanad-dashboard-plan-delete:hover {
-  background-color: rgba(127, 29, 29, 0.7);
-  color: #fef2f2;
-}
-
-/* Form rencana ========================================== */
-
-.nanad-dashboard-plan-form {
-  margin-top: 1.1rem;
-  padding: 1rem 1.1rem;
-  border-radius: 1.2rem;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background: radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 60%),
-    rgba(15, 23, 42, 0.97);
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.95);
-}
-
-.nanad-dashboard-plan-form h3 {
-  font-size: 0.95rem;
-  color: #fefce8;
-  margin-bottom: 0.65rem;
-}
-
-.nanad-dashboard-plan-form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.6rem;
-}
-
-.nanad-dashboard-plan-form-field label {
-  font-size: 0.75rem;
-  color: #cbd5f5;
-  display: block;
-  margin-bottom: 0.15rem;
-}
-
-.nanad-dashboard-plan-form-field input {
-  width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(51, 65, 85, 0.9);
-  padding: 0.42rem 0.6rem;
-  font-size: 0.8rem;
-  background-color: rgba(15, 23, 42, 0.96);
-  color: #e5e7eb;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-}
-
-.nanad-dashboard-plan-form-field input::placeholder {
-  color: #6b7280;
-}
-
-.nanad-dashboard-plan-form-field input:focus {
-  border-color: #facc15;
-  box-shadow:
-    0 0 0 1px rgba(250, 204, 21, 0.3),
-    0 0 0 4px rgba(250, 204, 21, 0.16);
-}
-
-.nanad-dashboard-plan-error {
-  margin-top: 0.4rem;
-  font-size: 0.75rem;
-  color: #fecaca;
-}
-
-.nanad-dashboard-plan-form-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.7rem;
-}
-
-/* Tombol utama (rencana, setoran, paket) */
-.nanad-dashboard-plan-submit,
-.nanad-dashboard-deposit-submit,
-.nanad-dashboard-package-use {
-  border-radius: 999px;
-  border: none;
-  padding: 0.45rem 1.25rem;
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  color: #0f172a;
-  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.45),
-    0 18px 45px rgba(15, 23, 42, 0.95);
-  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
-}
-
-.nanad-dashboard-plan-submit:hover,
-.nanad-dashboard-deposit-submit:hover,
-.nanad-dashboard-package-use:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.6),
-    0 22px 55px rgba(15, 23, 42, 0.96);
-  filter: brightness(1.02);
-}
-
-.nanad-dashboard-plan-submit:disabled,
-.nanad-dashboard-deposit-submit:disabled {
-  opacity: 0.6;
-  cursor: default;
-  box-shadow: none;
-}
-
-/* Tombol batal edit teks */
-.nanad-dashboard-plan-cancel,
-.nanad-dashboard-deposit-cancel {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.75rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-plan-cancel:hover,
-.nanad-dashboard-deposit-cancel:hover {
-  border-color: #9ca3af;
-  color: #f9fafb;
-}
-
-/* FORM SETORAN ========================================== */
-
-.nanad-dashboard-deposit-form {
-  margin-top: 1.1rem;
-  padding: 1rem 1.1rem;
-  border-radius: 1.2rem;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background-color: rgba(15, 23, 42, 0.98);
-}
-
-.nanad-dashboard-deposit-form h3 {
-  font-size: 0.95rem;
-  color: #fefce8;
-  margin-bottom: 0.25rem;
-}
-
-.nanad-dashboard-deposit-caption {
-  font-size: 0.78rem;
-  color: #9ca3af;
-  margin-bottom: 0.6rem;
-}
-
-.nanad-dashboard-deposit-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: 0.6rem;
-}
-
-.nanad-dashboard-deposit-field label {
-  font-size: 0.75rem;
-  color: #cbd5f5;
-  display: block;
-  margin-bottom: 0.15rem;
-}
-
-.nanad-dashboard-deposit-field input,
-.nanad-dashboard-deposit-field select {
-  width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(51, 65, 85, 0.9);
-  padding: 0.42rem 0.6rem;
-  font-size: 0.8rem;
-  background-color: rgba(15, 23, 42, 0.96);
-  color: #e5e7eb;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-}
-
-.nanad-dashboard-deposit-field input::placeholder {
-  color: #6b7280;
-}
-
-.nanad-dashboard-deposit-field input:focus,
-.nanad-dashboard-deposit-field select:focus {
-  border-color: #facc15;
-  box-shadow:
-    0 0 0 1px rgba(250, 204, 21, 0.3),
-    0 0 0 4px rgba(250, 204, 21, 0.16);
-}
-
-.nanad-dashboard-deposit-error {
-  margin-top: 0.4rem;
-  font-size: 0.75rem;
-  color: #fecaca;
-}
-
-.nanad-dashboard-deposit-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.7rem;
-}
-
-/* RIWAYAT SETORAN ======================================= */
-
-.nanad-dashboard-deposits-history {
-  margin-top: 1.2rem;
-}
-
-.nanad-dashboard-deposits-history h3 {
-  font-size: 0.9rem;
-  color: #fefce8;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-dashboard-deposits-filter {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.78rem;
-}
-
-.nanad-dashboard-deposits-filter span {
-  color: #9ca3af;
-}
-
-.nanad-dashboard-deposits-filter select {
-  border-radius: 999px;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background-color: rgba(15, 23, 42, 0.96);
-  font-size: 0.78rem;
-  padding: 0.28rem 0.7rem;
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-deposits-export {
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background-color: transparent;
-  font-size: 0.72rem;
-  padding: 0.27rem 0.8rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposits-export:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-/* Tabel riwayat */
-.nanad-dashboard-deposits-table {
-  border-radius: 1rem;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background-color: rgba(15, 23, 42, 0.98);
-  overflow: hidden;
-}
-
-.nanad-dashboard-deposits-header,
-.nanad-dashboard-deposits-row {
-  display: grid;
-  grid-template-columns: 1.1fr 1.4fr 1fr 1.4fr 1fr;
-  gap: 0.5rem;
-  padding: 0.55rem 0.9rem;
-  font-size: 0.78rem;
-}
-
-.nanad-dashboard-deposits-header {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.55));
-  border-bottom: 1px solid rgba(51, 65, 85, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #cbd5f5;
-}
-
-.nanad-dashboard-deposits-row:nth-child(odd) {
-  background-color: rgba(15, 23, 42, 0.96);
-}
-
-.nanad-dashboard-deposits-row:nth-child(even) {
-  background-color: rgba(15, 23, 42, 0.92);
-}
-
-.nanad-dashboard-deposits-row:hover {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 1), rgba(30, 64, 175, 0.35));
-}
-
-.nanad-dashboard-deposit-row-actions {
-  display: flex;
-  gap: 0.3rem;
-}
-
-/* Tombol edit / hapus setoran */
-.nanad-dashboard-deposit-edit {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background-color: transparent;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.55rem;
-  color: #e5e7eb;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposit-edit:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-.nanad-dashboard-deposit-delete {
-  border-radius: 999px;
-  border: 1px solid rgba(127, 29, 29, 0.9);
-  background-color: transparent;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.65rem;
-  color: #fecaca;
-  cursor: pointer;
-}
-
-.nanad-dashboard-deposit-delete:hover {
-  background-color: rgba(127, 29, 29, 0.7);
-  color: #fef2f2;
-}
-
-/* PAKET SIMULASI ======================================= */
-
-.nanad-dashboard-packages {
-  margin-top: 1.8rem;
-}
-
-.nanad-dashboard-packages-header h2 {
-  font-size: 0.98rem;
-  color: #fefce8;
-  margin-bottom: 0.2rem;
-}
-
-.nanad-dashboard-packages-header p {
-  font-size: 0.8rem;
-  color: #cbd5f5;
-}
-
-.nanad-dashboard-packages-grid {
-  margin-top: 0.8rem;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.nanad-dashboard-package-card {
-  border-radius: 1.2rem;
-  padding: 0.9rem 1rem;
-  background: radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 60%),
-    rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.95);
-}
-
-.nanad-dashboard-package-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.35rem;
-}
-
-.nanad-dashboard-package-name {
-  font-size: 0.86rem;
-  color: #fefce8;
-}
-
-.nanad-dashboard-package-badge {
-  border-radius: 999px;
-  border: 1px solid rgba(251, 191, 36, 0.7);
-  font-size: 0.7rem;
-  padding: 0.15rem 0.55rem;
-  color: #fef9c3;
-}
-
-.nanad-dashboard-package-desc {
-  font-size: 0.78rem;
-  color: #cbd5f5;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-dashboard-package-rows {
-  font-size: 0.78rem;
-  margin-bottom: 0.6rem;
-}
-
-.nanad-dashboard-package-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.2rem 0;
-}
-
-.nanad-dashboard-package-row dt {
-  color: #9ca3af;
-}
-
-.nanad-dashboard-package-row dd {
-  color: #e5e7eb;
-}
-
-.nanad-dashboard-package-note {
-  margin-top: 0.4rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
-.nanad-dashboard-package-disclaimer {
-  margin-top: 0.9rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
-/* DETAIL RENCANA (halaman /plans/[id]) ================== */
-
-.nanad-plan-detail {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
-  gap: 1.2rem;
-  margin-top: 1.2rem;
-}
-
-.nanad-plan-detail-main {
-  padding: 1rem 1.2rem;
-  border-radius: 1.4rem;
-  border: 1px solid rgba(55, 65, 81, 0.95);
-  background:
-    radial-gradient(circle at top left, rgba(250, 204, 21, 0.09), transparent 60%),
-    rgba(15, 23, 42, 0.98);
-  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.95);
-}
-
-.nanad-plan-detail-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #fefce8;
-  margin-bottom: 0.2rem;
-}
-
-.nanad-plan-detail-sub {
-  font-size: 0.78rem;
-  color: #e5e7eb;
-  margin-bottom: 0.7rem;
-}
-
-.nanad-plan-detail-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
-}
-
-.nanad-plan-detail-summary-item span {
-  font-size: 0.65rem;
-  color: #9ca3af;
-  display: block;
-}
-
-.nanad-plan-detail-summary-item strong {
-  font-size: 0.8rem;
-  color: #fef3c7;
-}
-
-.nanad-plan-detail-footnote {
-  margin-top: 0.4rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
-.nanad-plan-detail-side {
-  padding: 0.9rem 1rem;
-  border-radius: 1.4rem;
-  border: 1px solid rgba(55, 65, 81, 0.95);
-  background-color: rgba(15, 23, 42, 0.98);
-  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.9);
-}
-
-.nanad-plan-detail-side h2 {
-  font-size: 0.9rem;
-  color: #fef3c7;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-plan-detail-side-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-  font-size: 0.72rem;
-}
-
-.nanad-plan-detail-side-grid span {
-  display: block;
-  color: #9ca3af;
-}
-
-.nanad-plan-detail-side-grid strong {
-  display: block;
-  color: #e5e7eb;
-}
-
-.nanad-plan-detail-side-note {
-  margin-top: 0.5rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
-.nanad-plan-detail-history {
-  margin-top: 1.4rem;
-}
-
-.nanad-plan-detail-history h2 {
-  font-size: 0.9rem;
-  color: #fef3c7;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-plan-detail-empty {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-/* RESPONSIVE TWEAK (supaya tetap cakep di HP) =========== */
-
-@media (max-width: 1024px) {
-  .nanad-dashboard-shell {
-    padding: 1.5rem 1.4rem;
-  }
-
-  .nanad-dashboard-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .nanad-dashboard-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-plan-detail {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .nanad-dashboard-page {
-    padding: 1.8rem 0.9rem;
-  }
-
-  .nanad-dashboard-shell {
-    padding: 1.3rem 1.1rem 1.5rem;
-    border-radius: 1.4rem;
-  }
-
-  .nanad-dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-
-  .nanad-dashboard-header-right {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-  }
-
-  .nanad-dashboard-stats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-dashboard-plan-form-grid,
-  .nanad-dashboard-deposit-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-plan-detail-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .nanad-dashboard-packages-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-dashboard-plan-actions,
-  .nanad-dashboard-deposit-row-actions {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 600px) {
-  .nanad-dashboard-heading {
-    font-size: 1.1rem;
-  }
-
-  .nanad-dashboard-text {
-    font-size: 0.8rem;
-  }
-
-  .nanad-dashboard-card h2 {
-    font-size: 0.9rem;
-  }
-
-  .nanad-dashboard-table-header,
-  .nanad-dashboard-table-row,
-  .nanad-dashboard-deposits-header,
-  .nanad-dashboard-deposits-row {
-    font-size: 0.76rem;
-  }
-}
-
-/* === FRAME PREMIUM GLOW · FIX (tidak menutup konten) ==== */
-
-.nanad-dashboard-shell {
-  position: relative;
-  overflow: hidden;
-}
-
-/* cuma garis emas tipis, TANPA background yang nutup isi */
-.nanad-dashboard-shell::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(250, 204, 21, 0.35);
-  pointer-events: none;
-}
-
-/* highlight halus di sisi atas, jauh lebih tipis */
-.nanad-dashboard-shell::after {
-  content: "";
-  position: absolute;
-  top: -12%;
-  left: 8%;
-  width: 45%;
-  height: 50px;
-  background: radial-gradient(circle at top, rgba(250, 250, 210, 0.18), transparent 75%);
-  opacity: 0.4;
-  pointer-events: none;
-  filter: blur(1px);
-}
-
-/* === ANIMASI HALUS · GOLD PULSE ========================== */
-
-@keyframes nanadGoldPulse {
-  0% {
-    box-shadow:
-      0 0 0 1px rgba(161, 98, 7, 0.32),
-      0 12px 30px rgba(15, 23, 42, 0.9);
-    transform: translateY(0);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1px rgba(250, 204, 21, 0.7),
-      0 16px 40px rgba(15, 23, 42, 0.9);
-    transform: translateY(-1px);
-  }
-  100% {
-    box-shadow:
-      0 0 0 1px rgba(161, 98, 7, 0.32),
-      0 12px 30px rgba(15, 23, 42, 0.9);
-    transform: translateY(0);
-  }
-}
-
-.nanad-dashboard-logo {
-  animation: nanadGoldPulse 9s ease-in-out infinite;
-}
-
-/* badge Demo mode berasa “status live” */
-@keyframes nanadBadgeGlow {
-  0% {
-    box-shadow:
-      0 0 0 1px rgba(161, 98, 7, 0.35),
-      0 10px 25px rgba(15, 23, 42, 0.9);
-    filter: brightness(1);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1px rgba(250, 204, 21, 0.8),
-      0 14px 35px rgba(15, 23, 42, 0.95);
-    filter: brightness(1.05);
-  }
-  100% {
-    box-shadow:
-      0 0 0 1px rgba(161, 98, 7, 0.35),
-      0 10px 25px rgba(15, 23, 42, 0.9);
-    filter: brightness(1);
-  }
-}
-
-.nanad-dashboard-demo-badge {
-  animation: nanadBadgeGlow 12s ease-in-out infinite;
-}
-
-/* === DIVIDER ELEGAN ANTAR SECTION ======================== */
-
-.nanad-dashboard-plan,
-.nanad-dashboard-packages {
-  position: relative;
-}
-
-.nanad-dashboard-plan::before,
-.nanad-dashboard-packages::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 1px;
-  margin: 0.9rem 0 0.8rem;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(148, 163, 184, 0.4),
-    rgba(250, 204, 21, 0.65),
-    rgba(148, 163, 184, 0.4),
-    transparent
-  );
-  opacity: 0.85;
-}
-
-/* === TIPOGRAFI LABEL · FEEL PRIVATE BANK ================ */
-
-.nanad-dashboard-stat-label,
-.nanad-dashboard-account-label,
-.nanad-dashboard-table-header,
-.nanad-dashboard-deposits-header {
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-
-/* angka keuangan sedikit lebih “ketok” */
-.nanad-dashboard-stat-number,
-.nanad-dashboard-table-row div:nth-child(3),
-.nanad-dashboard-table-row div:nth-child(4),
-.nanad-dashboard-deposits-row div:nth-child(3) {
-  font-variant-numeric: tabular-nums;
-}
-
-/* hover di angka keuangan pada row */
-.nanad-dashboard-table-row div:nth-child(3):hover,
-.nanad-dashboard-table-row div:nth-child(4):hover,
-.nanad-dashboard-deposits-row div:nth-child(3):hover {
-  color: #fef9c3;
-}
-
-/* === SCROLLBAR HALUS ==================================== */
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.5), rgba(30, 64, 175, 0.8));
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(250, 204, 21, 0.8), rgba(30, 64, 175, 0.9));
-}
-
-/* =======================================================
-   NANAD INVEST · PUBLIC LANDING
-   ======================================================= */
-
-.nanad-landing-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 2.4rem 1.4rem;
-  background:
-    radial-gradient(circle at top left, rgba(250, 204, 21, 0.12), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
-    #020617;
-  color: #e5e7eb;
-}
-
-.nanad-landing-shell {
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  border-radius: 1.8rem;
-  padding: 1.8rem 1.8rem 2.1rem;
-  background:
-    radial-gradient(circle at top left, rgba(250, 204, 21, 0.08), transparent 60%),
-    rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.75),
-    0 0 0 1px rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(16px);
-}
-
-/* NAVBAR */
-.nanad-landing-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.4rem;
-  margin-bottom: 2.1rem;
-}
-
-.nanad-landing-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.nanad-landing-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  font-size: 0.9rem;
-  color: #0f172a;
-  background:
-    radial-gradient(circle at 20% 0, #fef9c3, #facc15 55%, #f97316 100%);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.35),
-    0 12px 30px rgba(15, 23, 42, 0.95);
-}
-
-.nanad-landing-brand-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #fefce8;
-}
-
-.nanad-landing-brand-sub {
-  font-size: 0.78rem;
-  color: #9ca3af;
-}
-
-.nanad-landing-nav {
-  display: flex;
-  align-items: center;
-  gap: 1.3rem;
-}
-
-.nanad-landing-nav-link {
-  font-size: 0.78rem;
-  color: #cbd5f5;
-  text-decoration: none;
-}
-
-.nanad-landing-nav-link:hover {
-  color: #fefce8;
-}
-
-.nanad-landing-nav-cta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nanad-landing-nav-ghost,
-.nanad-landing-nav-primary {
-  font-size: 0.78rem;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
-  text-decoration: none;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.nanad-landing-nav-ghost {
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  background-color: transparent;
-  color: #e5e7eb;
-}
-
-.nanad-landing-nav-ghost:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-.nanad-landing-nav-primary {
-  border: none;
-  color: #0f172a;
-  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.5),
-    0 16px 40px rgba(15, 23, 42, 0.95);
-}
-
-/* HERO */
-.nanad-landing-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 1.8rem;
-  margin-bottom: 2.2rem;
-}
-
-.nanad-landing-hero-left {
-  max-width: 560px;
-}
-
-.nanad-landing-eyebrow {
-  font-size: 0.74rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #93c5fd;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-landing-heading {
-  font-size: 1.7rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: #fefce8;
-  margin-bottom: 0.5rem;
-}
-
-.nanad-landing-heading span {
-  display: block;
-  background: linear-gradient(135deg, #fef9c3, #facc15, #f97316);
+  background: linear-gradient(to right, #f9fafb, #e5e7eb, #f5d17a);
   -webkit-background-clip: text;
   color: transparent;
 }
 
-.nanad-landing-hero-text {
-  font-size: 0.88rem;
-  line-height: 1.7;
-  color: #cbd5f5;
-  margin-bottom: 0.9rem;
-}
-
-.nanad-landing-hero-cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-bottom: 0.6rem;
-}
-
-.nanad-landing-cta-primary,
-.nanad-landing-cta-secondary {
-  text-decoration: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.3rem;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.nanad-landing-cta-primary {
-  border: none;
-  color: #0f172a;
-  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.5),
-    0 18px 45px rgba(15, 23, 42, 0.96);
-}
-
-.nanad-landing-cta-secondary {
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  color: #e5e7eb;
-  background: transparent;
-}
-
-.nanad-landing-cta-secondary:hover {
-  border-color: rgba(191, 219, 254, 0.9);
-  color: #bfdbfe;
-}
-
-.nanad-landing-hero-note {
-  font-size: 0.76rem;
-  color: #9ca3af;
-}
-
-/* HERO PREVIEW CARD */
-.nanad-landing-hero-right {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.nanad-landing-preview-card {
-  width: 100%;
-  max-width: 360px;
-  border-radius: 1.4rem;
-  padding: 1rem 1rem 0.9rem;
-  background:
-    radial-gradient(circle at top, rgba(250, 204, 21, 0.12), transparent 65%),
-    rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.95);
-  font-size: 0.78rem;
-}
-
-.nanad-landing-preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.6rem;
-  color: #cbd5f5;
-}
-
-.nanad-landing-demo-pill {
-  border-radius: 999px;
-  padding: 0.15rem 0.6rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  background: rgba(250, 204, 21, 0.16);
-  border: 1px solid rgba(250, 204, 21, 0.6);
-  color: #fefce8;
-}
-
-.nanad-landing-preview-stats {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
-  gap: 0.6rem;
-  margin-bottom: 0.7rem;
-}
-
-.nanad-landing-preview-stat span {
-  display: block;
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.nanad-landing-preview-stat strong {
-  display: block;
-  margin-top: 0.1rem;
-  color: #fef9c3;
+.nanad-dashboard-body {
+  margin: 0;
   font-size: 0.86rem;
-}
-
-.nanad-landing-preview-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 0.7rem;
-}
-
-.nanad-landing-preview-row-title {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.74rem;
-  color: #e5e7eb;
-}
-
-.nanad-landing-preview-row-title span {
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.nanad-landing-preview-progress {
-  margin-top: 0.15rem;
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  background-color: rgba(30, 64, 175, 0.45);
-  overflow: hidden;
-}
-
-.nanad-landing-preview-progress > div {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #facc15, #f97316);
-  box-shadow: 0 0 10px rgba(250, 204, 21, 0.85);
-}
-
-.nanad-landing-preview-footnote {
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-/* SECTION GENERIC */
-.nanad-landing-section {
-  margin-bottom: 2rem;
-}
-
-.nanad-landing-section-soft {
-  border-radius: 1.3rem;
-  padding: 1.1rem 1.1rem 1.2rem;
-  background-color: rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-}
-
-.nanad-landing-section-header h2 {
-  font-size: 1.05rem;
-  color: #fefce8;
-  margin-top: 0.2rem;
-}
-
-/* VALUE GRID */
-.nanad-landing-value-grid {
-  margin-top: 0.9rem;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.nanad-landing-value-card {
-  border-radius: 1.1rem;
-  padding: 0.85rem 0.9rem;
-  background-color: rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.95);
-  font-size: 0.8rem;
-}
-
-.nanad-landing-value-card h3 {
-  font-size: 0.9rem;
-  color: #fefce8;
-  margin-bottom: 0.3rem;
-}
-
-.nanad-landing-value-card p {
-  color: #cbd5f5;
   line-height: 1.6;
+  color: var(--nanad-text-muted);
 }
 
-/* STEPS */
-.nanad-landing-steps {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
+/* Stat cards */
 
-.nanad-landing-step {
-  border-radius: 1.1rem;
-  padding: 0.85rem 0.9rem;
-  background-color: rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  display: flex;
-  gap: 0.6rem;
-  font-size: 0.8rem;
-}
-
-.nanad-landing-step-number {
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #facc15;
-  margin-top: 0.2rem;
-}
-
-.nanad-landing-step h3 {
-  font-size: 0.9rem;
-  color: #fefce8;
-  margin-bottom: 0.2rem;
-}
-
-.nanad-landing-step p {
-  color: #cbd5f5;
-}
-
-/* SAFETY GRID */
-.nanad-landing-safety-grid {
+.nanad-dashboard-stat-grid {
   margin-top: 0.9rem;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 0.9rem;
 }
 
-.nanad-landing-safety-card {
-  border-radius: 1rem;
-  padding: 0.85rem 0.9rem;
-  background-color: rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  font-size: 0.8rem;
-}
-
-.nanad-landing-safety-card h3 {
-  font-size: 0.9rem;
-  color: #fefce8;
-  margin-bottom: 0.25rem;
-}
-
-.nanad-landing-safety-card p {
-  color: #cbd5f5;
-}
-
-/* CTA BOTTOM */
-.nanad-landing-bottom-cta {
-  margin-top: 1.6rem;
-}
-
-.nanad-landing-bottom-cta-inner {
-  border-radius: 1.4rem;
-  padding: 1rem 1.1rem;
-  background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.15), transparent 65%),
-    rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(250, 204, 21, 0.6);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.nanad-landing-bottom-cta-inner h2 {
-  font-size: 1rem;
-  color: #fefce8;
-  margin-bottom: 0.2rem;
-}
-
-.nanad-landing-bottom-cta-inner p {
-  font-size: 0.8rem;
-  color: #e5e7eb;
-}
-
-.nanad-landing-bottom-cta-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-/* FOOTER */
-.nanad-landing-footer {
-  margin-top: 1.4rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid rgba(51, 65, 85, 1);
-  font-size: 0.74rem;
-  color: #9ca3af;
-  display: flex;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .nanad-landing-shell {
-    padding: 1.6rem 1.4rem 1.9rem;
-  }
-
-  .nanad-landing-hero {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
-  }
-
-  .nanad-landing-value-grid,
-  .nanad-landing-steps,
-  .nanad-landing-safety-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .nanad-landing-page {
-    padding: 1.8rem 1rem;
-  }
-
-  .nanad-landing-shell {
-    padding: 1.4rem 1.2rem 1.7rem;
-    border-radius: 1.5rem;
-  }
-
-  .nanad-landing-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.9rem;
-  }
-
-  .nanad-landing-nav {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-  }
-
-  .nanad-landing-hero {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-landing-hero-right {
-    justify-content: flex-start;
-  }
-
-  .nanad-landing-value-grid,
-  .nanad-landing-steps,
-  .nanad-landing-safety-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-landing-bottom-cta-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .nanad-landing-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-.nanad-dashboard-footer {
-  margin-top: 1.4rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid rgba(51, 65, 85, 1);
-  font-size: 0.75rem;
-  color: #9ca3af;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.nanad-landing-footer-left {
+.nanad-dashboard-stat-card {
+  border-radius: var(--nanad-radius-lg);
+  padding: 0.9rem 1rem;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(15, 23, 42, 0.9)),
+    radial-gradient(circle at top, rgba(245, 209, 122, 0.18), transparent 60%);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  box-shadow: var(--nanad-shadow-subtle);
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 }
 
-.nanad-landing-footer-links {
-  display: flex;
-  gap: 0.75rem;
-  font-size: 0.76rem;
+.nanad-dashboard-stat-label {
+  font-size: 0.78rem;
+  color: var(--nanad-text-soft);
 }
 
-.nanad-landing-footer-links a {
-  color: #bfdbfe;
-  text-decoration: none;
+.nanad-dashboard-stat-number {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--nanad-silver-soft);
 }
 
-.nanad-landing-footer-links a:hover {
-  color: #fefce8;
+/* Grid section */
+
+.nanad-dashboard-table-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.15fr);
+  gap: 1.3rem;
 }
 
-/* === NANAD INVEST · CATAT SETORAN & RIWAYAT =============== */
+@media (max-width: 900px) {
+  .nanad-dashboard-table-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
-/* Card kanan (catat setoran + riwayat) */
+/* Card utama (deposit/withdraw/list) */
+
 .nanad-dashboard-deposits {
-  border-radius: 1.4rem;
-  padding: 1rem 1.1rem 1.2rem;
-  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), transparent 55%),
-    rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
-  font-size: 0.82rem;
-  color: #e5e7eb;
+  border-radius: var(--nanad-radius-xl);
+  padding: 1.1rem 1.1rem 1.2rem;
+  background:
+    radial-gradient(circle at top left, rgba(248, 250, 252, 0.08), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(148, 163, 184, 0.12), transparent 55%),
+    var(--nanad-card-soft);
+  border: 1px solid var(--nanad-border);
+  box-shadow: var(--nanad-shadow-subtle);
 }
 
 .nanad-dashboard-deposits-header h3 {
-  font-size: 0.9rem;
-  margin-bottom: 0.15rem;
-  color: #fefce8;
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--nanad-silver-soft);
 }
 
 .nanad-dashboard-deposits-header p {
+  margin: 0.25rem 0 0;
   font-size: 0.8rem;
-  color: #cbd5f5;
+  color: var(--nanad-text-soft);
 }
 
-/* Form setoran */
+/* Form deposit / withdraw */
+
 .nanad-dashboard-deposit-form {
-  margin-top: 0.8rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
-  border: 1px solid rgba(55, 65, 81, 0.9);
+  margin-top: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
 }
 
-.nanad-dashboard-deposit-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
-}
-
-.nanad-dashboard-deposit-form label {
+.nanad-dashboard-deposit-amount {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.78rem;
-  color: #cbd5f5;
-}
-
-.nanad-dashboard-deposit-form input,
-.nanad-dashboard-deposit-form select {
-  border-radius: 999px;
-  border: 1px solid rgba(51, 65, 85, 1);
-  background-color: rgba(15, 23, 42, 1);
-  padding: 0.4rem 0.75rem;
+  gap: 0.28rem;
   font-size: 0.8rem;
-  color: #e5e7eb;
+  color: var(--nanad-text-soft);
+}
+
+.nanad-dashboard-deposit-amount input {
+  border-radius: var(--nanad-radius-pill);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background:
+    radial-gradient(circle at top, rgba(248, 250, 252, 0.06), rgba(15, 23, 42, 1));
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8rem;
+  color: var(--nanad-silver-soft);
   outline: none;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.85);
 }
 
-.nanad-dashboard-deposit-form input::placeholder {
-  color: #6b7280;
+.nanad-dashboard-deposit-amount input::placeholder {
+  color: rgba(148, 163, 184, 0.78);
 }
 
-.nanad-dashboard-deposit-form input:focus,
-.nanad-dashboard-deposit-form select:focus {
-  border-color: rgba(191, 219, 254, 0.95);
-  box-shadow: 0 0 0 1px rgba(191, 219, 254, 0.75);
+.nanad-dashboard-deposit-amount input:focus {
+  border-color: var(--nanad-gold-soft);
+  box-shadow: 0 0 0 1px rgba(245, 209, 122, 0.5);
 }
 
-/* supaya input tanggal tidak putih polos */
-.nanad-dashboard-deposit-form input[type="date"] {
-  color-scheme: dark;
+.nanad-dashboard-deposit-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+  gap: 0.7rem;
 }
 
-/* Baris nominal sendiri biar lebar */
-.nanad-dashboard-deposit-amount {
-  width: 100%;
+.nanad-dashboard-deposit-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  font-size: 0.8rem;
+  color: var(--nanad-text-soft);
 }
 
-/* Tombol simpan setoran */
-.nanad-dashboard-deposit-submit {
-  align-self: flex-start;
-  margin-top: 0.1rem;
-  border: none;
-  border-radius: 999px;
-  padding: 0.45rem 1.4rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 500;
-  cursor: pointer;
-  color: #0f172a;
-  background: linear-gradient(135deg, #fef9c3, #fde68a, #facc15, #f97316);
-  box-shadow:
-    0 0 0 1px rgba(161, 98, 7, 0.55),
-    0 16px 36px rgba(15, 23, 42, 0.96);
-}
-
-.nanad-dashboard-deposit-submit:hover {
-  filter: brightness(1.05);
-}
-
-/* Riwayat setoran */
-.nanad-dashboard-deposits-list {
-  margin-top: 0.9rem;
-}
-
-.nanad-dashboard-deposits-list h4 {
-  font-size: 0.86rem;
-  margin-bottom: 0.4rem;
-  color: #fefce8;
-}
+/* List transaksi */
 
 .nanad-dashboard-deposits-rows {
-  border-radius: 0.9rem;
-  overflow: hidden;
-  border: 1px solid rgba(30, 64, 175, 0.7);
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 .nanad-dashboard-deposits-row {
   display: grid;
-  grid-template-columns: 0.9fr 1.2fr 1.2fr;
-  gap: 0.4rem;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.78rem;
-  background-color: rgba(15, 23, 42, 0.98);
+  grid-template-columns: 140px minmax(0, 1.8fr) 90px;
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+  border: 1px solid rgba(31, 41, 55, 0.98);
 }
 
-.nanad-dashboard-deposits-row:nth-child(2n) {
-  background: linear-gradient(
-    90deg,
-    rgba(15, 23, 42, 0.98),
-    rgba(30, 64, 175, 0.65)
-  );
+.nanad-dashboard-deposits-row > div:first-child {
+  font-size: 0.76rem;
+  color: var(--nanad-text-soft);
 }
 
-.nanad-dashboard-deposits-row div:nth-child(3) {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: #e5e7eb;
+.nanad-dashboard-deposits-row > div:nth-child(2) {
+  font-size: 0.8rem;
+  color: var(--nanad-silver-soft);
 }
 
-/* Responsive: form & tabel rapi di HP */
-@media (max-width: 768px) {
-  .nanad-dashboard-deposit-row {
+.nanad-dashboard-deposits-row > div:last-child {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--nanad-gold-soft);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Footer */
+
+.nanad-dashboard-footer {
+  margin-top: 0.4rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(30, 64, 175, 0.35);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--nanad-text-soft);
+}
+
+/* ================== LANDING PAGE ================== */
+
+.nanad-landing-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1.25rem;
+  background: radial-gradient(circle at top, #020617 0%, #000 55%);
+}
+
+.nanad-landing-shell {
+  width: 100%;
+  max-width: 1120px;
+  border-radius: 2rem;
+  padding: 1.9rem 1.9rem 2.1rem;
+  background:
+    radial-gradient(circle at top left, rgba(245, 209, 122, 0.15), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(148, 163, 184, 0.18), transparent 55%),
+    linear-gradient(150deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.99));
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow: var(--nanad-shadow-soft);
+  backdrop-filter: blur(30px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.nanad-landing-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 1.8rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .nanad-landing-main {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .nanad-dashboard-deposit-submit {
-    width: 100%;
-    text-align: center;
-  }
-
-  .nanad-dashboard-deposits-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nanad-dashboard-deposits-row div:nth-child(3) {
-    text-align: left;
-  }
 }
 
-/* Floating button WhatsApp Pengaduan */
+/* Auth */
+
+.nanad-auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1.25rem;
+  background: radial-gradient(circle at top, #020617 0%, #000 55%);
+}
+
+.nanad-auth-shell {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 1.8rem;
+  padding: 1.6rem 1.6rem 1.8rem;
+  background:
+    radial-gradient(circle at top left, rgba(245, 209, 122, 0.16), transparent 55%),
+    linear-gradient(150deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.99));
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow: var(--nanad-shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.nanad-auth-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background:
+    conic-gradient(from 220deg, #f9fafb, #f5d17a, #cbd5f5, #f9fafb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #020617;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.9);
+}
+
+.nanad-auth-title {
+  font-size: 1.4rem;
+  margin: 0.3rem 0 0;
+  font-weight: 600;
+  background: linear-gradient(to right, #f9fafb, #e5e7eb, #f5d17a);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.nanad-auth-sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.84rem;
+  color: var(--nanad-text-muted);
+}
+
+.nanad-auth-form {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.nanad-auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--nanad-text-soft);
+}
+
+.nanad-auth-field input {
+  border-radius: var(--nanad-radius-pill);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background:
+    radial-gradient(circle at top, rgba(248, 250, 252, 0.06), rgba(15, 23, 42, 1));
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  color: var(--nanad-silver-soft);
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.nanad-auth-field input::placeholder {
+  color: rgba(148, 163, 184, 0.78);
+}
+
+.nanad-auth-field input:focus {
+  border-color: var(--nanad-gold-soft);
+  box-shadow: 0 0 0 1px rgba(245, 209, 122, 0.55);
+}
+
+.nanad-auth-footer {
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+  color: var(--nanad-text-soft);
+}
+
+/* ================== WA FLOATING BUTTON ================== */
+
 .nanad-wa-fab {
   position: fixed;
   right: 1.5rem;
@@ -4501,21 +527,55 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.4rem;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   text-decoration: none;
-  color: #0b1120;
-  background: radial-gradient(circle at top, #fbbf24, #facc15, #f59e0b);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(250, 204, 21, 0.8);
+  color: #020617;
+  background: linear-gradient(135deg, #f9fafb, #f5d17a, #e5e7eb);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(245, 209, 122, 0.9);
 }
 
 .nanad-wa-fab:hover {
   transform: translateY(-1px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-  filter: brightness(1.05);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 1);
+  filter: brightness(1.04);
+}
+
+/* Responsif */
+
+@media (max-width: 640px) {
+  .nanad-dashboard-shell {
+    padding: 1.35rem 1.15rem 1.5rem;
+    border-radius: 1.6rem;
+  }
+
+  .nanad-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nanad-dashboard-table-section {
+    gap: 1rem;
+  }
+
+  .nanad-dashboard-deposits-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+
+  .nanad-landing-shell {
+    padding: 1.5rem 1.2rem 1.7rem;
+    border-radius: 1.7rem;
+  }
+
+  .nanad-wa-fab {
+    right: 1rem;
+    bottom: 1rem;
+    padding-inline: 1rem;
+  }
 }
