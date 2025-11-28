@@ -15,8 +15,7 @@ function formatCurrency(value) {
 
 // 🔐 HANYA email di daftar ini yang boleh buka halaman admin
 const ADMIN_EMAILS = [
-  "sonnnn603@gmail.com", // TODO: GANTI dengan email login Bang Son
-  // "admin-lain@contoh.com",
+  "sonnnn603@gmail.com", // email login Bang Son
 ];
 
 export default function AdminTransactionsPage() {
@@ -75,7 +74,7 @@ export default function AdminTransactionsPage() {
         setUser(user);
 
         // 🔐 Cek: kalau email TIDAK ada di ADMIN_EMAILS -> balikin ke dashboard
-        if (!user.email || !sonnnn603@gmail.com.includes(user.email)) {
+        if (!user.email || !ADMIN_EMAILS.includes(user.email)) {
           router.push("/");
           return;
         }
