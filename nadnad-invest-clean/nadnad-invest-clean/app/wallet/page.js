@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../../lib/supabaseClient";
+import supabase from "../../lib/supabaseClient";
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
@@ -49,7 +49,6 @@ export default function WalletPage() {
 
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Ambil transaksi untuk wallet tertentu
   const loadTransactions = async (walletId) => {
     const { data, error } = await supabase
       .from("wallet_transactions")
@@ -76,7 +75,6 @@ export default function WalletPage() {
       setLoadError("");
 
       try {
-        // 1. Cek user login
         const {
           data: { user },
           error,
@@ -93,7 +91,7 @@ export default function WalletPage() {
 
         setUser(user);
 
-        // 2. Ambil / buat wallet
+        // Ambil / buat wallet
         const { data: existing, error: walletErr } = await supabase
           .from("wallets")
           .select("*")
@@ -141,7 +139,7 @@ export default function WalletPage() {
     init();
   }, [router]);
 
-  // === Pengajuan DEPOSIT (dengan rekening tujuan + upload bukti) ===
+  // === Pengajuan DEPOSIT (rekening + bukti) ===
   const handleCreateDeposit = async (e) => {
     e.preventDefault();
     if (!wallet || !user) return;
@@ -157,7 +155,6 @@ export default function WalletPage() {
       return;
     }
 
-    // Cari label rekening berdasarkan id
     const targetObj =
       DEPOSIT_TARGETS.find((t) => t.id === depositTarget) || null;
     const targetLabel = targetObj?.label || depositTarget;
@@ -165,7 +162,7 @@ export default function WalletPage() {
     try {
       setActionLoading(true);
 
-      // 1️⃣ Upload bukti transfer (jika ada file)
+      // Upload bukti (jika ada)
       let proofImageUrl = null;
 
       if (depositProofFile) {
@@ -174,7 +171,7 @@ export default function WalletPage() {
         const filePath = `${user.id}/${Date.now()}-deposit.${ext}`;
 
         const { error: uploadErr } = await supabase.storage
-          .from("deposit_proofs") // pastikan nama bucket sama
+          .from("deposit_proofs")
           .upload(filePath, depositProofFile, {
             cacheControl: "3600",
             upsert: false,
@@ -185,7 +182,6 @@ export default function WalletPage() {
           alert(
             "Gagal mengunggah bukti transfer. Coba lagi atau kirim tanpa bukti."
           );
-          // boleh lanjut tanpa bukti, jadi tidak langsung return
         } else {
           const { data: publicData } = supabase.storage
             .from("deposit_proofs")
@@ -194,7 +190,6 @@ export default function WalletPage() {
         }
       }
 
-      // 2️⃣ Catat pengajuan deposit (status PENDING, saldo belum berubah)
       const before = wallet.balance ?? 0;
       const after = before + amount;
 
@@ -217,7 +212,7 @@ export default function WalletPage() {
       setDepositAmount("");
       setDepositProofFile(null);
 
-      await loadTransactions(wallet.id); // saldo tetap sama, hanya riwayat yang nambah
+      await loadTransactions(wallet.id);
       alert(
         "Pengajuan deposit terkirim dan menunggu persetujuan admin.\nAdmin akan mengecek mutasi & bukti transfer."
       );
@@ -229,7 +224,7 @@ export default function WalletPage() {
     }
   };
 
-  // === Pengajuan WITHDRAW (PENDING, saldo belum berubah) ===
+  // === Pengajuan WITHDRAW (PENDING) ===
   const handleCreateWithdraw = async (e) => {
     e.preventDefault();
     if (!wallet) return;
@@ -395,8 +390,8 @@ export default function WalletPage() {
               <h3>Ajukan deposit</h3>
               <p>
                 Lakukan transfer ke salah satu rekening Nanad Invest di bawah
-                ini, lalu isi nominal dan unggah bukti transfer. Admin akan
-                mengecek dan menyetujui secara manual.
+                ini, lalu isi nominal dan (opsional) unggah bukti transfer.
+                Admin akan mengecek dan menyetujui secara manual.
               </p>
             </div>
 
@@ -589,7 +584,8 @@ export default function WalletPage() {
                     <div key={tx.id} className="nanad-dashboard-deposits-row">
                       <div>{created}</div>
                       <div>
-                        {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}
+                        {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
+                        {formatCurrency(tx.amount)}
                         <br />
                         <span
                           style={{
@@ -601,6 +597,7 @@ export default function WalletPage() {
                         >
                           {statusLabel}
                         </span>
+
                         {tx.type === "DEPOSIT" && tx.deposit_target && (
                           <>
                             <br />
@@ -609,6 +606,7 @@ export default function WalletPage() {
                             </small>
                           </>
                         )}
+
                         {tx.type === "WITHDRAW" && tx.withdraw_bank_name && (
                           <>
                             <br />
@@ -619,6 +617,7 @@ export default function WalletPage() {
                             </small>
                           </>
                         )}
+
                         {tx.proof_image_url && (
                           <>
                             <br />
@@ -635,6 +634,13 @@ export default function WalletPage() {
                             </a>
                           </>
                         )}
+
+                        {tx.note && (
+                          <>
+                            <br />
+                            <small>{tx.note}</small>
+                          </>
+                        )}
                       </div>
                       <div>{formatCurrency(tx.amount)}</div>
                     </div>
@@ -645,7 +651,6 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* FOOTER DOMPET */}
         <footer className="nanad-dashboard-footer">
           <span>
             © {new Date().getFullYear()} Nanad Invest. All rights reserved.
@@ -653,8 +658,7 @@ export default function WalletPage() {
           <span>
             Fitur dompet dan approval ini masih dalam mode simulasi /
             pengembangan. Untuk operasi keuangan sebenarnya, tetap diperlukan
-            integrasi resmi dengan perbankan/payment gateway dan kepatuhan
-            regulasi.
+            integrasi resmi dan kepatuhan regulasi.
           </span>
         </footer>
       </div>
