@@ -450,9 +450,21 @@ export default function WalletPage() {
                       fontSize: "0.8rem",
                     }}
                   >
-                    {DEPOSIT_TARGETS.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.label}
+                    // Rekening tujuan deposit (silakan ganti dengan rekening resmi Nanad Invest)
+                    const DEPOSIT_TARGETS = [
+                      {
+                        id: "BCA-UTAMA",
+                        label: "BCA · 1234567890 · a.n. Ratri Candra Agustin", // rekening utama
+                      },
+                      {
+                        id: "BRI-CABANG",
+                        label: "BRI · 5556667778 · a.n. Nanad Invest Bandung", // rekening cabang
+                      },
+                      {
+                        id: "DANA-SON",
+                        label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
+                      },
+                    ];
                       </option>
                     ))}
                   </select>
