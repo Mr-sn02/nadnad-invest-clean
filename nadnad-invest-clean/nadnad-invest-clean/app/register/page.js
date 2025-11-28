@@ -1,214 +1,130 @@
+// app/register/page.js
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import supabase from "../../lib/supabaseClient";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Kalau sudah login & masih buka /register → lempar ke dashboard
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        router.push("/");
-      }
-    };
-    checkUser();
-  }, [router]);
-
-  async function handleRegister(e) {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+
+    if (!email || !password || !confirm) {
+      setErrorMsg("Semua kolom wajib diisi.");
+      return;
+    }
 
     if (password !== confirm) {
       setErrorMsg("Kata sandi dan konfirmasi tidak sama.");
       return;
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: nama,
-        },
-      },
-    });
+      if (error) {
+        setErrorMsg(error.message || "Gagal mendaftar.");
+        return;
+      }
 
-    setLoading(false);
-
-    if (error) {
-      setErrorMsg(error.message || "Registrasi gagal, coba lagi.");
-      return;
+      alert("Pendaftaran berhasil. Silakan masuk menggunakan akun baru.");
+      router.push("/login");
+    } catch (err) {
+      console.error("Register error:", err);
+      setErrorMsg("Terjadi kesalahan saat proses pendaftaran.");
+    } finally {
+      setLoading(false);
     }
-
-    // Setelah daftar, arahkan ke login
-    router.push("/login");
-  }
+  };
 
   return (
-    <main className="nanad-login-page">
-      <div className="nanad-login-shell">
-        {/* Brand bar */}
-        <header className="nanad-login-brand">
-          <div className="nanad-login-brand-left">
-            <div className="nanad-login-logo">N</div>
-            <div className="nanad-login-brand-text">
-              <p className="nanad-login-brand-title">Nanad Invest</p>
-              <p className="nanad-login-brand-sub">
-                Personal Planning &amp; Simulation Space
-              </p>
-            </div>
+    <main className="nanad-auth-page">
+      <div className="nanad-auth-shell">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div className="nanad-auth-logo">N</div>
+          <div>
+            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+            <p className="nanad-dashboard-brand-sub">
+              Langkah awal ruang finansial elegan
+            </p>
           </div>
-          <span className="nanad-login-badge">Create Plan Account</span>
-        </header>
+        </div>
 
-        {/* Main content */}
-        <div className="nanad-login-main">
-          {/* Kiri: storytelling */}
-          <section className="nanad-login-copy">
-            <div>
-              <p className="nanad-login-eyebrow">Start your plan</p>
-              <h1 className="nanad-login-heading">
-                Buat akun
-                <span>Nanad Invest untuk semua rencana keuanganmu.</span>
-              </h1>
-              <p className="nanad-login-text">
-                Simpan beberapa rencana sekaligus — dari dana darurat, rumah,
-                pendidikan, sampai pensiun. Semua bisa kamu ubah seiring hidup
-                dan prioritasmu berubah.
-              </p>
+        <div>
+          <h1 className="nanad-auth-title">Daftar akun Nanad Invest</h1>
+          <p className="nanad-auth-sub">
+            Buat akun untuk mulai mencatat setoran, penarikan, dan rencana
+            simpanan di satu ruang yang rapi dan mewah.
+          </p>
+        </div>
 
-              <div className="nanad-login-highlights">
-                <div className="nanad-login-highlight-card nanad-login-highlight-primary">
-                  <p className="nanad-login-highlight-title">
-                    Satu akun, banyak tujuan
-                  </p>
-                  <p className="nanad-login-highlight-body">
-                    Kelola beberapa target dana dalam satu dasbor yang rapi dan
-                    tenang.
-                  </p>
-                </div>
-                <div className="nanad-login-highlight-card">
-                  <p className="nanad-login-highlight-title">
-                    Data tetap milikmu
-                  </p>
-                  <p className="nanad-login-highlight-body">
-                    Informasi yang kamu isi dipakai untuk simulasi internal,
-                    bukan untuk “menodong” produk tertentu.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+        <form onSubmit={handleRegister} className="nanad-auth-form">
+          <div className="nanad-auth-field">
+            Email
+            <input
+              type="email"
+              placeholder="nama@contoh.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-          {/* Kanan: kartu form register */}
-          <section className="nanad-login-card">
-            <div className="nanad-login-card-header">
-              <p>New account</p>
-              <h2>Buat akun Nanad Invest</h2>
-              <p>
-                Isi data singkat di bawah. Kamu selalu bisa memperbarui nama dan
-                rencana di dalam dasbor.
-              </p>
-            </div>
+          <div className="nanad-auth-field">
+            Kata sandi
+            <input
+              type="password"
+              placeholder="minimal 6 karakter"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-            <form onSubmit={handleRegister} className="nanad-login-form">
-              <div className="nanad-login-field">
-                <label>Nama lengkap</label>
-                <div className="nanad-login-input-wrapper">
-                  <input
-                    type="text"
-                    required
-                    value={nama}
-                    onChange={(e) => setNama(e.target.value)}
-                    placeholder="Nama kamu"
-                  />
-                </div>
-              </div>
+          <div className="nanad-auth-field">
+            Konfirmasi kata sandi
+            <input
+              type="password"
+              placeholder="ulang kata sandi"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+            />
+          </div>
 
-              <div className="nanad-login-field">
-                <label>Email</label>
-                <div className="nanad-login-input-wrapper">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@email.com"
-                  />
-                </div>
-              </div>
-
-              <div className="nanad-login-field">
-                <label>Kata sandi</label>
-                <div className="nanad-login-input-wrapper">
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Minimal 8 karakter"
-                  />
-                </div>
-              </div>
-
-              <div className="nanad-login-field">
-                <label>Konfirmasi kata sandi</label>
-                <div className="nanad-login-input-wrapper">
-                  <input
-                    type="password"
-                    required
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    placeholder="Ulangi kata sandi"
-                  />
-                </div>
-              </div>
-
-              <div className="nanad-login-row">
-                <label className="nanad-login-remember">
-                  <input type="checkbox" required />
-                  <span>
-                    Saya setuju data saya digunakan untuk simulasi rencana di
-                    Nanad Invest.
-                  </span>
-                </label>
-              </div>
-
-              {errorMsg && (
-                <p className="nanad-login-error">{errorMsg}</p>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="nanad-login-submit"
-              >
-                {loading ? "Memproses..." : "Daftar sekarang"}
-              </button>
-            </form>
-
-            <p className="nanad-login-bottom-text">
-              Sudah punya akun? <a href="/login">Masuk di sini</a>
+          {errorMsg && (
+            <p
+              className="nanad-dashboard-body"
+              style={{ color: "#fecaca", fontSize: "0.8rem" }}
+            >
+              {errorMsg}
             </p>
-            <p className="nanad-login-bottom-sub">
-              Kamu bisa menghapus atau mengubah rencana kapan pun dari dalam
-              dasbor.
-            </p>
-          </section>
+          )}
+
+          <button
+            type="submit"
+            className="nanad-dashboard-deposit-submit"
+            disabled={loading}
+          >
+            {loading ? "Memproses..." : "Buat akun"}
+          </button>
+        </form>
+
+        <div className="nanad-auth-footer">
+          Sudah punya akun?{" "}
+          <Link href="/login" style={{ color: "#f5d17a" }}>
+            Masuk di sini
+          </Link>
         </div>
       </div>
     </main>
