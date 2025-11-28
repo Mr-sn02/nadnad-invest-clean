@@ -50,29 +50,22 @@ export default function AdminTransactionsPage() {
   };
 
   useEffect(() => {
-    const init = async () => {
-      setLoading(true);
-      try {
-        const {
-          data: { user },
-          error,
-        } = await supabase.auth.getUser();
+         if (!user) {
+        router.push("/login");
+        return;
+      }
 
-        if (error) {
-          console.error("Error getUser:", error.message);
-        }
+      setUser(user);
 
-        if (!user) {
-          router.push("/login");
-          return;
-        }
+      // 🔐 CEK: apakah email user termasuk daftar ADMIN_EMAILS
+      if (!user.email || !ADMIN_EMAILS.includes(user.email)) {
+        // Kalau bukan admin, kirim balik ke dashboard & jangan load data admin
+        router.push("/");
+        return;
+      }
 
-        setUser(user);
+      await loadPending();
 
-        // NOTE: kalau mau batasi hanya 1 akun admin, bisa cek email di sini:
-        // if (user.email !== "admin@nanadinvest.app") { ... }
-
-        await loadPending();
       } catch (err) {
         console.error("Admin init error:", err);
         setErrorMsg("Gagal memuat halaman admin.");
