@@ -1,162 +1,294 @@
+// app/dashboard/page.js
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabaseClient";
+import Link from "next/link";
+import supabase from "../../lib/supabaseClient";
+
+const ADMIN_EMAILS = ["sonnnn603@gmail.com"]; // ganti jika perlu
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
+  const [wallet, setWallet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
-    async function loadUser() {
-      const { data, error } = await supabase.auth.getUser();
+    const init = async () => {
+      setLoading(true);
+      setLoadError("");
 
-      if (error || !data.user) {
-        router.replace("/login");
-        return;
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+
+        if (error) {
+          console.error("Error getUser:", error.message);
+        }
+
+        if (!user) {
+          router.push("/login");
+          return;
+        }
+
+        setUser(user);
+
+        const { data: existing, error: walletErr } = await supabase
+          .from("wallets")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (walletErr) {
+          console.error("Error get wallet:", walletErr.message);
+          setLoadError(
+            "Gagal memuat saldo dompet. Pastikan database telah dikonfigurasi."
+          );
+          return;
+        }
+
+        setWallet(existing || null);
+      } catch (err) {
+        console.error("Dashboard init error:", err);
+        setLoadError("Terjadi kesalahan saat memuat dashboard.");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setUser(data.user);
-      setLoadingUser(false);
-    }
-
-    loadUser();
+    init();
   }, [router]);
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/login");
-  }
-
-  if (loadingUser || !user) {
-    return (
-      <main className="dashboard-shell">
-        <div className="dashboard-loading">Memuat dashboard…</div>
-      </main>
-    );
-  }
+  };
 
   return (
-    <main className="dashboard-shell">
-      {/* HEADER */}
-      <header className="dashboard-header">
-        <div>
-          <p className="dashboard-eyebrow">Nadnad Invest · Dashboard</p>
-          <h1 className="dashboard-title">Selamat datang</h1>
-          <p className="dashboard-subtitle">
-            Akun aktif: <strong>{user.email}</strong>
-          </p>
-          <p className="dashboard-tagline">
-            Elegance Powered by Intelligence — satu ruang rapi untuk
-            bereksperimen dengan rencana finansialmu sebelum terjun ke instrumen
-            nyata.
-          </p>
-        </div>
-
-        <button className="btn-ghost" onClick={handleLogout}>
-          Logout
-        </button>
-      </header>
-
-      {/* GRID UTAMA */}
-      <section className="dashboard-grid">
-        <article className="card">
-          <div className="chip">Profil akun</div>
-          <h2 className="card-title">Identitas kamu</h2>
-          <p className="card-text">
-            Email ini digunakan untuk menyimpan preferensi simulasi, histori
-            rencana, dan pengaturan profil di versi berikutnya.
-          </p>
-          <div className="card-meta">
-            Status akun: <strong>Aktif</strong>
-            <br />
-            Mode: <strong>Simulasi &amp; edukasi</strong>
+    <main className="nanad-dashboard-page">
+      <div className="nanad-dashboard-shell">
+        {/* Header */}
+        <header className="nanad-dashboard-header">
+          <div className="nanad-dashboard-brand">
+            <div className="nanad-dashboard-logo">N</div>
+            <div>
+              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-sub">
+                Dashboard ruang finansial pribadi
+              </p>
+            </div>
           </div>
-        </article>
 
-        <article className="card">
-          <div className="chip">Mode simulasi</div>
-          <h2 className="card-title">Tanpa dana sungguhan</h2>
-          <p className="card-text">
-            Semua angka di Nadnad Invest saat ini masih berupa ilustrasi.
-            Cocok untuk melatih kebiasaan menyisihkan dana dan memahami efek
-            waktu, setoran rutin, dan profil risiko.
-          </p>
-          <div className="card-meta">
-            Cocok untuk:{" "}
-            <strong>belajar &amp; eksperimen dengan angka yang aman</strong>.
+          <div style={{ display: "flex", gap: "0.6rem" }}>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={handleLogout}
+            >
+              Keluar
+            </button>
           </div>
-        </article>
+        </header>
 
-        <article className="card">
-          <div className="chip">Roadmap</div>
-          <h2 className="card-title">Ke mana dashboard ini akan berkembang?</h2>
-          <p className="card-text">
-            Rencana ke depan: grafik pertumbuhan, template rencana (dana
-            darurat, pendidikan, pensiun), dan notifikasi lembut untuk
-            mengingatkan setoran rutin.
+        {/* Welcome */}
+        <section className="nanad-dashboard-welcome">
+          <p className="nanad-dashboard-eyebrow">Welcome back</p>
+          <h1 className="nanad-dashboard-heading">
+            Ruang tenang untuk mencatat alur dana kamu.
+          </h1>
+          <p className="nanad-dashboard-body">
+            Dari satu dashboard, kamu dapat mengakses dompet, memantau riwayat
+            pengajuan setoran dan penarikan, serta—jika kamu admin—meninjau
+            permintaan pengguna sebelum saldo diperbarui.
           </p>
-          <div className="card-meta">
-            Saat ini: fokus ke desain, alur, dan pengalaman pengguna.
+
+          <div className="nanad-dashboard-stat-grid">
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Akun terhubung</p>
+              <p className="nanad-dashboard-stat-number">
+                {user?.email || "-"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem" }}
+              >
+                Ini adalah identitas login yang digunakan untuk mengakses ruang
+                Nanad Invest kamu.
+              </p>
+            </div>
+
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Saldo dompet</p>
+              <p className="nanad-dashboard-stat-number">
+                {wallet
+                  ? new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      maximumFractionDigits: 0,
+                    }).format(wallet.balance || 0)
+                  : "Rp 0"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem" }}
+              >
+                Saldo ini akan berubah setelah pengajuan deposit dan
+                penarikan{" "}
+                <strong>disetujui secara manual oleh admin.</strong>
+              </p>
+            </div>
+
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Peran</p>
+              <p className="nanad-dashboard-stat-number">
+                {user && user.email && ADMIN_EMAILS.includes(user.email)
+                  ? "Admin & Member"
+                  : "Member"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem" }}
+              >
+                Admin memiliki akses tambahan untuk menyetujui transaksi dan
+                melakukan penyesuaian saldo dompet secara terkontrol.
+              </p>
+            </div>
           </div>
-        </article>
-      </section>
+        </section>
 
-      {/* RINGKASAN SIMULASI DUMMY */}
-      <section className="section">
-        <div className="section-header">
-          <div className="section-eyebrow">Ringkasan simulasi</div>
-          <h2 className="section-title">Contoh rencana yang sedang disusun</h2>
-          <p className="section-subtitle">
-            Data di bawah ini masih contoh. Nanti bisa kita ganti dengan hasil
-            simulasi beneran (berdasarkan input kamu).
+        {/* Navigasi utama */}
+        <section className="nanad-dashboard-table-section">
+          <div className="nanad-dashboard-deposits">
+            <div className="nanad-dashboard-deposits-header">
+              <h3>Akses utama</h3>
+              <p>Menu yang sering kamu gunakan dalam Nanad Invest.</p>
+            </div>
+
+            <div
+              className="nanad-dashboard-deposits-rows"
+              style={{ marginTop: "0.75rem" }}
+            >
+              <div className="nanad-dashboard-deposits-row">
+                <div>Dompet &amp; pengajuan</div>
+                <div>
+                  Kelola saldo melalui pengajuan deposit dan penarikan, simpan
+                  bukti transfer, dan pantau riwayat transaksi kamu.
+                </div>
+                <div>
+                  <Link
+                    href="/wallet"
+                    className="nanad-dashboard-deposit-submit"
+                  >
+                    Buka wallet
+                  </Link>
+                </div>
+              </div>
+
+              {user && user.email && ADMIN_EMAILS.includes(user.email) && (
+                <>
+                  <div className="nanad-dashboard-deposits-row">
+                    <div>Approval transaksi</div>
+                    <div>
+                      Tinjau semua pengajuan deposit dan penarikan berstatus{" "}
+                      <strong>PENDING</strong>, lalu setujui atau tolak secara
+                      manual sebelum saldo diperbarui.
+                    </div>
+                    <div>
+                      <Link
+                        href="/admin/transactions"
+                        className="nanad-dashboard-logout"
+                      >
+                        Panel admin
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="nanad-dashboard-deposits-row">
+                    <div>Edit saldo dompet</div>
+                    <div>
+                      Sesuaikan saldo dompet member secara langsung dengan
+                      pencatatan otomatis sebagai transaksi{" "}
+                      <strong>ADJUST</strong> untuk menjaga transparansi.
+                    </div>
+                    <div>
+                      <Link
+                        href="/admin/wallets"
+                        className="nanad-dashboard-logout"
+                      >
+                        Kelola dompet
+                      </Link>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="nanad-dashboard-deposits">
+            <div className="nanad-dashboard-deposits-header">
+              <h3>Catatan & kenyamanan penggunaan</h3>
+              <p>
+                Beberapa hal penting sebelum kamu menggunakan Nanad Invest
+                secara rutin.
+              </p>
+            </div>
+
+            <ul
+              className="nanad-dashboard-body"
+              style={{ marginTop: "0.75rem", paddingLeft: "1.1rem" }}
+            >
+              <li style={{ marginBottom: "0.4rem" }}>
+                Nanad Invest berperan sebagai{" "}
+                <strong>ruang pencatatan &amp; perencanaan</strong>, bukan
+                sebagai lembaga investasi berizin.
+              </li>
+              <li style={{ marginBottom: "0.4rem" }}>
+                Dana nyata tetap disimpan dan dikelola pada rekening resmi
+                milik pengguna dan/atau pengelola sesuai kesepakatan dan
+                regulasi yang berlaku.
+              </li>
+              <li style={{ marginBottom: "0.4rem" }}>
+                Jika ada keraguan terkait nomor rekening tujuan atau status
+                transaksi, gunakan tombol{" "}
+                <strong>Pengaduan WhatsApp</strong> di pojok kanan bawah untuk
+                menghubungi admin.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <footer className="nanad-dashboard-footer">
+          <span>
+            © {new Date().getFullYear()} Nanad Invest. All rights reserved.
+          </span>
+          <span>
+            Nanad Invest tidak memberikan janji keuntungan tertentu. Segala
+            keputusan finansial tetap menjadi tanggung jawab masing-masing
+            pengguna.
+          </span>
+        </footer>
+
+        {loading && (
+          <p
+            className="nanad-dashboard-body"
+            style={{ fontSize: "0.78rem", marginTop: "0.4rem" }}
+          >
+            Memuat data dashboard...
           </p>
-        </div>
-
-        <div className="dashboard-table-wrapper">
-          <table className="dashboard-table">
-            <thead>
-              <tr>
-                <th>Tujuan</th>
-                <th>Profil</th>
-                <th>Setoran bulanan</th>
-                <th>Durasi</th>
-                <th>Estimasi nilai akhir</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Stabil Elegan (dana darurat)</td>
-                <td>Konservatif</td>
-                <td>Rp 750.000</td>
-                <td>3 tahun</td>
-                <td>Rp 32.000.000</td>
-              </tr>
-              <tr>
-                <td>Rencana Pendidikan</td>
-                <td>Moderate</td>
-                <td>Rp 500.000</td>
-                <td>8 tahun</td>
-                <td>Rp 95.000.000</td>
-              </tr>
-              <tr>
-                <td>Pensiun Mandiri</td>
-                <td>Agresif elegan</td>
-                <td>Rp 1.000.000</td>
-                <td>15 tahun</td>
-                <td>Rp 420.000.000</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p className="dashboard-note">
-          *Angka di atas hanya ilustrasi kasar. Bukan janji hasil dan tidak
-          merepresentasikan instrumen investasi tertentu.
-        </p>
-      </section>
+        )}
+        {loadError && (
+          <p
+            className="nanad-dashboard-body"
+            style={{ fontSize: "0.78rem", color: "#fecaca" }}
+          >
+            {loadError}
+          </p>
+        )}
+      </div>
     </main>
   );
 }
