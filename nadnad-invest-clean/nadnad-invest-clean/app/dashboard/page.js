@@ -6,7 +6,17 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
-const ADMIN_EMAILS = ["sonnnn603@gmail.com"]; // ganti jika perlu
+// 🔐 Sementara: daftar email admin.
+// Kalau nanti sudah pakai role di database, bagian ini bisa diganti.
+const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,6 +40,7 @@ export default function DashboardPage() {
           console.error("Error getUser:", error.message);
         }
 
+        // Belum login → lempar ke /login
         if (!user) {
           router.push("/login");
           return;
@@ -37,6 +48,7 @@ export default function DashboardPage() {
 
         setUser(user);
 
+        // Ambil dompet user (jika ada)
         const { data: existing, error: walletErr } = await supabase
           .from("wallets")
           .select("*")
@@ -64,9 +76,17 @@ export default function DashboardPage() {
   }, [router]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+    try {
+      await supabase.auth.signOut();
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Gagal logout. Coba lagi.");
+    }
   };
+
+  const isAdmin =
+    user && user.email && ADMIN_EMAILS.includes(user.email);
 
   return (
     <main className="nanad-dashboard-page">
@@ -83,7 +103,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* 👉 Di dashboard, tampilkan Profil & Keamanan + Keluar */}
           <div style={{ display: "flex", gap: "0.6rem" }}>
             <button
               type="button"
@@ -92,7 +111,6 @@ export default function DashboardPage() {
             >
               Profil &amp; Keamanan
             </button>
-
             <button
               type="button"
               className="nanad-dashboard-logout"
@@ -110,9 +128,10 @@ export default function DashboardPage() {
             Ruang tenang untuk mencatat alur dana kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Dari satu dashboard, kamu dapat mengakses dompet, memantau riwayat
-            pengajuan setoran dan penarikan, serta—jika kamu admin—meninjau
-            permintaan pengguna sebelum saldo diperbarui.
+            Dari satu dashboard, kamu dapat mengakses dompet, tabungan
+            khusus (saving goals), memantau riwayat pengajuan setoran dan
+            penarikan, serta—jika kamu admin—meninjau permintaan pengguna
+            sebelum saldo diperbarui.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -133,20 +152,13 @@ export default function DashboardPage() {
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">Saldo dompet</p>
               <p className="nanad-dashboard-stat-number">
-                {wallet
-                  ? new Intl.NumberFormat("id-ID", {
-                      style: "currency",
-                      currency: "IDR",
-                      maximumFractionDigits: 0,
-                    }).format(wallet.balance || 0)
-                  : "Rp 0"}
+                {wallet ? formatCurrency(wallet.balance || 0) : "Rp 0"}
               </p>
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.35rem" }}
               >
-                Saldo ini akan berubah setelah pengajuan deposit dan
-                penarikan{" "}
+                Saldo ini akan berubah setelah pengajuan deposit dan penarikan{" "}
                 <strong>disetujui secara manual oleh admin.</strong>
               </p>
             </div>
@@ -154,9 +166,7 @@ export default function DashboardPage() {
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">Peran</p>
               <p className="nanad-dashboard-stat-number">
-                {user && user.email && ADMIN_EMAILS.includes(user.email)
-                  ? "Admin & Member"
-                  : "Member"}
+                {isAdmin ? "Admin & Member" : "Member"}
               </p>
               <p
                 className="nanad-dashboard-body"
@@ -171,6 +181,7 @@ export default function DashboardPage() {
 
         {/* Navigasi utama */}
         <section className="nanad-dashboard-table-section">
+          {/* Kolom kiri: akses utama */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Akses utama</h3>
@@ -181,7 +192,6 @@ export default function DashboardPage() {
               className="nanad-dashboard-deposits-rows"
               style={{ marginTop: "0.75rem" }}
             >
-              {/* Wallet */}
               <div className="nanad-dashboard-deposits-row">
                 <div>Dompet &amp; pengajuan</div>
                 <div>
@@ -198,21 +208,21 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* 👉 Profil & Keamanan sebagai akses utama juga */}
               <div className="nanad-dashboard-deposits-row">
-                <div>Profil akun &amp; keamanan</div>
+                <div>Tabungan &amp; goals khusus</div>
                 <div>
-                  Lihat detail akun Nanad Invest kamu, cek email yang
-                  terdaftar, dan baca pengingat keamanan agar akun tetap aman.
+                  Buat beberapa kantong tabungan (saving buckets) seperti{" "}
+                  <strong>dana darurat, DP rumah, modal usaha</strong>, dan
+                  pantau progresnya secara terpisah dari saldo utama.
                 </div>
                 <div>
-                  <Link href="/profile" className="nanad-dashboard-logout">
-                    Buka profil
+                  <Link href="/goals" className="nanad-dashboard-logout">
+                    Buka goals
                   </Link>
                 </div>
               </div>
 
-              {user && user.email && ADMIN_EMAILS.includes(user.email) && (
+              {isAdmin && (
                 <>
                   <div className="nanad-dashboard-deposits-row">
                     <div>Approval transaksi</div>
@@ -252,6 +262,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* Kolom kanan: catatan & kenyamanan */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Catatan & kenyamanan penggunaan</h3>
@@ -281,10 +292,16 @@ export default function DashboardPage() {
                 <strong>Pengaduan WhatsApp</strong> di pojok kanan bawah untuk
                 menghubungi admin.
               </li>
+              <li style={{ marginBottom: "0.4rem" }}>
+                Fitur <strong>Tabungan / Goals</strong> bersifat perencanaan.
+                Angka di goals tidak otomatis mengunci saldo dompet utama, jadi
+                tetap cek mutasi rekening resmi saat mengambil keputusan.
+              </li>
             </ul>
           </div>
         </section>
 
+        {/* Footer + info loading/error */}
         <footer className="nanad-dashboard-footer">
           <span>
             © {new Date().getFullYear()} Nanad Invest. All rights reserved.
@@ -304,6 +321,7 @@ export default function DashboardPage() {
             Memuat data dashboard...
           </p>
         )}
+
         {loadError && (
           <p
             className="nanad-dashboard-body"
