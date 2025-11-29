@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Cek apakah token recovery valid -> Supabase akan kasih user sementara
+  // Cek token recovery -> Supabase harus kasih user sementara
   useEffect(() => {
     const checkUser = async () => {
       setChecking(true);
