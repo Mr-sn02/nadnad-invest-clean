@@ -31,49 +31,27 @@ export default function ArisanDetailPage() {
   const [joinLoading, setJoinLoading] = useState(false);
   const [payLoading, setPayLoading] = useState(false);
 
-  // ---- Helper: cari membership user ini ----
+  // membership user
   const myMember = useMemo(() => {
     if (!user) return null;
     return members.find((m) => m.user_id === user.id) || null;
   }, [members, user]);
 
-  // ---- Helper: round berikutnya untuk user ini ----
+  // putaran berikutnya untuk user ini
   const nextRoundForUser = useMemo(() => {
-    if (!myMember) return null;
+    if (!group || !myMember) return null;
     const myContribs = contribs.filter((c) => c.user_id === myMember.user_id);
     const lastRound = myContribs.reduce(
       (max, c) => Math.max(max, Number(c.round_number) || 0),
       0
     );
     const next = lastRound + 1;
-    if (!group) return next;
-    if (next > (group.total_rounds || 0)) return null; // sudah lunas semua
+    if (!group.total_rounds) return next;
+    if (next > group.total_rounds) return null;
     return next;
-  }, [myMember, contribs, group]);
+  }, [group, myMember, contribs]);
 
-  // ---- Helper: round "sekarang" berdasarkan tanggal mulai (per bulan) ----
-  const currentRoundNumber = useMemo(() => {
-    if (!group || !group.start_date) return 1;
-    const start = new Date(group.start_date);
-    const now = new Date();
-
-    if (now < start) return 1;
-
-    const yearDiff = now.getFullYear() - start.getFullYear();
-    const monthDiff = now.getMonth() - start.getMonth();
-    let diffMonths = yearDiff * 12 + monthDiff;
-
-    // bulatkan menuju atas kalau sudah lewat tanggal
-    if (now.getDate() >= start.getDate()) {
-      diffMonths += 1;
-    }
-
-    const round = diffMonths <= 0 ? 1 : diffMonths;
-    const maxRounds = group.total_rounds || round;
-    return Math.min(round, maxRounds);
-  }, [group]);
-
-  // ---- LOAD DATA AWAL ----
+  // load awal
   useEffect(() => {
     if (!groupId) return;
 
@@ -82,7 +60,7 @@ export default function ArisanDetailPage() {
       setErrorMsg("");
 
       try {
-        // 1) cek login
+        // user
         const {
           data: { user },
           error,
@@ -99,22 +77,22 @@ export default function ArisanDetailPage() {
 
         setUser(user);
 
-        // 2) ambil group
-        const { data: grp, error: gErr } = await supabase
+        // group
+        const { data: g, error: gErr } = await supabase
           .from("arisan_groups")
           .select("*")
           .eq("id", groupId)
           .maybeSingle();
 
-        if (gErr || !grp) {
+        if (gErr || !g) {
           console.error("Load group error:", gErr?.message);
-          setErrorMsg("Grup arisan tidak ditemukan atau terjadi kesalahan.");
+          setErrorMsg("Grup arisan tidak ditemukan.");
           return;
         }
 
-        setGroup(grp);
+        setGroup(g);
 
-        // 3) ambil wallet user
+        // wallet
         const { data: w, error: wErr } = await supabase
           .from("wallets")
           .select("*")
@@ -124,10 +102,9 @@ export default function ArisanDetailPage() {
         if (wErr) {
           console.error("Load wallet error:", wErr.message);
         }
-
         setWallet(w || null);
 
-        // 4) ambil members
+        // members
         const { data: m, error: mErr } = await supabase
           .from("arisan_members")
           .select("*")
@@ -139,10 +116,9 @@ export default function ArisanDetailPage() {
           setErrorMsg("Gagal memuat anggota arisan.");
           return;
         }
-
         setMembers(m || []);
 
-        // 5) ambil kontribusi
+        // contributions
         const { data: c, error: cErr } = await supabase
           .from("arisan_contributions")
           .select("*")
@@ -155,13 +131,10 @@ export default function ArisanDetailPage() {
           setErrorMsg("Gagal memuat data setoran arisan.");
           return;
         }
-
         setContribs(c || []);
       } catch (err) {
         console.error("Arisan detail init error:", err);
-        setErrorMsg(
-          "Terjadi kesalahan saat memuat halaman arisan. Periksa koneksi atau konfigurasi Supabase."
-        );
+        setErrorMsg("Terjadi kesalahan saat memuat detail arisan.");
       } finally {
         setLoading(false);
       }
@@ -170,11 +143,16 @@ export default function ArisanDetailPage() {
     init();
   }, [groupId, router]);
 
-  // ---- Aksi: gabung grup ----
+  const isOwner = group && user && group.owner_user_id === user.id;
+  const memberCount = members.length;
+  const totalPot =
+    (group?.monthly_amount || 0) * (memberCount > 0 ? memberCount : 1);
+
+  // gabung grup
   const handleJoinGroup = async () => {
-    if (!user || !group) return;
+    if (!group || !user) return;
     if (myMember) {
-      alert("Kamu sudah terdaftar sebagai anggota arisan ini.");
+      alert("Kamu sudah menjadi anggota grup ini.");
       return;
     }
 
@@ -187,62 +165,56 @@ export default function ArisanDetailPage() {
       const { error } = await supabase.from("arisan_members").insert({
         group_id: group.id,
         user_id: user.id,
-        nickname: null,
         position: nextPosition,
         status: "ACTIVE",
       });
 
       if (error) {
         console.error("Join group error:", error.message);
-        setErrorMsg("Gagal bergabung dengan grup arisan.");
+        setErrorMsg("Gagal bergabung ke grup arisan.");
         return;
       }
 
-      // reload anggota
       const { data: m, error: mErr } = await supabase
         .from("arisan_members")
         .select("*")
         .eq("group_id", group.id)
         .order("position", { ascending: true });
 
-      if (mErr) {
-        console.error("Reload members error:", mErr.message);
-      } else {
-        setMembers(m || []);
-      }
+      if (!mErr && m) setMembers(m);
 
       alert("Berhasil bergabung ke grup arisan.");
     } catch (err) {
       console.error("Join group unexpected error:", err);
-      setErrorMsg("Terjadi kesalahan saat bergabung ke grup arisan.");
+      setErrorMsg("Terjadi kesalahan saat bergabung ke grup.");
     } finally {
       setJoinLoading(false);
     }
   };
 
-  // ---- Aksi: bayar iuran putaran berikutnya dari wallet ----
+  // bayar iuran putaran berikutnya dari wallet
   const handlePayNextRound = async () => {
-    if (!user || !group || !wallet || !myMember) {
+    if (!group || !user || !wallet || !myMember) {
       alert(
-        "Data belum lengkap. Pastikan kamu punya dompet, sudah login, dan sudah tergabung di grup."
+        "Data belum lengkap. Pastikan kamu punya dompet dan sudah bergabung ke grup."
       );
       return;
     }
 
     if (!nextRoundForUser) {
-      alert("Kamu sudah menyelesaikan semua iuran untuk grup ini.");
+      alert("Kamu sudah melunasi semua iuran arisan ini.");
       return;
     }
 
     const amount = group.monthly_amount || 0;
     if (!amount || amount <= 0) {
-      alert("Nominal iuran arisan belum diatur dengan benar.");
+      alert("Nominal iuran belum diset di grup ini.");
       return;
     }
 
     if ((wallet.balance || 0) < amount) {
       alert(
-        `Saldo dompet kamu tidak cukup.\nSaldo: ${formatCurrency(
+        `Saldo dompet tidak cukup.\nSaldo: ${formatCurrency(
           wallet.balance || 0
         )}\nIuran: ${formatCurrency(amount)}`
       );
@@ -256,7 +228,7 @@ export default function ArisanDetailPage() {
       const before = wallet.balance || 0;
       const after = before - amount;
 
-      // 1) catat ke tabel kontribusi arisan
+      // 1) simpan kontribusi
       const { error: cErr } = await supabase
         .from("arisan_contributions")
         .insert({
@@ -270,11 +242,11 @@ export default function ArisanDetailPage() {
 
       if (cErr) {
         console.error("Insert contribution error:", cErr.message);
-        alert("Gagal mencatat setoran arisan. Saldo belum dipotong.");
+        alert("Gagal mencatat setoran arisan. Saldo belum diubah.");
         return;
       }
 
-      // 2) catat ke wallet_transactions
+      // 2) catat transaksi wallet
       const { error: txErr } = await supabase
         .from("wallet_transactions")
         .insert({
@@ -290,10 +262,6 @@ export default function ArisanDetailPage() {
 
       if (txErr) {
         console.error("Insert wallet tx error:", txErr.message);
-        alert(
-          "Setoran arisan tercatat, tapi gagal mencatat transaksi wallet. Periksa di Supabase."
-        );
-        // kita tetap lanjut update saldo supaya konsisten
       }
 
       // 3) update saldo wallet
@@ -304,32 +272,25 @@ export default function ArisanDetailPage() {
 
       if (wErr) {
         console.error("Update wallet error:", wErr.message);
-        alert(
-          "Gagal memperbarui saldo dompet. Periksa konsistensi saldo di Supabase."
-        );
       }
 
       // reload wallet & kontribusi
-      const { data: wReload, error: wReloadErr } = await supabase
+      const { data: wReload } = await supabase
         .from("wallets")
         .select("*")
         .eq("id", wallet.id)
         .maybeSingle();
 
-      if (!wReloadErr && wReload) {
-        setWallet(wReload);
-      }
+      if (wReload) setWallet(wReload);
 
-      const { data: cReload, error: cReloadErr } = await supabase
+      const { data: cReload } = await supabase
         .from("arisan_contributions")
         .select("*")
         .eq("group_id", group.id)
         .order("round_number", { ascending: true })
         .order("created_at", { ascending: true });
 
-      if (!cReloadErr && cReload) {
-        setContribs(cReload);
-      }
+      if (cReload) setContribs(cReload);
 
       alert(
         `Setoran arisan putaran ke-${nextRoundForUser} berhasil dicatat.\nSaldo baru: ${formatCurrency(
@@ -343,27 +304,6 @@ export default function ArisanDetailPage() {
       setPayLoading(false);
     }
   };
-
-  // ---- Ringkasan setoran per putaran ----
-  const roundsSummary = useMemo(() => {
-    if (!group) return [];
-    const totalRounds = group.total_rounds || 0;
-    if (!totalRounds) return [];
-
-    const arr = [];
-    for (let r = 1; r <= totalRounds; r++) {
-      const roundContribs = contribs.filter(
-        (c) => Number(c.round_number) === r
-      );
-      arr.push({
-        round: r,
-        count: roundContribs.length,
-      });
-    }
-    return arr;
-  }, [group, contribs]);
-
-  // ---- Render ----
 
   if (loading) {
     return (
@@ -384,10 +324,7 @@ export default function ArisanDetailPage() {
             <h1 className="nanad-dashboard-heading">
               Grup arisan tidak ditemukan.
             </h1>
-            <p className="nanad-dashboard-body">
-              {errorMsg ||
-                "Grup yang kamu cari tidak dapat dimuat. Mungkin sudah dihapus atau ID-nya salah."}
-            </p>
+            <p className="nanad-dashboard-body">{errorMsg}</p>
             <button
               type="button"
               className="nanad-dashboard-deposit-submit"
@@ -402,11 +339,6 @@ export default function ArisanDetailPage() {
     );
   }
 
-  const isOwner = group.owner_user_id === user.id;
-  const memberCount = members.length;
-  const totalPot =
-    (group.monthly_amount || 0) * (memberCount > 0 ? memberCount : 1);
-
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
@@ -417,7 +349,7 @@ export default function ArisanDetailPage() {
             <div>
               <p className="nanad-dashboard-brand-title">Nanad Invest</p>
               <p className="nanad-dashboard-brand-sub">
-                Arisan · Detail grup &amp; setoran
+                Arisan · Detail grup &amp; iuran
               </p>
             </div>
           </div>
@@ -447,7 +379,7 @@ export default function ArisanDetailPage() {
           </div>
         </header>
 
-        {/* Info utama grup */}
+        {/* Info grup */}
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Detail grup arisan</p>
           <h1 className="nanad-dashboard-heading">
@@ -472,7 +404,7 @@ export default function ArisanDetailPage() {
           </h1>
           <p className="nanad-dashboard-body">
             {group.description ||
-              "Grup arisan bersama teman/pelanggan yang terjadwal dan tercatat di dalam Nanad Invest."}
+              "Grup arisan yang tercatat di Nanad Invest. Iuran dapat dicatat dari saldo dompet masing-masing."}
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -481,63 +413,51 @@ export default function ArisanDetailPage() {
               <p className="nanad-dashboard-stat-number">
                 {formatCurrency(group.monthly_amount || 0)}
               </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.3rem", fontSize: "0.78rem" }}
-              >
-                Dibayar oleh setiap anggota untuk setiap putaran.
-              </p>
             </div>
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">Total putaran</p>
               <p className="nanad-dashboard-stat-number">
                 {group.total_rounds || "-"}
               </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.3rem", fontSize: "0.78rem" }}
-              >
-                Mulai dari tanggal{" "}
-                {group.start_date
-                  ? new Date(group.start_date).toLocaleDateString("id-ID")
-                  : "-"}
-                .
-              </p>
             </div>
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-label">Perkiraan pot per putaran</p>
+              <p className="nanad-dashboard-stat-label">
+                Perkiraan pot per putaran
+              </p>
               <p className="nanad-dashboard-stat-number">
                 {formatCurrency(totalPot)}
               </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.3rem", fontSize: "0.78rem" }}
-              >
-                Berdasarkan jumlah anggota saat ini: {memberCount} orang.
-              </p>
             </div>
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-label">Status &amp; giliran</p>
+              <p className="nanad-dashboard-stat-label">Saldo dompet kamu</p>
               <p className="nanad-dashboard-stat-number">
-                {group.status || "ACTIVE"}
-              </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.3rem", fontSize: "0.78rem" }}
-              >
-                Perkiraan putaran berjalan: ke-{currentRoundNumber}.
+                {wallet ? formatCurrency(wallet.balance || 0) : "Rp 0"}
               </p>
             </div>
           </div>
 
-          {wallet && (
+          {myMember && (
             <p
               className="nanad-dashboard-body"
               style={{ marginTop: "0.6rem", fontSize: "0.8rem" }}
             >
-              Saldo dompet kamu:{" "}
-              <strong>{formatCurrency(wallet.balance || 0)}</strong>
+              Kamu terdaftar sebagai anggota pada posisi{" "}
+              <strong>#{myMember.position}</strong>{" "}
+              {isOwner && "(kamu juga pemilik grup ini)"}.
             </p>
+          )}
+
+          {!myMember && (
+            <div style={{ marginTop: "0.8rem" }}>
+              <button
+                type="button"
+                className="nanad-dashboard-deposit-submit"
+                disabled={joinLoading}
+                onClick={handleJoinGroup}
+              >
+                {joinLoading ? "Memproses..." : "Gabung grup arisan ini"}
+              </button>
+            </div>
           )}
 
           {errorMsg && (
@@ -550,48 +470,24 @@ export default function ArisanDetailPage() {
           )}
         </section>
 
-        {/* Grid: anggota & iuran */}
+        {/* Anggota & iuran */}
         <section className="nanad-dashboard-table-section">
-          {/* Anggota dan keikutsertaan */}
+          {/* Anggota */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Anggota & urutan penerima</h3>
+              <h3>Anggota & urutan</h3>
               <p>
-                Urutan anggota bisa digunakan sebagai urutan penerima pot
-                arisan pada tiap putaran, sesuai kesepakatan kalian.
+                Urutan bisa digunakan sebagai urutan penerima arisan, sesuai
+                kesepakatan kalian.
               </p>
             </div>
-
-            {!myMember && (
-              <div style={{ marginTop: "0.8rem" }}>
-                <button
-                  type="button"
-                  className="nanad-dashboard-deposit-submit"
-                  disabled={joinLoading}
-                  onClick={handleJoinGroup}
-                >
-                  {joinLoading ? "Memproses..." : "Gabung grup arisan ini"}
-                </button>
-              </div>
-            )}
-
-            {myMember && (
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.6rem", fontSize: "0.8rem" }}
-              >
-                Kamu terdaftar sebagai anggota pada posisi{" "}
-                <strong>#{myMember.position}</strong>{" "}
-                {isOwner && "(kamu juga pemilik grup/arisan ini)"}.
-              </p>
-            )}
 
             {members.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.75rem" }}
               >
-                Belum ada anggota yang terdaftar.
+                Belum ada anggota dalam grup ini.
               </p>
             ) : (
               <div
@@ -603,16 +499,15 @@ export default function ArisanDetailPage() {
                     <div>Posisi #{m.position}</div>
                     <div>
                       <strong>
-                        {m.nickname ||
-                          (m.user_id === user.id
-                            ? "Kamu"
-                            : `Member #${m.position}`)}
+                        {m.user_id === user.id
+                          ? "Kamu"
+                          : m.nickname || `Member #${m.position}`}
                       </strong>
                       <br />
                       <span
                         style={{
-                          fontSize: "0.78rem",
-                          color: "#e5e7eb",
+                          fontSize: "0.76rem",
+                          color: "#9ca3af",
                         }}
                       >
                         User ID:{" "}
@@ -657,7 +552,6 @@ export default function ArisanDetailPage() {
                           style={{
                             fontSize: "0.75rem",
                             color: "#facc15",
-                            textAlign: "right",
                           }}
                         >
                           Ini kamu
@@ -670,13 +564,13 @@ export default function ArisanDetailPage() {
             )}
           </div>
 
-          {/* Setoran & jadwal putaran */}
+          {/* Iuran */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Setoran arisan & jadwal putaran</h3>
+              <h3>Setoran iuran arisan</h3>
               <p>
-                Catatan iuran tiap putaran yang dibayar dari saldo dompet
-                Nanad Invest.
+                Iuran yang dibayar dari saldo dompet akan tercatat di sini dan
+                di riwayat dompet.
               </p>
             </div>
 
@@ -684,7 +578,7 @@ export default function ArisanDetailPage() {
               <div
                 style={{
                   marginTop: "0.9rem",
-                  marginBottom: "0.75rem",
+                  marginBottom: "0.8rem",
                   padding: "0.85rem 1rem",
                   borderRadius: "1rem",
                   border: "1px solid rgba(245,209,122,0.5)",
@@ -707,7 +601,6 @@ export default function ArisanDetailPage() {
                 <p style={{ margin: "0.25rem 0 0.4rem" }}>
                   Putaran ke-<strong>{nextRoundForUser}</strong> dengan iuran{" "}
                   <strong>{formatCurrency(group.monthly_amount || 0)}</strong>.
-                  Gunakan saldo dompet Nanad Invest untuk mencatat setoran ini.
                 </p>
                 <button
                   type="button"
@@ -717,7 +610,7 @@ export default function ArisanDetailPage() {
                 >
                   {payLoading
                     ? "Memproses setoran..."
-                    : "Bayar iuran putaran ini dari dompet"}
+                    : "Bayar iuran dari dompet"}
                 </button>
               </div>
             )}
@@ -736,27 +629,37 @@ export default function ArisanDetailPage() {
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.75rem", fontSize: "0.8rem" }}
               >
-                Bergabung dulu ke grup arisan ini sebelum mencatat setoran
+                Bergabung ke grup terlebih dahulu sebelum mencatat setoran
                 iuran.
               </p>
             )}
 
-            {roundsSummary.length === 0 ? (
+            {contribs.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.8rem" }}
               >
-                Belum ada putaran yang tercatat atau total putaran belum
-                diatur.
+                Belum ada setoran arisan yang tercatat.
               </p>
             ) : (
               <div
                 className="nanad-dashboard-deposits-rows"
                 style={{ marginTop: "0.8rem" }}
               >
-                {roundsSummary.map((r) => (
-                  <div key={r.round} className="nanad-dashboard-deposits-row">
-                    <div>Putaran ke-{r.round}</div>
+                {contribs.map((c) => (
+                  <div key={c.id} className="nanad-dashboard-deposits-row">
+                    <div>
+                      Putaran ke-{c.round_number}
+                      <br />
+                      <span
+                        style={{
+                          fontSize: "0.76rem",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        {new Date(c.created_at).toLocaleString("id-ID")}
+                      </span>
+                    </div>
                     <div>
                       <span
                         style={{
@@ -764,39 +667,25 @@ export default function ArisanDetailPage() {
                           color: "#e5e7eb",
                         }}
                       >
-                        Setoran tercatat:{" "}
-                        <strong>
-                          {r.count}/{memberCount || "-"} anggota
-                        </strong>
+                        Setoran {formatCurrency(c.amount || 0)}
                       </span>
                       <br />
                       <span
                         style={{
                           fontSize: "0.75rem",
-                          color: "#9ca3af",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.08em",
+                          color:
+                            c.status === "PAID" || c.status === "COMPLETED"
+                              ? "#4ade80"
+                              : "#facc15",
                         }}
                       >
-                        Nominal per anggota:{" "}
-                        {formatCurrency(group.monthly_amount || 0)} · Pot
-                        maksimum:{" "}
-                        {formatCurrency(
-                          (group.monthly_amount || 0) * (memberCount || 1)
-                        )}
+                        {c.status}
                       </span>
                     </div>
                     <div style={{ justifyContent: "flex-end" }}>
-                      {currentRoundNumber === r.round && (
-                        <span
-                          style={{
-                            fontSize: "0.75rem",
-                            padding: "0.15rem 0.6rem",
-                            borderRadius: "999px",
-                            border: "1px solid rgba(245,209,122,0.8)",
-                          }}
-                        >
-                          Putaran berjalan
-                        </span>
-                      )}
+                      {formatCurrency(c.amount || 0)}
                     </div>
                   </div>
                 ))}
@@ -811,9 +700,9 @@ export default function ArisanDetailPage() {
             circle.
           </span>
           <span>
-            Sistem ini membantu mencatat iuran dan saldo. Kesepakatan teknis
-            arisan (jadwal penerima, konsekuensi telat bayar, dsb.) tetap perlu
-            disepakati di luar sistem oleh semua peserta.
+            Kesepakatan teknis arisan (urutan penerima, denda, dll.) tetap
+            menjadi kesepakatan para peserta. Sistem ini membantu pencatatan
+            saja.
           </span>
         </footer>
       </div>
