@@ -189,4 +189,14 @@ export default function ResetPasswordPage() {
 
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear
+            © {new Date().getFullYear()} Nanad Invest. Reset password.
+          </span>
+          <span>
+            Jangan bagikan link reset password ini ke siapa pun. Jika kamu
+            tidak merasa meminta reset, abaikan email tersebut.
+          </span>
+        </footer>
+      </div>
+    </main>
+  );
+}
