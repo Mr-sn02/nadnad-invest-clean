@@ -83,7 +83,16 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* 👉 Di dashboard, tampilkan Profil & Keamanan + Keluar */}
           <div style={{ display: "flex", gap: "0.6rem" }}>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => router.push("/profile")}
+            >
+              Profil &amp; Keamanan
+            </button>
+
             <button
               type="button"
               className="nanad-dashboard-logout"
@@ -172,6 +181,7 @@ export default function DashboardPage() {
               className="nanad-dashboard-deposits-rows"
               style={{ marginTop: "0.75rem" }}
             >
+              {/* Wallet */}
               <div className="nanad-dashboard-deposits-row">
                 <div>Dompet &amp; pengajuan</div>
                 <div>
@@ -184,6 +194,20 @@ export default function DashboardPage() {
                     className="nanad-dashboard-deposit-submit"
                   >
                     Buka wallet
+                  </Link>
+                </div>
+              </div>
+
+              {/* 👉 Profil & Keamanan sebagai akses utama juga */}
+              <div className="nanad-dashboard-deposits-row">
+                <div>Profil akun &amp; keamanan</div>
+                <div>
+                  Lihat detail akun Nanad Invest kamu, cek email yang
+                  terdaftar, dan baca pengingat keamanan agar akun tetap aman.
+                </div>
+                <div>
+                  <Link href="/profile" className="nanad-dashboard-logout">
+                    Buka profil
                   </Link>
                 </div>
               </div>
