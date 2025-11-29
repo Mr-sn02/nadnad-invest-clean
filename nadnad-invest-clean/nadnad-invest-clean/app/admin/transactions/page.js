@@ -25,6 +25,9 @@ export default function AdminTransactionsPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [actionId, setActionId] = useState(null);
 
+  // Catatan admin per transaksi (state lokal di UI, key = tx.id)
+  const [adminNotes, setAdminNotes] = useState({});
+
   // Ambil semua transaksi PENDING
   const loadPending = async () => {
     setErrorMsg("");
@@ -32,7 +35,7 @@ export default function AdminTransactionsPage() {
     const { data, error } = await supabase
       .from("wallet_transactions")
       .select(
-        "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder, deposit_target, proof_image_url, sender_name, user_email"
+        "id, created_at, type, amount, status, note, wallet_id, withdraw_bank_name, withdraw_bank_account, withdraw_bank_holder, deposit_target, proof_image_url, sender_name, user_email, user_note, admin_note"
       )
       .eq("status", "PENDING")
       .order("created_at", { ascending: true })
@@ -45,6 +48,13 @@ export default function AdminTransactionsPage() {
     }
 
     setPendingTx(data || []);
+
+    // Prefill adminNotes dari admin_note yang sudah ada (kalau ada)
+    const prefill = {};
+    (data || []).forEach((tx) => {
+      if (tx.admin_note) prefill[tx.id] = tx.admin_note;
+    });
+    setAdminNotes(prefill);
   };
 
   // Inisialisasi halaman admin + cek akses
@@ -93,6 +103,8 @@ export default function AdminTransactionsPage() {
   // APPROVE transaksi
   const handleApprove = async (tx) => {
     setActionId(tx.id);
+    const adminNote = (adminNotes[tx.id] || "").trim();
+
     try {
       // Ambil wallet terbaru
       const { data: w, error: wErr } = await supabase
@@ -114,13 +126,17 @@ export default function AdminTransactionsPage() {
       } else if (tx.type === "WITHDRAW") {
         if (w.balance < tx.amount) {
           // saldo tidak cukup: otomatis REJECTED
+          const autoNote =
+            (tx.note || "") +
+            " | Ditolak saat approval: saldo tidak mencukupi." +
+            (adminNote ? ` | Catatan admin: ${adminNote}` : "");
+
           await supabase
             .from("wallet_transactions")
             .update({
               status: "REJECTED",
-              note:
-                (tx.note || "") +
-                " | Ditolak saat approval: saldo tidak mencukupi.",
+              note: autoNote,
+              admin_note: adminNote || null,
             })
             .eq("id", tx.id);
 
@@ -145,13 +161,19 @@ export default function AdminTransactionsPage() {
       }
 
       // Update transaksi -> APPROVED
+      const finalNote =
+        (tx.note || "") +
+        " | Disetujui admin." +
+        (adminNote ? ` | Catatan admin: ${adminNote}` : "");
+
       const { error: txErr } = await supabase
         .from("wallet_transactions")
         .update({
           status: "APPROVED",
           balance_before: w.balance,
           balance_after: newBalance,
-          note: (tx.note || "") + " | Disetujui admin.",
+          note: finalNote,
+          admin_note: adminNote || null,
         })
         .eq("id", tx.id);
 
@@ -174,12 +196,20 @@ export default function AdminTransactionsPage() {
   // REJECT transaksi
   const handleReject = async (tx) => {
     setActionId(tx.id);
+    const adminNote = (adminNotes[tx.id] || "").trim();
+
     try {
+      const finalNote =
+        (tx.note || "") +
+        " | Ditolak admin." +
+        (adminNote ? ` | Catatan admin: ${adminNote}` : "");
+
       const { error } = await supabase
         .from("wallet_transactions")
         .update({
           status: "REJECTED",
-          note: (tx.note || "") + " | Ditolak admin.",
+          note: finalNote,
+          admin_note: adminNote || null,
         })
         .eq("id", tx.id);
 
@@ -239,7 +269,7 @@ export default function AdminTransactionsPage() {
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
             >
               Kembali ke dashboard
             </button>
@@ -257,8 +287,9 @@ export default function AdminTransactionsPage() {
             berstatus <strong>APPROVED</strong>.
           </p>
           <p className="nanad-dashboard-body" style={{ fontSize: "0.8rem" }}>
-            Catatan: sistem role admin belum diatur. Pastikan hanya email yang
-            ada di daftar ADMIN_EMAILS yang memiliki akses ke halaman ini.
+            Gunakan kolom <strong>catatan admin</strong> untuk meninggalkan
+            alasan singkat setiap kali menyetujui atau menolak, agar riwayat
+            lebih jelas bagi pengguna.
           </p>
         </section>
 
@@ -292,6 +323,7 @@ export default function AdminTransactionsPage() {
               >
                 {pendingTx.map((tx) => (
                   <div key={tx.id} className="nanad-dashboard-deposits-row">
+                    {/* Kolom kiri: waktu + status */}
                     <div>
                       {new Date(tx.created_at).toLocaleString("id-ID")}
                       <br />
@@ -307,6 +339,7 @@ export default function AdminTransactionsPage() {
                       </span>
                     </div>
 
+                    {/* Tengah: detail transaksi + catatan */}
                     <div>
                       {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
                       {formatCurrency(tx.amount)}
@@ -336,7 +369,8 @@ export default function AdminTransactionsPage() {
                         <>
                           <br />
                           <small>
-                            ke {tx.withdraw_bank_name} · {tx.withdraw_bank_account} (
+                            ke {tx.withdraw_bank_name} ·{" "}
+                            {tx.withdraw_bank_account} (
                             {tx.withdraw_bank_holder})
                           </small>
                         </>
@@ -359,15 +393,74 @@ export default function AdminTransactionsPage() {
                         </>
                       )}
 
+                      {tx.user_note && (
+                        <>
+                          <br />
+                          <small>
+                            <strong>Catatan pengguna:</strong> {tx.user_note}
+                          </small>
+                        </>
+                      )}
+
+                      {tx.admin_note && (
+                        <>
+                          <br />
+                          <small>
+                            <strong>Catatan admin (sebelumnya):</strong>{" "}
+                            {tx.admin_note}
+                          </small>
+                        </>
+                      )}
+
                       {tx.note && (
                         <>
                           <br />
-                          <small>{tx.note}</small>
+                          <small>
+                            <strong>Catatan sistem:</strong> {tx.note}
+                          </small>
                         </>
                       )}
+
+                      {/* Textarea catatan admin untuk tindakan ini */}
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <small style={{ display: "block", marginBottom: 4 }}>
+                          Catatan admin (opsional, ikut disimpan saat Terima /
+                          Tolak):
+                        </small>
+                        <textarea
+                          value={adminNotes[tx.id] || ""}
+                          onChange={(e) =>
+                            setAdminNotes((prev) => ({
+                              ...prev,
+                              [tx.id]: e.target.value,
+                            }))
+                          }
+                          placeholder="contoh: mutasi sudah masuk, bukti jelas · atau: data rekening kurang jelas, diminta perbaikan."
+                          style={{
+                            width: "100%",
+                            minHeight: "70px",
+                            fontSize: "0.8rem",
+                            borderRadius: "16px",
+                            padding: "0.4rem 0.6rem",
+                            border:
+                              "1px solid rgba(248, 250, 252, 0.16)",
+                            background:
+                              "radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,0.9))",
+                          }}
+                        />
+                      </div>
                     </div>
 
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                    {/* Kanan: tombol aksi */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.4rem",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                      }}
+                    >
                       <button
                         type="button"
                         disabled={actionId === tx.id}
