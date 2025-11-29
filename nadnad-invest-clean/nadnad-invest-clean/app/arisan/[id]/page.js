@@ -29,7 +29,7 @@ export default function ArisanDetailPage() {
   const [wallet, setWallet] = useState(null);
   const [group, setGroup] = useState(null);
   const [members, setMembers] = useState([]);
-  const [contribs, setContribs] = useState([]); // arisan_contributions
+  const [contribs, setContribs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [joining, setJoining] = useState(false);
@@ -40,7 +40,7 @@ export default function ArisanDetailPage() {
   const loadAll = async (userId) => {
     setErrorMsg("");
 
-    // 1) grup
+    // 1) Detail grup
     const { data: grp, error: gErr } = await supabase
       .from("arisan_groups")
       .select("*")
@@ -55,7 +55,7 @@ export default function ArisanDetailPage() {
 
     setGroup(grp);
 
-    // 2) members
+    // 2) Anggota
     const { data: mems, error: mErr } = await supabase
       .from("arisan_members")
       .select("*")
@@ -74,7 +74,7 @@ export default function ArisanDetailPage() {
     setIsMember(!!me);
     if (me && me.nickname) setNickname(me.nickname);
 
-    // 3) contributions
+    // 3) Setoran
     const { data: contrib, error: cErr } = await supabase
       .from("arisan_contributions")
       .select("*")
@@ -110,7 +110,7 @@ export default function ArisanDetailPage() {
         }
         setUser(user);
 
-        // ambil wallet
+        // Ambil dompet
         const { data: w, error: wErr } = await supabase
           .from("wallets")
           .select("*")
@@ -135,8 +135,7 @@ export default function ArisanDetailPage() {
   }, [router, groupId]);
 
   const handleJoin = async () => {
-    if (!user) return;
-    if (!group) return;
+    if (!user || !group) return;
 
     if (isMember) {
       alert("Kamu sudah terdaftar di arisan ini.");
@@ -145,7 +144,7 @@ export default function ArisanDetailPage() {
 
     try {
       setJoining(true);
-      // hitung posisi terakhir + 1
+
       const maxPos = members.reduce(
         (max, m) => (m.position && m.position > max ? m.position : max),
         0
@@ -203,19 +202,19 @@ export default function ArisanDetailPage() {
     }
   };
 
+  // ✅ versi diperbaiki
   const handlePayFromWallet = async (roundNumber) => {
     if (!user || !wallet || !group) return;
+
     const me = members.find((m) => m.user_id === user.id);
     if (!me) {
       alert("Kamu belum menjadi anggota arisan ini.");
       return;
     }
 
-    // cek apakah sudah setor untuk putaran ini
+    // Cek sudah setor atau belum
     const already = contribs.find(
-      (c) =>
-        c.user_id === user.id &&
-        c.round_number === roundNumber
+      (c) => c.user_id === user.id && c.round_number === roundNumber
     );
     if (already) {
       alert("Kamu sudah mencatat setoran untuk putaran ini.");
@@ -253,7 +252,7 @@ export default function ArisanDetailPage() {
       const before = wallet.balance || 0;
       const after = before - amount;
 
-      // 1) update saldo wallet
+      // 1) Update saldo dompet
       const { error: wErr } = await supabase
         .from("wallets")
         .update({ balance: after })
@@ -265,16 +264,16 @@ export default function ArisanDetailPage() {
         return;
       }
 
-      // 2) catat transaksi wallet (jenis ARISAN_CONTRIB)
+      // 2) Catat transaksi dompet (WITHDRAW + APPROVED)
       const { data: txData, error: txErr } = await supabase
         .from("wallet_transactions")
         .insert({
           wallet_id: wallet.id,
-          type: "ARISAN_CONTRIB",
+          type: "WITHDRAW", // penting: pakai tipe yang sudah ada di DB
           amount,
           balance_before: before,
           balance_after: after,
-          status: "COMPLETED",
+          status: "APPROVED", // langsung dianggap sudah disetujui
           note: `Setoran arisan '${group.name}' putaran ${roundNumber}`,
           user_email: user.email || null,
         })
@@ -282,14 +281,18 @@ export default function ArisanDetailPage() {
         .single();
 
       if (txErr) {
-        console.error("Insert tx error:", txErr.message);
-        alert("Gagal mencatat transaksi dompet.");
+        console.error("Insert tx error:", txErr);
+        alert(
+          "Gagal mencatat transaksi dompet: " +
+            (txErr.message ||
+              "cek definisi tabel wallet_transactions di Supabase.")
+        );
         return;
       }
 
       const walletTxId = txData?.id || null;
 
-      // 3) catat ke arisan_contributions
+      // 3) Catat ke tabel setoran arisan
       const { error: cErr } = await supabase
         .from("arisan_contributions")
         .insert({
@@ -302,12 +305,16 @@ export default function ArisanDetailPage() {
         });
 
       if (cErr) {
-        console.error("Insert contrib error:", cErr.message);
-        alert("Gagal mencatat setoran arisan.");
+        console.error("Insert contrib error:", cErr);
+        alert(
+          "Gagal mencatat setoran arisan: " +
+            (cErr.message ||
+              "cek tabel arisan_contributions di Supabase.")
+        );
         return;
       }
 
-      // refresh data
+      // Refresh dompet & data arisan
       const { data: newWallet, error: newWErr } = await supabase
         .from("wallets")
         .select("*")
@@ -321,7 +328,10 @@ export default function ArisanDetailPage() {
       alert("Setoran arisan berhasil dicatat dan saldo dompet dikurangi.");
     } catch (err) {
       console.error("Pay from wallet error:", err);
-      alert("Terjadi kesalahan saat mencatat setoran.");
+      alert(
+        "Terjadi kesalahan saat mencatat setoran: " +
+          (err.message || "error tak dikenal.")
+      );
     } finally {
       setActionLoading(false);
     }
@@ -331,9 +341,7 @@ export default function ArisanDetailPage() {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p className="nanad-dashboard-body">
-            Memuat detail arisan...
-          </p>
+          <p className="nanad-dashboard-body">Memuat detail arisan...</p>
         </div>
       </main>
     );
@@ -371,11 +379,6 @@ export default function ArisanDetailPage() {
     rounds.push({ roundNumber: i, date });
   }
 
-  const memberById = {};
-  members.forEach((m) => {
-    memberById[m.user_id] = m;
-  });
-
   const me = user ? members.find((m) => m.user_id === user.id) : null;
 
   return (
@@ -411,7 +414,7 @@ export default function ArisanDetailPage() {
           </div>
         </header>
 
-        {/* Info grup + status diri sendiri */}
+        {/* Info grup + status user */}
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Arisan group</p>
           <h1 className="nanad-dashboard-heading">{group.name}</h1>
@@ -445,7 +448,8 @@ export default function ArisanDetailPage() {
                 style={{ marginTop: "0.3rem", fontSize: "0.78rem" }}
               >
                 Setoran arisan yang dicatat dari dompet akan{" "}
-                <strong>mengurangi saldo</strong> di sini (simulasi pencatatan).
+                <strong>mengurangi saldo</strong> di sini (simulasi
+                pencatatan).
               </p>
             </div>
 
@@ -676,7 +680,7 @@ export default function ArisanDetailPage() {
             )}
           </div>
 
-          {/* Daftar anggota & urutan */}
+          {/* Daftar anggota */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Daftar anggota &amp; urutan menerima</h3>
@@ -699,10 +703,7 @@ export default function ArisanDetailPage() {
                 style={{ marginTop: "0.75rem" }}
               >
                 {members.map((m) => (
-                  <div
-                    key={m.id}
-                    className="nanad-dashboard-deposits-row"
-                  >
+                  <div key={m.id} className="nanad-dashboard-deposits-row">
                     <div>
                       {m.position
                         ? `Urutan ke-${m.position}`
