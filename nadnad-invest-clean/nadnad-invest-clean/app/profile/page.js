@@ -24,8 +24,12 @@ export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
-  const [resetLoading, setResetLoading] = useState(false);
-  const [resetMessage, setResetMessage] = useState("");
+  // state untuk form ganti password langsung
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdError, setPwdError] = useState("");
+  const [pwdMessage, setPwdMessage] = useState("");
 
   useEffect(() => {
     const loadUser = async () => {
@@ -65,40 +69,52 @@ export default function ProfilePage() {
     }
   };
 
-  // Kirim link reset password ke email user, redirect ke /reset-password
-  const handleSendResetLink = async () => {
-    if (!user?.email) {
-      alert("Email akun tidak ditemukan.");
+  // 👉 Ganti password langsung (tanpa email)
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPwdError("");
+    setPwdMessage("");
+
+    if (!newPassword || newPassword.length < 6) {
+      setPwdError("Password baru minimal 6 karakter.");
       return;
     }
 
-    const ok = window.confirm(
-      `Kirim link ganti password ke email:\n${user.email} ?`
-    );
-    if (!ok) return;
+    if (newPassword !== confirmPassword) {
+      setPwdError("Konfirmasi password tidak sama.");
+      return;
+    }
 
     try {
-      setResetLoading(true);
-      setResetMessage("");
+      setPwdLoading(true);
 
-      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       });
 
       if (error) {
-        console.error("resetPasswordForEmail error:", error.message);
-        setResetMessage("Gagal mengirim link ganti password. Coba lagi nanti.");
+        console.error("updateUser (password) error:", error.message);
+        setPwdError("Gagal mengubah password. Coba lagi.");
         return;
       }
 
-      setResetMessage(
-        "Link ganti password telah dikirim ke email kamu. Silakan cek inbox atau folder spam."
+      setPwdMessage(
+        "Password berhasil diubah. Kamu akan diminta login ulang dengan password baru."
       );
+
+      // kosongkan form
+      setNewPassword("");
+      setConfirmPassword("");
+
+      // setelah beberapa detik, paksa logout agar login pakai password baru
+      setTimeout(() => {
+        handleLogout();
+      }, 2500);
     } catch (err) {
-      console.error("Unexpected reset error:", err);
-      setResetMessage("Terjadi kesalahan saat mengirim link ganti password.");
+      console.error("Unexpected update password error:", err);
+      setPwdError("Terjadi kesalahan saat mengubah password.");
     } finally {
-      setResetLoading(false);
+      setPwdLoading(false);
     }
   };
 
@@ -241,7 +257,7 @@ export default function ProfilePage() {
             </ul>
           </div>
 
-          {/* Tombol aksi akun */}
+          {/* Aksi akun: logout & ganti password */}
           <div
             style={{
               marginTop: "1.5rem",
@@ -257,32 +273,94 @@ export default function ProfilePage() {
             >
               Logout dari akun ini
             </button>
-
-            <button
-              type="button"
-              className="nanad-dashboard-logout"
-              onClick={handleSendResetLink}
-              disabled={resetLoading}
-            >
-              {resetLoading
-                ? "Mengirim link ganti password..."
-                : "Kirim link ganti password"}
-            </button>
           </div>
 
-          {/* Pesan status reset password */}
-          {resetMessage && (
+          {/* Form ganti password langsung */}
+          <div
+            style={{
+              marginTop: "1.5rem",
+              maxWidth: "380px",
+              borderRadius: "24px",
+              padding: "1rem 1.25rem",
+              border: "1px solid rgba(148,163,184,0.4)",
+              background:
+                "radial-gradient(circle at top, rgba(148,163,184,0.12), rgba(15,23,42,1))",
+              fontSize: "0.8rem",
+            }}
+          >
             <p
-              className="nanad-dashboard-body"
               style={{
-                marginTop: "0.75rem",
-                fontSize: "0.8rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                fontSize: "0.7rem",
+                marginBottom: "0.5rem",
                 color: "#e5e7eb",
               }}
             >
-              {resetMessage}
+              GANTI PASSWORD
             </p>
-          )}
+            <p className="nanad-dashboard-body" style={{ fontSize: "0.8rem" }}>
+              Password baru hanya bisa diubah saat kamu sudah login. Setelah
+              password diubah, kamu akan diminta login ulang menggunakan password
+              yang baru.
+            </p>
+
+            <form
+              onSubmit={handleChangePassword}
+              style={{
+                marginTop: "0.75rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.6rem",
+              }}
+            >
+              <label className="nanad-dashboard-deposit-amount">
+                Password baru
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Minimal 6 karakter"
+                />
+              </label>
+
+              <label className="nanad-dashboard-deposit-amount">
+                Konfirmasi password baru
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Ulangi password baru"
+                />
+              </label>
+
+              {pwdError && (
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ color: "#fecaca", fontSize: "0.78rem" }}
+                >
+                  {pwdError}
+                </p>
+              )}
+              {pwdMessage && (
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ color: "#bbf7d0", fontSize: "0.78rem" }}
+                >
+                  {pwdMessage}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className="nanad-dashboard-deposit-submit"
+                disabled={pwdLoading}
+                style={{ marginTop: "0.3rem" }}
+              >
+                {pwdLoading ? "Menyimpan password..." : "Simpan password baru"}
+              </button>
+            </form>
+          </div>
         </section>
 
         {/* Footer kecil */}
@@ -291,8 +369,9 @@ export default function ProfilePage() {
             © {new Date().getFullYear()} Nanad Invest. Account & security page.
           </span>
           <span>
-            Untuk pengaturan password, gunakan link resmi yang dikirim ke email
-            melalui fitur reset password Nanad Invest (Supabase Auth).
+            Jaga selalu kerahasiaan akun kamu. Untuk keamanan tambahan, ganti
+            password secara berkala dan hindari menggunakan password yang sama
+            dengan layanan lain.
           </span>
         </footer>
       </div>
