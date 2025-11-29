@@ -39,6 +39,10 @@ export default function WalletPage() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
+  // Filter riwayat transaksi
+  const [typeFilter, setTypeFilter] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW
+  const [statusFilter, setStatusFilter] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
+
   // ==== Form DEPOSIT ====
   const [depositAmount, setDepositAmount] = useState("");
   const [depositTarget, setDepositTarget] = useState(
@@ -204,19 +208,21 @@ export default function WalletPage() {
       const before = wallet.balance ?? 0;
       const after = before + amount;
 
-      const { error: txErr } = await supabase.from("wallet_transactions").insert({
-        wallet_id: wallet.id,
-        type: "DEPOSIT",
-        amount,
-        balance_before: before,
-        balance_after: after,
-        status: "PENDING",
-        note: "Pengajuan deposit menunggu persetujuan admin.",
-        deposit_target: targetLabel,
-        proof_image_url: proofImageUrl,
-        sender_name: depositSenderName.trim(),
-        user_email: user.email || null,
-      });
+      const { error: txErr } = await supabase
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          type: "DEPOSIT",
+          amount,
+          balance_before: before,
+          balance_after: after,
+          status: "PENDING",
+          note: "Pengajuan deposit menunggu persetujuan admin.",
+          deposit_target: targetLabel,
+          proof_image_url: proofImageUrl,
+          sender_name: depositSenderName.trim(),
+          user_email: user.email || null,
+        });
 
       if (txErr) throw txErr;
 
@@ -271,19 +277,21 @@ export default function WalletPage() {
       const before = wallet.balance ?? 0;
       const after = before - amount;
 
-      const { error: txErr } = await supabase.from("wallet_transactions").insert({
-        wallet_id: wallet.id,
-        type: "WITHDRAW",
-        amount,
-        balance_before: before,
-        balance_after: after,
-        status: "PENDING",
-        note: "Pengajuan penarikan menunggu persetujuan admin.",
-        withdraw_bank_name: withdrawBankName,
-        withdraw_bank_account: withdrawBankAccount,
-        withdraw_bank_holder: withdrawBankHolder,
-        user_email: user.email || null,
-      });
+      const { error: txErr } = await supabase
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          type: "WITHDRAW",
+          amount,
+          balance_before: before,
+          balance_after: after,
+          status: "PENDING",
+          note: "Pengajuan penarikan menunggu persetujuan admin.",
+          withdraw_bank_name: withdrawBankName,
+          withdraw_bank_account: withdrawBankAccount,
+          withdraw_bank_holder: withdrawBankHolder,
+          user_email: user.email || null,
+        });
 
       if (txErr) throw txErr;
 
@@ -301,6 +309,24 @@ export default function WalletPage() {
       setActionLoading(false);
     }
   };
+
+  // Filter transaksi berdasarkan jenis & status
+  const filteredTransactions = transactions.filter((tx) => {
+    let okType = true;
+    if (typeFilter === "DEPOSIT") okType = tx.type === "DEPOSIT";
+    else if (typeFilter === "WITHDRAW") okType = tx.type === "WITHDRAW";
+
+    let okStatus = true;
+    if (statusFilter === "PENDING") {
+      okStatus = tx.status === "PENDING";
+    } else if (statusFilter === "APPROVED") {
+      okStatus = tx.status === "APPROVED" || tx.status === "COMPLETED";
+    } else if (statusFilter === "REJECTED") {
+      okStatus = tx.status === "REJECTED";
+    }
+
+    return okType && okStatus;
+  });
 
   // ==== RENDER: state loading / error ====
   if (loading) {
@@ -575,260 +601,286 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* Riwayat transaksi dompet - versi tabel sederhana */}
+        {/* Riwayat transaksi dompet */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Riwayat transaksi dompet</h3>
               <p>
                 Termasuk pengajuan yang masih{" "}
-                <strong>menunggu persetujuan admin</strong>.
+                <strong>menunggu persetujuan admin</strong>. Kamu bisa menyaring
+                berdasarkan jenis transaksi dan status di bawah ini.
               </p>
             </div>
 
-            {transactions.length === 0 ? (
+            {/* Filter bar */}
+            <div
+              style={{
+                marginTop: "0.75rem",
+                marginBottom: "0.5rem",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+                alignItems: "center",
+                fontSize: "0.8rem",
+              }}
+            >
+              <span
+                style={{
+                  opacity: 0.8,
+                  marginRight: "0.25rem",
+                }}
+              >
+                Jenis:
+              </span>
+              {[
+                { key: "ALL", label: "Semua" },
+                { key: "DEPOSIT", label: "Deposit" },
+                { key: "WITHDRAW", label: "Penarikan" },
+              ].map((btn) => (
+                <button
+                  key={btn.key}
+                  type="button"
+                  onClick={() => setTypeFilter(btn.key)}
+                  className={
+                    typeFilter === btn.key
+                      ? "nanad-dashboard-deposit-submit"
+                      : "nanad-dashboard-logout"
+                  }
+                  style={{
+                    padding: "0.25rem 0.75rem",
+                    fontSize: "0.75rem",
+                    borderRadius: "999px",
+                  }}
+                >
+                  {btn.label}
+                </button>
+              ))}
+
+              <span
+                style={{
+                  opacity: 0.8,
+                  marginLeft: "0.75rem",
+                  marginRight: "0.25rem",
+                }}
+              >
+                Status:
+              </span>
+              {[
+                { key: "ALL", label: "Semua" },
+                { key: "PENDING", label: "Pending" },
+                { key: "APPROVED", label: "Disetujui" },
+                { key: "REJECTED", label: "Ditolak" },
+              ].map((btn) => (
+                <button
+                  key={btn.key}
+                  type="button"
+                  onClick={() => setStatusFilter(btn.key)}
+                  className={
+                    statusFilter === btn.key
+                      ? "nanad-dashboard-deposit-submit"
+                      : "nanad-dashboard-logout"
+                  }
+                  style={{
+                    padding: "0.25rem 0.75rem",
+                    fontSize: "0.75rem",
+                    borderRadius: "999px",
+                  }}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Daftar transaksi */}
+            {filteredTransactions.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
-                style={{ marginTop: "0.75rem" }}
+                style={{ marginTop: "0.75rem", fontSize: "0.8rem" }}
               >
-                Belum ada transaksi tercatat.
+                Belum ada transaksi yang cocok dengan filter yang dipilih.
               </p>
             ) : (
               <div
-                style={{
-                  marginTop: "0.75rem",
-                  overflow: "hidden",
-                  borderRadius: "24px",
-                  border: "1px solid rgba(148,163,184,0.3)",
-                  background:
-                    "radial-gradient(circle at top, rgba(15,23,42,1), rgba(2,6,23,1))",
-                }}
+                className="nanad-dashboard-deposits-rows"
+                style={{ marginTop: "0.75rem" }}
               >
-                <div style={{ overflowX: "auto" }}>
-                  <table
-                    style={{
-                      width: "100%",
-                      fontSize: "0.75rem",
-                      borderCollapse: "collapse",
-                    }}
-                  >
-                    <thead
-                      style={{
-                        background:
-                          "linear-gradient(to right, rgba(30,64,175,0.35), rgba(15,23,42,0.95))",
-                      }}
-                    >
-                      <tr>
-                        <th
+                {filteredTransactions.map((tx) => {
+                  const created = new Date(tx.created_at).toLocaleString(
+                    "id-ID",
+                    {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  );
+
+                  let statusLabel = tx.status;
+                  let statusColor = "#e5e7eb";
+                  let statusBg = "rgba(148,163,184,0.15)";
+
+                  if (tx.status === "PENDING") {
+                    statusLabel = "Menunggu persetujuan";
+                    statusColor = "#facc15";
+                    statusBg = "rgba(234,179,8,0.12)";
+                  } else if (
+                    tx.status === "APPROVED" ||
+                    tx.status === "COMPLETED"
+                  ) {
+                    statusLabel = "Disetujui / selesai";
+                    statusColor = "#4ade80";
+                    statusBg = "rgba(34,197,94,0.12)";
+                  } else if (tx.status === "REJECTED") {
+                    statusLabel = "Ditolak";
+                    statusColor = "#f87171";
+                    statusBg = "rgba(248,113,113,0.12)";
+                  }
+
+                  const typeLabel =
+                    tx.type === "DEPOSIT" ? "Deposit" : "Penarikan";
+                  const typeBg =
+                    tx.type === "DEPOSIT"
+                      ? "rgba(59,130,246,0.18)"
+                      : "rgba(236,72,153,0.18)";
+                  const typeColor =
+                    tx.type === "DEPOSIT" ? "#bfdbfe" : "#f9a8d4";
+
+                  return (
+                    <div key={tx.id} className="nanad-dashboard-deposits-row">
+                      <div>
+                        <div
                           style={{
-                            textAlign: "left",
-                            padding: "0.6rem 1rem",
-                            fontWeight: 500,
+                            fontSize: "0.8rem",
+                            opacity: 0.9,
+                            marginBottom: "0.15rem",
                           }}
                         >
-                          Tanggal
-                        </th>
-                        <th
+                          {created}
+                        </div>
+                        <div
                           style={{
-                            textAlign: "left",
-                            padding: "0.6rem 1rem",
-                            fontWeight: 500,
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "0.35rem",
+                            marginTop: "0.1rem",
                           }}
                         >
-                          Tipe
-                        </th>
-                        <th
-                          style={{
-                            textAlign: "right",
-                            padding: "0.6rem 1rem",
-                            fontWeight: 500,
-                          }}
-                        >
-                          Nominal
-                        </th>
-                        <th
-                          style={{
-                            textAlign: "left",
-                            padding: "0.6rem 1rem",
-                            fontWeight: 500,
-                          }}
-                        >
-                          Status
-                        </th>
-                        <th
-                          style={{
-                            textAlign: "left",
-                            padding: "0.6rem 1rem",
-                            fontWeight: 500,
-                          }}
-                        >
-                          Detail
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {transactions.map((tx, idx) => {
-                        const created = tx.created_at
-                          ? new Date(tx.created_at).toLocaleString("id-ID")
-                          : "-";
-
-                        let statusLabel = tx.status || "-";
-                        let statusBg = "rgba(148,163,184,0.15)";
-                        let statusColor = "#e5e7eb";
-
-                        if (tx.status === "PENDING") {
-                          statusLabel = "Menunggu persetujuan";
-                          statusBg = "rgba(250,204,21,0.15)";
-                          statusColor = "#fde68a";
-                        } else if (
-                          tx.status === "APPROVED" ||
-                          tx.status === "COMPLETED"
-                        ) {
-                          statusLabel = "Disetujui / selesai";
-                          statusBg = "rgba(34,197,94,0.12)";
-                          statusColor = "#bbf7d0";
-                        } else if (tx.status === "REJECTED") {
-                          statusLabel = "Ditolak";
-                          statusBg = "rgba(248,113,113,0.12)";
-                          statusColor = "#fecaca";
-                        }
-
-                        const typeLabel =
-                          tx.type === "DEPOSIT" ? "Deposit" : "Penarikan";
-
-                        let detailLines = [];
-
-                        if (tx.type === "DEPOSIT" && tx.deposit_target) {
-                          detailLines.push(`Rekening tujuan: ${tx.deposit_target}`);
-                        }
-                        if (tx.type === "WITHDRAW" && tx.withdraw_bank_name) {
-                          detailLines.push(
-                            `Ke ${tx.withdraw_bank_name} · ${tx.withdraw_bank_account || ""} (${tx.withdraw_bank_holder || "-"})`
-                          );
-                        }
-                        if (tx.sender_name) {
-                          detailLines.push(`A/n pengirim: ${tx.sender_name}`);
-                        }
-                        if (tx.note) {
-                          detailLines.push(tx.note);
-                        }
-
-                        return (
-                          <tr
-                            key={tx.id || idx}
+                          <span
                             style={{
-                              backgroundColor:
-                                idx % 2 === 0
-                                  ? "rgba(15,23,42,1)"
-                                  : "rgba(15,23,42,0.85)",
+                              fontSize: "0.7rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.08em",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "999px",
+                              background: typeBg,
+                              color: typeColor,
                             }}
                           >
-                            <td
+                            {typeLabel}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "0.7rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.08em",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "999px",
+                              background: statusBg,
+                              color: statusColor,
+                            }}
+                          >
+                            {statusLabel}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: "0.9rem", marginBottom: 4 }}>
+                          {typeLabel} {formatCurrency(tx.amount)}
+                        </div>
+
+                        {tx.user_email && (
+                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
+                            Akun: {tx.user_email}
+                          </div>
+                        )}
+
+                        {tx.sender_name && (
+                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
+                            Atas nama pengirim: {tx.sender_name}
+                          </div>
+                        )}
+
+                        {tx.type === "DEPOSIT" && tx.deposit_target && (
+                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
+                            Rekening tujuan: {tx.deposit_target}
+                          </div>
+                        )}
+
+                        {tx.type === "WITHDRAW" && tx.withdraw_bank_name && (
+                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
+                            ke {tx.withdraw_bank_name} ·{" "}
+                            {tx.withdraw_bank_account} (
+                            {tx.withdraw_bank_holder})
+                          </div>
+                        )}
+
+                        {tx.proof_image_url && (
+                          <div style={{ marginTop: "0.2rem" }}>
+                            <a
+                              href={tx.proof_image_url}
+                              target="_blank"
+                              rel="noreferrer"
                               style={{
-                                padding: "0.6rem 1rem",
-                                whiteSpace: "nowrap",
+                                fontSize: "0.75rem",
+                                textDecoration: "underline",
+                                opacity: 0.95,
                               }}
                             >
-                              {created}
-                            </td>
-                            <td style={{ padding: "0.6rem 1rem" }}>
-                              <span
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  borderRadius: "999px",
-                                  padding: "0.1rem 0.6rem",
-                                  border: "1px solid rgba(148,163,184,0.5)",
-                                  fontSize: "0.7rem",
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.06em",
-                                }}
-                              >
-                                {typeLabel}
-                              </span>
-                            </td>
-                            <td
-                              style={{
-                                padding: "0.6rem 1rem",
-                                textAlign: "right",
-                              }}
-                            >
-                              {formatCurrency(tx.amount)}
-                            </td>
-                            <td style={{ padding: "0.6rem 1rem" }}>
-                              <span
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  borderRadius: "999px",
-                                  padding: "0.1rem 0.6rem",
-                                  backgroundColor: statusBg,
-                                  color: statusColor,
-                                  fontSize: "0.7rem",
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.06em",
-                                }}
-                              >
-                                {statusLabel}
-                              </span>
-                            </td>
-                            <td
-                              style={{
-                                padding: "0.6rem 1rem",
-                                fontSize: "0.7rem",
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              {detailLines.length === 0 ? (
-                                <span>-</span>
-                              ) : (
-                                detailLines.map((line, i) => (
-                                  <div key={i}>{line}</div>
-                                ))
-                              )}
-                              {tx.proof_image_url && (
-                                <div style={{ marginTop: "0.2rem" }}>
-                                  <a
-                                    href={tx.proof_image_url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={{
-                                      textDecoration: "underline",
-                                      fontSize: "0.7rem",
-                                    }}
-                                  >
-                                    Lihat bukti transfer
-                                  </a>
-                                </div>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-                <div
-                  style={{
-                    padding: "0.6rem 1rem",
-                    borderTop: "1px solid rgba(148,163,184,0.3)",
-                    fontSize: "0.7rem",
-                    color: "rgba(148,163,184,0.9)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: "0.5rem",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span>
-                    Riwayat transaksi ini bersumber dari tabel{" "}
-                    <code>wallet_transactions</code>.
-                  </span>
-                  <span style={{ fontStyle: "italic" }}>
-                    Simulasi tampilan · Bukan catatan transaksi resmi lembaga
-                    keuangan.
-                  </span>
-                </div>
+                              Lihat bukti transfer
+                            </a>
+                          </div>
+                        )}
+
+                        {tx.note && (
+                          <div
+                            style={{
+                              fontSize: "0.75rem",
+                              opacity: 0.9,
+                              marginTop: "0.2rem",
+                            }}
+                          >
+                            {tx.note}
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ textAlign: "right" }}>
+                        <div
+                          style={{
+                            fontSize: "0.9rem",
+                            fontWeight: 500,
+                          }}
+                        >
+                          {formatCurrency(tx.amount)}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "0.7rem",
+                            opacity: 0.8,
+                            marginTop: "0.15rem",
+                          }}
+                        >
+                          Saldo sebelum: {formatCurrency(tx.balance_before)}
+                          <br />
+                          Saldo sesudah: {formatCurrency(tx.balance_after)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
