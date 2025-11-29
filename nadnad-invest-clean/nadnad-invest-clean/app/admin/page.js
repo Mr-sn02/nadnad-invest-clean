@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "../../lib/supabaseClient";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_NANAD_ADMIN_KEY || "";
+const ADMIN_KEY = "Son887799";
 
 // helper rupiah
 function formatCurrency(value) {
