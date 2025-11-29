@@ -40,7 +40,9 @@ export default function ArisanDetailPage() {
   const [members, setMembers] = useState([]);
 
   const [wallet, setWallet] = useState(null);
-  const [rounds, setRounds] = useState([]); // [{round, scheduledDate, status, recipient, payments:[]}]
+  const [rounds, setRounds] = useState([]); // jadwal putaran
+
+  // state arisan
   const [processingRound, setProcessingRound] = useState(null);
   const [savingRecipient, setSavingRecipient] = useState(null);
   const [archiving, setArchiving] = useState(false);
@@ -48,7 +50,13 @@ export default function ArisanDetailPage() {
 
   const isOwner = myMembership?.role === "OWNER";
 
-  // ====== LOAD UTAMA ======
+  // state chat
+  const [messages, setMessages] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [newMessage, setNewMessage] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
+
+  // ====== INIT / LOAD UTAMA ======
   useEffect(() => {
     if (!rawId) return;
 
@@ -58,7 +66,7 @@ export default function ArisanDetailPage() {
       setNotFound(false);
 
       try {
-        // 1) user
+        // 1) User
         const {
           data: { user },
           error,
@@ -77,7 +85,7 @@ export default function ArisanDetailPage() {
         const idStr = Array.isArray(rawId) ? rawId[0] : rawId;
         const isCode = /^\d{5}$/.test(idStr);
 
-        // 2) group
+        // 2) Grup (by group_code 5 digit atau id)
         let groupQuery = supabase.from("arisan_groups").select("*");
         if (isCode) {
           groupQuery = groupQuery.eq("group_code", idStr);
@@ -98,7 +106,7 @@ export default function ArisanDetailPage() {
         }
         setGroup(g);
 
-        // 3) memberships & myMembership
+        // 3) Members & membership saya
         const { data: membersData, error: membersErr } = await supabase
           .from("arisan_memberships")
           .select(
@@ -110,13 +118,13 @@ export default function ArisanDetailPage() {
         if (membersErr) {
           console.error("Load members error:", membersErr.message);
         }
-        setMembers(membersData || []);
+        const membersList = membersData || [];
+        setMembers(membersList);
 
-        const mine =
-          membersData?.find((m) => m.user_id === user.id) || null;
+        const mine = membersList.find((m) => m.user_id === user.id) || null;
         setMyMembership(mine || null);
 
-        // 4) wallet user
+        // 4) Wallet user
         let currentWallet = null;
         const { data: w, error: wErr } = await supabase
           .from("wallets")
@@ -149,8 +157,11 @@ export default function ArisanDetailPage() {
         }
         setWallet(currentWallet);
 
-        // 5) rounds + payments
-        await loadRoundsAndPayments(g.id, g, membersData || [], currentWallet);
+        // 5) Putaran & pembayaran
+        await loadRoundsAndPayments(g.id, g, membersList, currentWallet);
+
+        // 6) Chat grup
+        await loadMessages(g.id);
       } catch (err) {
         console.error("Arisan detail error:", err);
         setErrorMsg("Terjadi kesalahan saat memuat grup arisan.");
@@ -162,10 +173,21 @@ export default function ArisanDetailPage() {
     loadAll();
   }, [rawId, router]);
 
-  // ====== LOAD ROUNDS + PAYMENTS (dipanggil ulang setelah aksi) ======
+  // ====== POLLING CHAT RINGAN (tiap 8 detik) ======
+  useEffect(() => {
+    if (!group) return;
+    const interval = setInterval(() => {
+      loadMessages(group.id);
+    }, 8000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [group?.id]);
+
+  // ====== LOAD ROUNDS + PAYMENTS ======
   const loadRoundsAndPayments = async (groupId, g, membersList, currentWallet) => {
     try {
-      // cek apakah sudah ada rounds
+      // cek existing rounds
       let { data: roundsData, error: rErr } = await supabase
         .from("arisan_rounds")
         .select(
@@ -188,7 +210,7 @@ export default function ArisanDetailPage() {
         return;
       }
 
-      // jika belum ada rounds -> jika owner: buat otomatis
+      // jika belum ada rounds -> buat berdasarkan total_rounds
       if ((!roundsData || roundsData.length === 0) && g.total_rounds > 0) {
         const start = g.start_date ? new Date(g.start_date) : null;
         const toInsert = [];
@@ -221,35 +243,37 @@ export default function ArisanDetailPage() {
       }
 
       // ambil payments
-      const { data: paymentsData, error: pErr } = await supabase
-        .from("arisan_round_payments")
-        .select(
-          `
-          id,
-          round_id,
-          membership_id,
-          status,
-          paid_at,
-          note
-        `
-        )
-        .in(
-          "round_id",
-          (roundsData || []).map((r) => r.id)
-        );
+      const roundIds = (roundsData || []).map((r) => r.id);
+      let paymentsData = [];
 
-      if (pErr) {
-        console.error("Load payments error:", pErr.message);
+      if (roundIds.length > 0) {
+        const { data: pData, error: pErr } = await supabase
+          .from("arisan_round_payments")
+          .select(
+            `
+            id,
+            round_id,
+            membership_id,
+            status,
+            paid_at,
+            note
+          `
+          )
+          .in("round_id", roundIds);
+
+        if (pErr) {
+          console.error("Load payments error:", pErr.message);
+        } else {
+          paymentsData = pData || [];
+        }
       }
 
-      // mapping
+      // bentuk view
       const roundsView = (roundsData || []).map((r) => {
-        const roundPayments =
-          paymentsData?.filter((p) => p.round_id === r.id) || [];
+        const roundPayments = paymentsData.filter((p) => p.round_id === r.id);
 
         const recipient =
-          membersList?.find((m) => m.id === r.recipient_membership_id) ||
-          null;
+          membersList.find((m) => m.id === r.recipient_membership_id) || null;
 
         return {
           id: r.id,
@@ -268,6 +292,33 @@ export default function ArisanDetailPage() {
       setRounds(roundsView);
     } catch (err) {
       console.error("loadRoundsAndPayments error:", err);
+    }
+  };
+
+  // ====== LOAD CHAT MESSAGES ======
+  const loadMessages = async (groupId) => {
+    if (!groupId) return;
+    try {
+      setLoadingMessages(true);
+      const { data, error } = await supabase
+        .from("arisan_group_messages")
+        .select(
+          "id, group_id, user_id, user_email, message, created_at"
+        )
+        .eq("group_id", groupId)
+        .order("created_at", { ascending: true })
+        .limit(200);
+
+      if (error) {
+        console.error("Load messages error:", error.message);
+        return;
+      }
+
+      setMessages(data || []);
+    } catch (err) {
+      console.error("loadMessages error:", err);
+    } finally {
+      setLoadingMessages(false);
     }
   };
 
@@ -306,10 +357,11 @@ export default function ArisanDetailPage() {
       }
 
       setMyMembership(inserted);
-      setMembers((prev) => [...prev, inserted]);
+      const newMembers = [...members, inserted];
+      setMembers(newMembers);
 
-      // re-load rounds & payments supaya muncul slot pembayaran baru
-      await loadRoundsAndPayments(group.id, group, [...members, inserted], wallet);
+      // reload putaran biar slot pembayaran masuk
+      await loadRoundsAndPayments(group.id, group, newMembers, wallet);
 
       alert("Berhasil bergabung sebagai peserta arisan.");
     } catch (err) {
@@ -330,6 +382,7 @@ export default function ArisanDetailPage() {
 
     const amount = group.monthly_amount || 0;
     const currentBalance = wallet.balance || 0;
+
     if (!amount || amount <= 0) {
       alert("Nominal iuran arisan tidak valid.");
       return;
@@ -343,7 +396,7 @@ export default function ArisanDetailPage() {
       return;
     }
 
-    // cek apakah sudah ada payment PAID untuk user & round
+    // cek sudah lunas atau belum untuk user & putaran ini
     const existingPayment = round.payments.find(
       (p) => p.membership_id === myMembership.id && p.status === "PAID"
     );
@@ -358,7 +411,7 @@ export default function ArisanDetailPage() {
       const before = currentBalance;
       const after = before - amount;
 
-      // 1) buat transaksi wallet
+      // 1) transaksi wallet
       const { data: tx, error: txErr } = await supabase
         .from("wallet_transactions")
         .insert({
@@ -380,7 +433,7 @@ export default function ArisanDetailPage() {
         return;
       }
 
-      // 2) update saldo wallet
+      // 2) update saldo
       const { error: wErr } = await supabase
         .from("wallets")
         .update({ balance: after })
@@ -393,7 +446,7 @@ export default function ArisanDetailPage() {
         );
       }
 
-      // 3) insert/update payment
+      // 3) payment
       const { data: existing, error: getPayErr } = await supabase
         .from("arisan_round_payments")
         .select("*")
@@ -504,7 +557,11 @@ export default function ArisanDetailPage() {
   // ====== OWNER: ARSIPKAN GRUP ======
   const handleArchiveGroup = async () => {
     if (!isOwner || !group) return;
-    if (!window.confirm("Arsipkan grup ini? Grup tetap bisa dilihat, tapi tidak aktif.")) {
+    if (
+      !window.confirm(
+        "Arsipkan grup ini? Grup tetap bisa dilihat, tapi tidak aktif."
+      )
+    ) {
       return;
     }
 
@@ -528,6 +585,52 @@ export default function ArisanDetailPage() {
       alert("Terjadi kesalahan saat mengarsipkan grup.");
     } finally {
       setArchiving(false);
+    }
+  };
+
+  // ====== KIRIM CHAT ======
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!group || !user) return;
+    if (!myMembership) {
+      alert("Gabung dulu ke grup arisan untuk bisa mengirim pesan.");
+      return;
+    }
+    const text = newMessage.trim();
+    if (!text) return;
+    if (group.is_archived) {
+      alert("Grup sudah diarsipkan. Chat baru dinonaktifkan.");
+      return;
+    }
+
+    try {
+      setSendingMessage(true);
+      const { data, error } = await supabase
+        .from("arisan_group_messages")
+        .insert({
+          group_id: group.id,
+          user_id: user.id,
+          user_email: user.email,
+          message: text,
+        })
+        .select(
+          "id, group_id, user_id, user_email, message, created_at"
+        )
+        .single();
+
+      if (error) {
+        console.error("Send message error:", error.message);
+        alert("Gagal mengirim pesan.");
+        return;
+      }
+
+      setNewMessage("");
+      setMessages((prev) => [...prev, data]);
+    } catch (err) {
+      console.error("Send message error:", err);
+      alert("Terjadi kesalahan saat mengirim pesan.");
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -648,7 +751,7 @@ export default function ArisanDetailPage() {
             </button>
           )}
 
-          {/* Aturan / perjanjian grup */}
+          {/* Aturan grup */}
           {group.rules_note && (
             <div
               style={{
@@ -707,7 +810,7 @@ export default function ArisanDetailPage() {
           )}
         </section>
 
-        {/* JADWAL & ANGGOTA */}
+        {/* JADWAL & ANGGOTA + CHAT */}
         <section className="nanad-dashboard-table-section">
           {/* KIRI: Putaran & iuran */}
           <div className="nanad-dashboard-deposits">
@@ -733,10 +836,6 @@ export default function ArisanDetailPage() {
                 style={{ marginTop: "0.75rem" }}
               >
                 {rounds.map((r) => {
-                  const totalPaid = r.payments.filter(
-                    (p) => p.status === "PAID"
-                  ).length;
-
                   const myPay =
                     myMembership &&
                     r.payments.find(
@@ -779,6 +878,7 @@ export default function ArisanDetailPage() {
                       </div>
 
                       <div>
+                        {/* Penerima */}
                         <div>
                           Penerima:
                           <br />
@@ -831,6 +931,7 @@ export default function ArisanDetailPage() {
                           )}
                         </div>
 
+                        {/* Status iuran anggota */}
                         <div
                           style={{
                             marginTop: "0.45rem",
@@ -937,16 +1038,17 @@ export default function ArisanDetailPage() {
             )}
           </div>
 
-          {/* KANAN: daftar anggota */}
+          {/* KANAN: anggota + chat grup */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Anggota grup arisan</h3>
+              <h3>Anggota grup &amp; chat arisan</h3>
               <p>
-                Daftar semua akun yang terdaftar sebagai peserta atau owner.
-                Bagikan ID Grup ke peserta lain agar mereka bisa bergabung.
+                Daftar semua peserta arisan dan ruang chat sederhana untuk
+                koordinasi jadwal dan informasi.
               </p>
             </div>
 
+            {/* Daftar anggota */}
             {members.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
@@ -993,6 +1095,7 @@ export default function ArisanDetailPage() {
               </div>
             )}
 
+            {/* Link undangan */}
             <div
               className="nanad-dashboard-body"
               style={{ marginTop: "0.9rem", fontSize: "0.78rem" }}
@@ -1018,6 +1121,162 @@ export default function ArisanDetailPage() {
               Peserta cukup membuka link tersebut, lalu klik{" "}
               <em>“Gabung sebagai peserta arisan”</em>.
             </div>
+
+            {/* CHAT GRUP */}
+            <hr
+              style={{
+                margin: "1rem 0 0.8rem",
+                borderColor: "rgba(148,163,184,0.35)",
+              }}
+            />
+
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.78rem",
+                  color: "#9ca3af",
+                }}
+              >
+                <strong>Chat grup arisan</strong> – untuk koordinasi ringan,
+                bukan pengganti bukti transaksi resmi.
+              </p>
+
+              <div
+                style={{
+                  marginTop: "0.6rem",
+                  borderRadius: "1rem",
+                  border: "1px solid rgba(30,64,175,0.4)",
+                  background:
+                    "linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.94))",
+                  padding: "0.6rem 0.7rem",
+                  maxHeight: "260px",
+                  overflowY: "auto",
+                  fontSize: "0.78rem",
+                }}
+              >
+                {loadingMessages && messages.length === 0 ? (
+                  <p className="nanad-dashboard-body">
+                    Memuat pesan chat...
+                  </p>
+                ) : messages.length === 0 ? (
+                  <p className="nanad-dashboard-body">
+                    Belum ada pesan. Mulai obrolan pertama untuk menyapa
+                    anggota grup.
+                  </p>
+                ) : (
+                  messages.map((msg) => {
+                    const member =
+                      members.find((m) => m.user_id === msg.user_id) || null;
+                    const name =
+                      member?.display_name ||
+                      member?.user_email ||
+                      msg.user_email ||
+                      "Anggota";
+
+                    const isMe = user && msg.user_id === user.id;
+
+                    return (
+                      <div
+                        key={msg.id}
+                        style={{
+                          marginBottom: "0.35rem",
+                          textAlign: isMe ? "right" : "left",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "inline-block",
+                            maxWidth: "90%",
+                            padding: "0.35rem 0.55rem",
+                            borderRadius: "0.8rem",
+                            background: isMe
+                              ? "linear-gradient(135deg,#f5d17a,#d4a63f)"
+                              : "rgba(15,23,42,0.9)",
+                            color: isMe ? "#020617" : "#e5e7eb",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "0.7rem",
+                              opacity: 0.9,
+                              marginBottom: "0.15rem",
+                            }}
+                          >
+                            {name}
+                          </div>
+                          <div>{msg.message}</div>
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "0.65rem",
+                            color: "#9ca3af",
+                            marginTop: "0.1rem",
+                          }}
+                        >
+                          {new Date(msg.created_at).toLocaleTimeString(
+                            "id-ID",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Form kirim chat */}
+              <form
+                onSubmit={handleSendMessage}
+                style={{
+                  marginTop: "0.6rem",
+                  display: "flex",
+                  gap: "0.45rem",
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder={
+                    group.is_archived
+                      ? "Grup diarsipkan, chat dinonaktifkan."
+                      : myMembership
+                      ? "Ketik pesan untuk grup..."
+                      : "Gabung dulu ke grup untuk mengirim pesan."
+                  }
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  disabled={
+                    sendingMessage || group.is_archived || !myMembership
+                  }
+                  style={{
+                    flex: 1,
+                    borderRadius: "999px",
+                    border: "1px solid rgba(148,163,184,0.7)",
+                    background:
+                      "radial-gradient(circle at top, rgba(248,250,252,0.06), rgba(15,23,42,1))",
+                    padding: "0.45rem 0.8rem",
+                    fontSize: "0.78rem",
+                    color: "#e5e7eb",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  type="submit"
+                  className="nanad-dashboard-deposit-submit"
+                  disabled={
+                    sendingMessage ||
+                    !newMessage.trim() ||
+                    group.is_archived ||
+                    !myMembership
+                  }
+                >
+                  {sendingMessage ? "Kirim..." : "Kirim"}
+                </button>
+              </form>
+            </div>
           </div>
         </section>
 
@@ -1027,9 +1286,9 @@ export default function ArisanDetailPage() {
             © {new Date().getFullYear()} Nanad Invest. Arisan module (beta).
           </span>
           <span>
-            Fitur arisan ini bersifat pencatatan &amp; simulasi. Pengelolaan
-            dana nyata tetap mengikuti kesepakatan dan regulasi yang berlaku di
-            luar aplikasi.
+            Fitur arisan &amp; chat ini bersifat pencatatan dan komunikasi
+            ringan. Pengelolaan dana nyata tetap mengikuti kesepakatan dan
+            regulasi di luar aplikasi.
           </span>
         </footer>
       </div>
