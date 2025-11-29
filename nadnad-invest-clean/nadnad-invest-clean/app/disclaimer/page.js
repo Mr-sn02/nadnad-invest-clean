@@ -1,113 +1,191 @@
 // app/disclaimer/page.js
-import Link from "next/link";
-
-export const metadata = {
-  title: "Disclaimer | Nadnad Invest",
-};
 
 export default function DisclaimerPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-slate-900 text-slate-100">
-      <div className="max-w-3xl mx-auto px-4 py-10 lg:py-16">
-        <div className="mb-8">
-          <p className="text-xs tracking-[0.3em] uppercase text-slate-400 mb-2">
-            Legal
-          </p>
-          <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight">
-            Disclaimer{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-amber-300 to-slate-100">
-              Nadnad Invest
-            </span>
+    <main className="nanad-dashboard-page">
+      <div className="nanad-dashboard-shell">
+        <section className="nanad-dashboard-welcome">
+          <p className="nanad-dashboard-eyebrow">Legal · Disclaimer</p>
+          <h1 className="nanad-dashboard-heading">
+            Disclaimer · Pernyataan Penyangkalan
           </h1>
-          <p className="mt-3 text-sm text-slate-400">
-            Penyangkalan (disclaimer) ini menjelaskan batas tanggung jawab
-            Nadnad Invest sebagai platform pengelolaan dana.
+          <p className="nanad-dashboard-body">
+            Informasi berikut menjelaskan batasan tanggung jawab dan ruang
+            lingkup penggunaan Nanad Invest. The information below explains the
+            limits of liability and scope of use for Nanad Invest.
           </p>
-        </div>
+        </section>
 
-        <div className="space-y-6 text-sm leading-relaxed">
-          <section className="border border-yellow-500/20 rounded-2xl p-5 bg-white/5">
-            <h2 className="text-lg font-semibold mb-2 text-yellow-200">
-              1. Bukan Nasihat Keuangan
-            </h2>
+        {/* Indonesia */}
+        <section className="nanad-dashboard-deposits">
+          <div className="nanad-dashboard-deposits-header">
+            <h3>Disclaimer – Bahasa Indonesia</h3>
             <p>
-              Seluruh informasi, simulasi, dan tampilan pada platform Nadnad
-              Invest disediakan{" "}
-              <span className="font-semibold">
-                untuk tujuan informasi umum
-              </span>{" "}
-              dan bukan merupakan{" "}
-              <span className="font-semibold">nasihat keuangan, hukum,</span>{" "}
-              maupun{" "}
-              <span className="font-semibold">anjuran investasi personal</span>.
-              Pengguna disarankan untuk berkonsultasi dengan penasihat keuangan
-              independen sebelum mengambil keputusan.
+              Ringkasan penyangkalan yang berlaku bagi seluruh pengguna Nanad
+              Invest. Ini bukan nasihat hukum atau keuangan profesional.
             </p>
-          </section>
+          </div>
 
-          <section className="border border-yellow-500/20 rounded-2xl p-5 bg-white/5">
-            <h2 className="text-lg font-semibold mb-2 text-yellow-200">
-              2. Tidak Ada Jaminan Keuntungan
-            </h2>
-            <p>
-              Nadnad Invest{" "}
-              <span className="font-semibold">
-                tidak menjamin keuntungan tertentu
-              </span>{" "}
-              maupun perlindungan penuh atas risiko kerugian. Kinerja masa lalu
-              (jika ditampilkan) tidak dapat dijadikan jaminan hasil di masa
-              depan. Pengguna memahami bahwa{" "}
-              <span className="font-semibold">
-                seluruh keputusan tetap berada di tangan Pengguna
-              </span>
-              .
-            </p>
-          </section>
+          <div
+            className="nanad-dashboard-body"
+            style={{ marginTop: "0.9rem", fontSize: "0.9rem", lineHeight: 1.7 }}
+          >
+            <h4 style={{ marginTop: "0" }}>1. Bukan Nasihat Investasi</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Nanad Invest tidak memberikan rekomendasi investasi, saran
+                pembelian atau penjualan instrumen keuangan apa pun.
+              </li>
+              <li>
+                Informasi yang ditampilkan (saldo, catatan, grafik) bersifat
+                ilustratif dan administratif, bukan proyeksi imbal hasil atau
+                jaminan keuntungan.
+              </li>
+            </ul>
 
-          <section className="border border-yellow-500/20 rounded-2xl p-5 bg-white/5">
-            <h2 className="text-lg font-semibold mb-2 text-yellow-200">
-              3. Risiko Teknologi & Gangguan Sistem
-            </h2>
-            <p>
-              Nadnad Invest berupaya menjaga keamanan dan ketersediaan sistem,
-              namun tidak dapat menjamin bahwa platform bebas dari{" "}
-              bug, gangguan jaringan, serangan siber, atau keterlambatan
-              transaksi akibat faktor di luar kendali kami. Segala upaya
-              perbaikan akan dilakukan secara wajar sesuai standar industri.
-            </p>
-          </section>
+            <h4>2. Risiko dan Keputusan Pengguna</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Seluruh keputusan finansial yang diambil berdasarkan catatan di
+                Nanad Invest sepenuhnya merupakan{" "}
+                <strong>tanggung jawab pengguna</strong>.
+              </li>
+              <li>
+                Pengguna disarankan untuk berkonsultasi dengan penasihat
+                keuangan, konsultan pajak, atau penasihat hukum berizin sebelum
+                mengambil keputusan penting.
+              </li>
+            </ul>
 
-          <section className="border border-yellow-500/20 rounded-2xl p-5 bg-white/5">
-            <h2 className="text-lg font-semibold mb-2 text-yellow-200">
-              4. Informasi Pihak Ketiga
-            </h2>
-            <p>
-              Jika di kemudian hari platform menampilkan data, grafik, atau
-              tautan dari pihak ketiga, Pengguna memahami bahwa{" "}
-              akurasi dan kelengkapan data tersebut dapat berada di luar
-              kendali Nadnad Invest. Pengguna disarankan untuk melakukan
-              verifikasi mandiri jika diperlukan.
-            </p>
-          </section>
+            <h4>3. Akurasi Data &amp; Gangguan Layanan</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Pengelola berupaya menampilkan data dengan akurat, namun tidak
+                menjamin bahwa seluruh informasi bebas dari kekeliruan input,
+                sinkronisasi, atau gangguan teknis.
+              </li>
+              <li>
+                Aplikasi dapat mengalami downtime, keterlambatan respon, atau
+                bug perangkat lunak yang mengakibatkan tampilan data tidak
+                sempurna.
+              </li>
+            </ul>
 
-          <section className="border border-yellow-500/20 rounded-2xl p-5 bg-white/5">
-            <h2 className="text-lg font-semibold mb-2 text-yellow-200">
-              5. Persetujuan Pengguna
-            </h2>
+            <h4>4. Batasan Tanggung Jawab</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Pengelola tidak bertanggung jawab atas kerugian finansial,
+                kehilangan data, atau kerusakan lain yang timbul akibat:
+                <ul style={{ paddingLeft: "1.25rem", marginTop: "0.25rem" }}>
+                  <li>kesalahan input pengguna,</li>
+                  <li>pembagian kata sandi kepada pihak lain,</li>
+                  <li>serangan siber pihak ketiga, atau</li>
+                  <li>
+                    gangguan layanan yang berada di luar kendali wajar
+                    pengelola.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>5. Tidak Menggantikan Catatan Resmi</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Nanad Invest tidak menggantikan fungsi mutasi rekening bank,
+                laporan lembaga keuangan, atau dokumen resmi lainnya.
+              </li>
+              <li>
+                Jika terdapat selisih data, pengguna wajib merujuk pada catatan
+                resmi dari bank/lembaga keuangan sebagai sumber kebenaran
+                utama.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* English */}
+        <section className="nanad-dashboard-deposits">
+          <div className="nanad-dashboard-deposits-header">
+            <h3>Disclaimer – English Version</h3>
             <p>
-              Dengan mengakses dan menggunakan platform Nadnad Invest, Pengguna
-              menyatakan telah membaca, memahami, dan menyetujui isi Disclaimer
-              ini serta{" "}
-              <Link
-                href="/terms"
-                className="underline decoration-yellow-400 decoration-dotted underline-offset-2"
-              >
-                Syarat & Ketentuan
-              </Link>
-              .
+              Summary of the disclaimer applicable to all Nanad Invest users.
+              This is not legal, investment, tax, or accounting advice.
             </p>
-          </section>
-        </div>
+          </div>
+
+          <div
+            className="nanad-dashboard-body"
+            style={{ marginTop: "0.9rem", fontSize: "0.9rem", lineHeight: 1.7 }}
+          >
+            <h4 style={{ marginTop: "0" }}>1. No Investment Advice</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Nanad Invest does not provide investment recommendations or
+                advice to buy, sell, or hold any financial instrument.
+              </li>
+              <li>
+                Information shown in the app (balances, notes, charts) is
+                illustrative and administrative only, not a forecast of returns
+                or a guarantee of profit.
+              </li>
+            </ul>
+
+            <h4>2. User&apos;s Risk and Responsibility</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                All financial decisions made based on records stored in Nanad
+                Invest are the <strong>sole responsibility of the user</strong>.
+              </li>
+              <li>
+                Users are encouraged to consult licensed financial, tax, or
+                legal professionals before making significant decisions.
+              </li>
+            </ul>
+
+            <h4>3. Data Accuracy &amp; Service Interruptions</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                While reasonable efforts are made to display accurate data, the
+                operator does not warrant that all information is free from
+                input errors, syncing issues, or technical faults.
+              </li>
+              <li>
+                The service may experience downtime, delayed responses, or
+                software bugs that affect how information is presented.
+              </li>
+            </ul>
+
+            <h4>4. Limitation of Liability</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                The operator shall not be liable for financial loss, data loss,
+                or other damages arising from:
+                <ul style={{ paddingLeft: "1.25rem", marginTop: "0.25rem" }}>
+                  <li>user input mistakes,</li>
+                  <li>sharing passwords with third parties,</li>
+                  <li>third-party cyber attacks, or</li>
+                  <li>
+                    service interruptions beyond the operator&apos;s reasonable
+                    control.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>5. No Replacement for Official Records</h4>
+            <ul style={{ paddingLeft: "1.1rem" }}>
+              <li>
+                Nanad Invest does not replace official bank statements, reports
+                from financial institutions, or other legal documents.
+              </li>
+              <li>
+                In the event of discrepancies, users must rely on the official
+                records from banks or financial institutions as the primary
+                source of truth.
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
     </main>
   );
