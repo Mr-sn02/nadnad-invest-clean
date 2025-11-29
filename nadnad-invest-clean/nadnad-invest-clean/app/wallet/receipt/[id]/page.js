@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import supabase from "../../../../../lib/supabaseClient";
+import supabase from "../../../lib/supabaseClient"; // ✅ ini yang benar
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
