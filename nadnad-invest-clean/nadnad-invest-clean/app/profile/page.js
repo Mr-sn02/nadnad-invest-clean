@@ -87,7 +87,7 @@ export default function ProfilePage() {
             <button
               type="button"
               className="nanad-dashboard-deposit-submit"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
               style={{ marginTop: "0.75rem" }}
             >
               Kembali ke dashboard
