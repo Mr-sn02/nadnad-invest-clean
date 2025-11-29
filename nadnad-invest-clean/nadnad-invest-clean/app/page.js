@@ -18,13 +18,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* 👉 Bagian kanan header, sekarang ada 3 tombol */}
           <div style={{ display: "flex", gap: "0.6rem" }}>
-            {/* Profil & Keamanan – akan redirect ke login kalau belum login */}
-            <Link href="/profile" className="nanad-dashboard-logout">
-              Profil &amp; Keamanan
-            </Link>
-
             <Link href="/login" className="nanad-dashboard-logout">
               Masuk
             </Link>
@@ -63,11 +57,6 @@ export default function LandingPage() {
               <Link href="/register" className="nanad-dashboard-logout">
                 Mulai dari akun baru
               </Link>
-
-              {/* 👉 CTA tambahan ke Profil (kalau sudah login) */}
-              <Link href="/profile" className="nanad-dashboard-logout">
-                Lihat Profil &amp; Keamanan
-              </Link>
             </div>
 
             <p
@@ -96,10 +85,7 @@ export default function LandingPage() {
               <p className="nanad-dashboard-stat-number">
                 Satu layar untuk setoran &amp; penarikan
               </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.4rem" }}
-              >
+              <p className="nanad-dashboard-body" style={{ marginTop: "0.4rem" }}>
                 Pantau saldo dompet, ajukan deposit, penarikan, dan simpan
                 bukti transfer secara rapi. Admin dapat menyetujui atau
                 menolak pengajuan melalui panel khusus.
@@ -111,10 +97,7 @@ export default function LandingPage() {
               <p className="nanad-dashboard-stat-number">
                 Manual check, transparan, terdokumentasi
               </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.4rem" }}
-              >
+              <p className="nanad-dashboard-body" style={{ marginTop: "0.4rem" }}>
                 Setiap perubahan saldo tercatat sebagai transaksi dengan jejak
                 sebelum–sesudah, sehingga alur administrasi tetap jelas dan
                 dapat ditelusuri.
@@ -126,10 +109,7 @@ export default function LandingPage() {
               <p className="nanad-dashboard-stat-number">
                 Tampilan premium, tetap tenang
               </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.4rem" }}
-              >
+              <p className="nanad-dashboard-body" style={{ marginTop: "0.4rem" }}>
                 Antarmuka minimalis dengan aksen putih, emas, dan perak untuk
                 pengalaman menggunakan platform yang terasa eksklusif dan
                 fokus.
