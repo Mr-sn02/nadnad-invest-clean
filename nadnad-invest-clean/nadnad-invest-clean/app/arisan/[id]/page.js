@@ -37,11 +37,13 @@ export default function ArisanDetailPage() {
   const [user, setUser] = useState(null);
   const [group, setGroup] = useState(null);
   const [role, setRole] = useState(null);
-  const [rounds, setRounds] = useState([]);
 
-  // ====== LOAD USER + GROUP DARI PARAM ======
+  const [wallet, setWallet] = useState(null);
+  const [rounds, setRounds] = useState([]);
+  const [processingRound, setProcessingRound] = useState(null);
+
+  // ====== LOAD USER + GROUP + WALLET ======
   useEffect(() => {
-    // kalau belum ada id di URL, jangan jalan dulu
     if (!rawId) return;
 
     const load = async () => {
@@ -66,7 +68,7 @@ export default function ArisanDetailPage() {
         setUser(user);
 
         const idStr = Array.isArray(rawId) ? rawId[0] : rawId;
-        const isCode = /^\d{5}$/.test(idStr); // 5 digit berarti group_code
+        const isCode = /^\d{5}$/.test(idStr); // 5 digit = group_code
 
         // 2) ambil grup
         let query = supabase.from("arisan_groups").select("*");
@@ -106,7 +108,68 @@ export default function ArisanDetailPage() {
 
         setRole(mem?.role || null);
 
-        // 4) buat jadwal putaran sederhana (bulanan)
+        // 4) ambil / buat wallet user
+        let currentWallet = null;
+        const { data: w, error: wErr } = await supabase
+          .from("wallets")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (wErr) {
+          console.error("Load wallet error:", wErr.message);
+        }
+
+        if (w) {
+          currentWallet = w;
+        } else {
+          // kalau belum punya dompet, buat baru
+          const { data: created, error: createErr } = await supabase
+            .from("wallets")
+            .insert({
+              user_id: user.id,
+              user_email: user.email,
+              balance: 0,
+              currency: "IDR",
+            })
+            .select("*")
+            .single();
+
+          if (createErr) {
+            console.error("Create wallet error:", createErr.message);
+          } else {
+            currentWallet = created;
+          }
+        }
+
+        setWallet(currentWallet);
+
+        // 5) cek putaran yang sudah pernah dibayar (dari wallet_transactions.note)
+        const paidSet = new Set();
+
+        if (currentWallet) {
+          const { data: txs, error: txErr } = await supabase
+            .from("wallet_transactions")
+            .select("note")
+            .eq("wallet_id", currentWallet.id)
+            .like("note", `ARISAN:${g.id}:%`);
+
+          if (txErr) {
+            console.error("Load arisan tx error:", txErr.message);
+          } else if (txs) {
+            txs.forEach((t) => {
+              const note = t.note || "";
+              // format: ARISAN:<group_id>:<round>
+              const parts = note.split(":");
+              const roundNum = Number(parts[2]);
+              if (!Number.isNaN(roundNum)) {
+                paidSet.add(roundNum);
+              }
+            });
+          }
+        }
+
+        // 6) buat jadwal putaran
         const roundsArr = [];
         const start = g.start_date ? new Date(g.start_date) : null;
 
@@ -114,7 +177,7 @@ export default function ArisanDetailPage() {
           let dateStr = "-";
           if (start) {
             const d = new Date(start);
-            d.setMonth(d.getMonth() + (i - 1)); // asumsi tiap bulan
+            d.setMonth(d.getMonth() + (i - 1)); // asumsi bulanan
             dateStr = d.toLocaleDateString("id-ID", {
               day: "2-digit",
               month: "short",
@@ -125,6 +188,7 @@ export default function ArisanDetailPage() {
             number: i,
             date: dateStr,
             amount: g.monthly_amount,
+            paid: paidSet.has(i),
           });
         }
 
@@ -139,6 +203,98 @@ export default function ArisanDetailPage() {
 
     load();
   }, [rawId, router]);
+
+  // ====== SETOR IURAN PUTARAN DARI WALLET ======
+  const handlePayRound = async (roundNumber) => {
+    if (!wallet || !group || !user) {
+      alert(
+        "Wallet atau data pengguna belum siap. Coba refresh halaman atau buka halaman Wallet dulu."
+      );
+      return;
+    }
+
+    const round = rounds.find((r) => r.number === roundNumber);
+    if (!round) return;
+
+    if (round.paid) {
+      alert("Putaran ini sudah tercatat lunas.");
+      return;
+    }
+
+    const amount = group.monthly_amount || 0;
+    const currentBalance = wallet.balance || 0;
+
+    if (!amount || amount <= 0) {
+      alert("Nominal iuran arisan tidak valid.");
+      return;
+    }
+
+    if (currentBalance < amount) {
+      alert(
+        `Saldo dompet kamu belum cukup. Saldo sekarang ${formatCurrency(
+          currentBalance
+        )}, sedangkan iuran putaran ini ${formatCurrency(amount)}.`
+      );
+      return;
+    }
+
+    try {
+      setProcessingRound(roundNumber);
+
+      const before = currentBalance;
+      const after = before - amount;
+
+      // 1) catat transaksi di wallet_transactions
+      const { error: txErr } = await supabase
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          type: "WITHDRAW",
+          amount,
+          balance_before: before,
+          balance_after: after,
+          status: "COMPLETED",
+          note: `ARISAN:${group.id}:${roundNumber}`,
+          user_email: user.email || null,
+        });
+
+      if (txErr) {
+        console.error("Insert wallet tx error:", txErr.message);
+        alert("Gagal mencatat transaksi dompet.");
+        return;
+      }
+
+      // 2) update saldo wallet
+      const { error: wErr } = await supabase
+        .from("wallets")
+        .update({ balance: after })
+        .eq("id", wallet.id);
+
+      if (wErr) {
+        console.error("Update wallet error:", wErr.message);
+        alert(
+          "Transaksi tercatat, tapi gagal memperbarui saldo dompet. Hubungi admin."
+        );
+      }
+
+      // 3) update state lokal
+      setWallet((prev) => (prev ? { ...prev, balance: after } : prev));
+      setRounds((prev) =>
+        prev.map((r) =>
+          r.number === roundNumber ? { ...r, paid: true } : r
+        )
+      );
+
+      alert(
+        `Setoran iuran putaran ke-${roundNumber} berhasil dicatat dari saldo wallet kamu.`
+      );
+    } catch (err) {
+      console.error("Pay round error:", err);
+      alert("Terjadi kesalahan saat menyetor iuran arisan.");
+    } finally {
+      setProcessingRound(null);
+    }
+  };
 
   // ============= RENDER =============
 
@@ -211,7 +367,8 @@ export default function ArisanDetailPage() {
           <h1 className="nanad-dashboard-heading">{group.name}</h1>
           <p className="nanad-dashboard-body">
             ID Grup: <strong>{group.group_code}</strong>{" "}
-            · Iuran per putaran: <strong>{formatCurrency(group.monthly_amount)}</strong>{" "}
+            · Iuran per putaran:{" "}
+            <strong>{formatCurrency(group.monthly_amount)}</strong>{" "}
             · Total putaran: <strong>{group.total_rounds}</strong>
             {group.start_date && (
               <>
@@ -224,10 +381,25 @@ export default function ArisanDetailPage() {
           <p className="nanad-dashboard-body" style={{ marginTop: "0.4rem" }}>
             Posisi kamu di grup ini:{" "}
             <strong>{role ? role : "belum terdaftar sebagai member (viewer)"}</strong>.
-            Untuk saat ini halaman ini menampilkan jadwal dan informasi arisan.
-            Fitur setor iuran langsung dari saldo wallet bisa kita aktifkan di
-            tahap berikutnya.
           </p>
+
+          {/* Ringkasan wallet */}
+          <div className="nanad-dashboard-stat-grid">
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Saldo dompet kamu</p>
+              <p className="nanad-dashboard-stat-number">
+                {wallet ? formatCurrency(wallet.balance || 0) : "Wallet belum aktif"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.3rem" }}
+              >
+                Setoran iuran arisan akan mengurangi saldo dompet Nanad Invest
+                kamu dan tercatat sebagai transaksi{" "}
+                <strong>WITHDRAW</strong> dengan catatan khusus.
+              </p>
+            </div>
+          </div>
 
           {errorMsg && (
             <p
@@ -239,15 +411,15 @@ export default function ArisanDetailPage() {
           )}
         </section>
 
-        {/* JADWAL PUTARAN SEDERHANA */}
+        {/* JADWAL PUTARAN & SETORAN */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Jadwal putaran &amp; iuran</h3>
+              <h3>Jadwal putaran &amp; setoran iuran</h3>
               <p>
                 Jadwal dibuat sederhana berdasarkan tanggal mulai (jika diisi)
-                dengan asumsi putaran bulanan. Nilai ini hanya sebagai rencana
-                dan pencatatan, bukan penarikan otomatis dari rekening.
+                dengan asumsi putaran bulanan. Kamu bisa mencatat setoran
+                langsung dari saldo wallet untuk tiap putaran.
               </p>
             </div>
 
@@ -284,15 +456,41 @@ export default function ArisanDetailPage() {
                       <span
                         style={{
                           fontSize: "0.75rem",
-                          color: "#9ca3af",
+                          color: r.paid ? "#4ade80" : "#facc15",
                         }}
                       >
-                        Status pembayaran & penentuan penerima putaran bisa
-                        diatur di tahap pengembangan berikutnya.
+                        Status iuran:{" "}
+                        {r.paid ? "Sudah tercatat lunas" : "Belum tercatat"}
                       </span>
                     </div>
                     <div style={{ justifyContent: "flex-end" }}>
-                      <span>{formatCurrency(r.amount)}</span>
+                      {wallet ? (
+                        r.paid ? (
+                          <span>{formatCurrency(r.amount)}</span>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={processingRound === r.number}
+                            className="nanad-dashboard-deposit-submit"
+                            onClick={() => handlePayRound(r.number)}
+                          >
+                            {processingRound === r.number
+                              ? "Memproses..."
+                              : "Setor dari wallet"}
+                          </button>
+                        )
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: "0.75rem",
+                            color: "#fecaca",
+                            textAlign: "right",
+                          }}
+                        >
+                          Wallet belum aktif. Buka halaman Wallet terlebih
+                          dahulu.
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -300,7 +498,7 @@ export default function ArisanDetailPage() {
             )}
           </div>
 
-          {/* Panel kecil info tambahan */}
+          {/* Panel catatan penggunaan */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Catatan penggunaan fitur arisan</h3>
@@ -321,13 +519,13 @@ export default function ArisanDetailPage() {
               </li>
               <li style={{ marginBottom: "0.4rem" }}>
                 Penyetoran iuran dan penyaluran dana tetap dilakukan secara
-                manual melalui rekening masing-masing, kemudian dicatat di dalam
-                aplikasi.
+                manual melalui rekening masing-masing, lalu dicatat di dalam
+                aplikasi ini.
               </li>
               <li style={{ marginBottom: "0.4rem" }}>
-                Untuk penentuan giliran penerima, kamu bisa menyusun skema dan
-                mencatatnya pada catatan terpisah atau fitur lanjutan di
-                pengembangan berikutnya.
+                Catatan transaksi wallet untuk arisan menggunakan format{" "}
+                <code>ARISAN:group_id:putaran</code> sehingga admin bisa
+                melakukan audit bila diperlukan.
               </li>
             </ul>
           </div>
