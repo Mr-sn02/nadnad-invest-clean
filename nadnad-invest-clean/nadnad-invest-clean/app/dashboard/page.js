@@ -222,6 +222,19 @@ export default function DashboardPage() {
                 </div>
               </div>
 
+              <div className="nanad-dashboard-deposits-row">
+                <div>Arisan bersama pengguna</div>
+                <div>
+                  Kelola grup arisan dengan jadwal terencana, iuran bulanan, dan
+                  catat setoran dari saldo dompet Nanad Invest sebagai simulasi alur dana.
+                </div>
+                <div>
+                  <Link href="/arisan" className="nanad-dashboard-logout">
+                    Buka arisan
+                  </Link>
+                </div>
+              </div>
+
               {isAdmin && (
                 <>
                   <div className="nanad-dashboard-deposits-row">
