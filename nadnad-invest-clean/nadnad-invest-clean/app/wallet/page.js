@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 // Format rupiah
@@ -39,10 +40,6 @@ export default function WalletPage() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
-  // Filter riwayat transaksi
-  const [typeFilter, setTypeFilter] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW
-  const [statusFilter, setStatusFilter] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
-
   // ==== Form DEPOSIT ====
   const [depositAmount, setDepositAmount] = useState("");
   const [depositTarget, setDepositTarget] = useState(
@@ -61,6 +58,10 @@ export default function WalletPage() {
 
   const [actionLoading, setActionLoading] = useState(false);
 
+  // ==== Filter riwayat ====
+  const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW
+  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
+
   // Ambil riwayat transaksi wallet
   const loadTransactions = async (walletId) => {
     const { data, error } = await supabase
@@ -68,7 +69,7 @@ export default function WalletPage() {
       .select("*")
       .eq("wallet_id", walletId)
       .order("created_at", { ascending: false })
-      .limit(30);
+      .limit(50);
 
     if (error) {
       console.error("Error load transactions:", error.message);
@@ -257,7 +258,7 @@ export default function WalletPage() {
       return;
     }
 
-    if (amount > wallet.balance) {
+    if (amount > (wallet.balance ?? 0)) {
       alert(
         `Saldo saat ini ${formatCurrency(
           wallet.balance
@@ -316,43 +317,6 @@ export default function WalletPage() {
     }
   };
 
-  // Filter transaksi berdasarkan jenis & status
-  const filteredTransactions = transactions.filter((tx) => {
-    let okType = true;
-    if (typeFilter === "DEPOSIT") okType = tx.type === "DEPOSIT";
-    else if (typeFilter === "WITHDRAW") okType = tx.type === "WITHDRAW";
-
-    let okStatus = true;
-    if (statusFilter === "PENDING") {
-      okStatus = tx.status === "PENDING";
-    } else if (statusFilter === "APPROVED") {
-      okStatus = tx.status === "APPROVED" || tx.status === "COMPLETED";
-    } else if (statusFilter === "REJECTED") {
-      okStatus = tx.status === "REJECTED";
-    }
-
-    return okType && okStatus;
-  });
-
-  // Ringkasan transaksi disetujui (dipakai untuk statistik kecil)
-  const approvedDeposits = transactions
-    .filter(
-      (tx) =>
-        tx.type === "DEPOSIT" &&
-        (tx.status === "APPROVED" || tx.status === "COMPLETED")
-    )
-    .reduce((sum, tx) => sum + (tx.amount || 0), 0);
-
-  const approvedWithdrawals = transactions
-    .filter(
-      (tx) =>
-        tx.type === "WITHDRAW" &&
-        (tx.status === "APPROVED" || tx.status === "COMPLETED")
-    )
-    .reduce((sum, tx) => sum + (tx.amount || 0), 0);
-
-  const netFlow = approvedDeposits - approvedWithdrawals;
-
   // ==== RENDER: state loading / error ====
   if (loading) {
     return (
@@ -381,7 +345,7 @@ export default function WalletPage() {
             <button
               type="button"
               className="nanad-dashboard-deposit-submit"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
               style={{ marginTop: "0.75rem" }}
             >
               Kembali ke dashboard
@@ -391,6 +355,15 @@ export default function WalletPage() {
       </main>
     );
   }
+
+  // Filter transaksi di client
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchType =
+      filterType === "ALL" ? true : tx.type === filterType;
+    const matchStatus =
+      filterStatus === "ALL" ? true : tx.status === filterStatus;
+    return matchType && matchStatus;
+  });
 
   // ==== RENDER: halaman wallet utama ====
   return (
@@ -408,13 +381,22 @@ export default function WalletPage() {
             </div>
           </div>
 
-          <button
-            type="button"
-            className="nanad-dashboard-logout"
-            onClick={() => router.push("/dashboard")}
-          >
-            Kembali ke dashboard
-          </button>
+          <div style={{ display: "flex", gap: "0.6rem" }}>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => router.push("/profile")}
+            >
+              Profil &amp; Keamanan
+            </button>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => router.push("/dashboard")}
+            >
+              Kembali ke dashboard
+            </button>
+          </div>
         </header>
 
         {/* Ringkasan saldo */}
@@ -487,17 +469,16 @@ export default function WalletPage() {
                 />
               </label>
 
-              {/* Catatan user (opsional) */}
+              {/* Catatan pengguna */}
               <label className="nanad-dashboard-deposit-amount">
-                Catatan (opsional)
+                Catatan tambahan (opsional)
                 <textarea
-                  placeholder="contoh: simpanan untuk dana darurat, simpanan umroh, dll."
+                  placeholder="contoh: setor untuk tabungan pendidikan / setor pertama, mohon dibantu."
                   value={depositUserNote}
                   onChange={(e) => setDepositUserNote(e.target.value)}
                   style={{
                     minHeight: "70px",
                     resize: "vertical",
-                    borderRadius: "18px",
                   }}
                 />
               </label>
@@ -630,17 +611,15 @@ export default function WalletPage() {
                 />
               </label>
 
-              {/* Catatan user (opsional) */}
               <label className="nanad-dashboard-deposit-amount">
-                Catatan (opsional)
+                Catatan tambahan (opsional)
                 <textarea
-                  placeholder="contoh: penarikan untuk kebutuhan mendesak, bayar sekolah, dll."
+                  placeholder="contoh: tarik untuk kebutuhan darurat / pembayaran tertentu."
                   value={withdrawUserNote}
                   onChange={(e) => setWithdrawUserNote(e.target.value)}
                   style={{
                     minHeight: "70px",
                     resize: "vertical",
-                    borderRadius: "18px",
                   }}
                 />
               </label>
@@ -663,153 +642,86 @@ export default function WalletPage() {
               <h3>Riwayat transaksi dompet</h3>
               <p>
                 Termasuk pengajuan yang masih{" "}
-                <strong>menunggu persetujuan admin</strong>. Kamu bisa menyaring
-                berdasarkan jenis transaksi dan status di bawah ini.
+                <strong>menunggu persetujuan admin</strong>.
               </p>
-            </div>
-
-            {/* Ringkasan transaksi disetujui */}
-            <div
-              className="nanad-dashboard-stat-grid"
-              style={{ marginTop: "0.75rem" }}
-            >
-              <div className="nanad-dashboard-stat-card">
-                <p className="nanad-dashboard-stat-label">
-                  Total deposit disetujui
-                </p>
-                <p className="nanad-dashboard-stat-number">
-                  {formatCurrency(approvedDeposits)}
-                </p>
-                <p
-                  className="nanad-dashboard-body"
-                  style={{ marginTop: "0.3rem", fontSize: "0.8rem" }}
-                >
-                  Akumulasi semua transaksi <strong>DEPOSIT</strong> dengan
-                  status <strong>APPROVED / COMPLETED</strong> yang tercatat
-                  pada riwayat ini.
-                </p>
-              </div>
-
-              <div className="nanad-dashboard-stat-card">
-                <p className="nanad-dashboard-stat-label">
-                  Total penarikan disetujui
-                </p>
-                <p className="nanad-dashboard-stat-number">
-                  {formatCurrency(approvedWithdrawals)}
-                </p>
-                <p
-                  className="nanad-dashboard-body"
-                  style={{ marginTop: "0.3rem", fontSize: "0.8rem" }}
-                >
-                  Akumulasi semua transaksi <strong>WITHDRAW</strong> yang sudah
-                  disetujui admin dan tercatat selesai.
-                </p>
-              </div>
-
-              <div className="nanad-dashboard-stat-card">
-                <p className="nanad-dashboard-stat-label">
-                  Aliran bersih disetujui
-                </p>
-                <p className="nanad-dashboard-stat-number">
-                  {formatCurrency(netFlow)}
-                </p>
-                <p
-                  className="nanad-dashboard-body"
-                  style={{ marginTop: "0.3rem", fontSize: "0.8rem" }}
-                >
-                  Selisih antara{" "}
-                  <strong>deposit disetujui - penarikan disetujui</strong>.
-                  Nilai positif berarti dana lebih banyak masuk daripada keluar.
-                </p>
-              </div>
             </div>
 
             {/* Filter bar */}
             <div
               style={{
-                marginTop: "0.75rem",
-                marginBottom: "0.5rem",
+                marginTop: "0.8rem",
+                marginBottom: "0.4rem",
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "0.5rem",
-                alignItems: "center",
-                fontSize: "0.8rem",
+                fontSize: "0.78rem",
               }}
             >
-              <span
-                style={{
-                  opacity: 0.8,
-                  marginRight: "0.25rem",
-                }}
-              >
-                Jenis:
-              </span>
-              {[
-                { key: "ALL", label: "Semua" },
-                { key: "DEPOSIT", label: "Deposit" },
-                { key: "WITHDRAW", label: "Penarikan" },
-              ].map((btn) => (
-                <button
-                  key={btn.key}
-                  type="button"
-                  onClick={() => setTypeFilter(btn.key)}
-                  className={
-                    typeFilter === btn.key
-                      ? "nanad-dashboard-deposit-submit"
-                      : "nanad-dashboard-logout"
-                  }
-                  style={{
-                    padding: "0.25rem 0.75rem",
-                    fontSize: "0.75rem",
-                    borderRadius: "999px",
-                  }}
-                >
-                  {btn.label}
-                </button>
-              ))}
+              <div style={{ display: "flex", gap: "0.4rem" }}>
+                <span style={{ opacity: 0.7 }}>Jenis:</span>
+                {["ALL", "DEPOSIT", "WITHDRAW"].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setFilterType(t)}
+                    style={{
+                      padding: "0.25rem 0.7rem",
+                      borderRadius: "999px",
+                      border:
+                        filterType === t
+                          ? "1px solid rgba(250,204,21,0.9)"
+                          : "1px solid rgba(148,163,184,0.4)",
+                      background:
+                        filterType === t
+                          ? "radial-gradient(circle at top, rgba(250,204,21,0.35), rgba(15,23,42,1))"
+                          : "rgba(15,23,42,0.6)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {t === "ALL" ? "Semua" : t === "DEPOSIT" ? "Deposit" : "Penarikan"}
+                  </button>
+                ))}
+              </div>
 
-              <span
-                style={{
-                  opacity: 0.8,
-                  marginLeft: "0.75rem",
-                  marginRight: "0.25rem",
-                }}
-              >
-                Status:
-              </span>
-              {[
-                { key: "ALL", label: "Semua" },
-                { key: "PENDING", label: "Pending" },
-                { key: "APPROVED", label: "Disetujui" },
-                { key: "REJECTED", label: "Ditolak" },
-              ].map((btn) => (
-                <button
-                  key={btn.key}
-                  type="button"
-                  onClick={() => setStatusFilter(btn.key)}
-                  className={
-                    statusFilter === btn.key
-                      ? "nanad-dashboard-deposit-submit"
-                      : "nanad-dashboard-logout"
-                  }
-                  style={{
-                    padding: "0.25rem 0.75rem",
-                    fontSize: "0.75rem",
-                    borderRadius: "999px",
-                  }}
-                >
-                  {btn.label}
-                </button>
-              ))}
+              <div style={{ display: "flex", gap: "0.4rem" }}>
+                <span style={{ opacity: 0.7 }}>Status:</span>
+                {["ALL", "PENDING", "APPROVED", "REJECTED"].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setFilterStatus(s)}
+                    style={{
+                      padding: "0.25rem 0.7rem",
+                      borderRadius: "999px",
+                      border:
+                        filterStatus === s
+                          ? "1px solid rgba(56,189,248,0.9)"
+                          : "1px solid rgba(148,163,184,0.4)",
+                      background:
+                        filterStatus === s
+                          ? "radial-gradient(circle at top, rgba(56,189,248,0.35), rgba(15,23,42,1))"
+                          : "rgba(15,23,42,0.6)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {s === "ALL"
+                      ? "Semua"
+                      : s === "PENDING"
+                      ? "Pending"
+                      : s === "APPROVED"
+                      ? "Disetujui"
+                      : "Ditolak"}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Daftar transaksi */}
             {filteredTransactions.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
-                style={{ marginTop: "0.75rem", fontSize: "0.8rem" }}
+                style={{ marginTop: "0.75rem" }}
               >
-                Belum ada transaksi yang cocok dengan filter yang dipilih.
+                Tidak ada transaksi sesuai filter.
               </p>
             ) : (
               <div
@@ -817,161 +729,125 @@ export default function WalletPage() {
                 style={{ marginTop: "0.75rem" }}
               >
                 {filteredTransactions.map((tx) => {
-                  const created = new Date(tx.created_at).toLocaleString(
-                    "id-ID",
-                    {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }
-                  );
+                  const created = tx.created_at
+                    ? new Date(tx.created_at).toLocaleString("id-ID")
+                    : "-";
 
                   let statusLabel = tx.status;
                   let statusColor = "#e5e7eb";
-                  let statusBg = "rgba(148,163,184,0.15)";
 
                   if (tx.status === "PENDING") {
                     statusLabel = "Menunggu persetujuan";
                     statusColor = "#facc15";
-                    statusBg = "rgba(234,179,8,0.12)";
                   } else if (
                     tx.status === "APPROVED" ||
                     tx.status === "COMPLETED"
                   ) {
                     statusLabel = "Disetujui / selesai";
                     statusColor = "#4ade80";
-                    statusBg = "rgba(34,197,94,0.12)";
                   } else if (tx.status === "REJECTED") {
                     statusLabel = "Ditolak";
                     statusColor = "#f87171";
-                    statusBg = "rgba(248,113,113,0.12)";
                   }
 
-                  const typeLabel =
-                    tx.type === "DEPOSIT" ? "Deposit" : "Penarikan";
-                  const typeBg =
-                    tx.type === "DEPOSIT"
-                      ? "rgba(59,130,246,0.18)"
-                      : "rgba(236,72,153,0.18)";
                   const typeColor =
-                    tx.type === "DEPOSIT" ? "#bfdbfe" : "#f9a8d4";
+                    tx.type === "DEPOSIT"
+                      ? "#4ade80"
+                      : tx.type === "WITHDRAW"
+                      ? "#fb923c"
+                      : "#38bdf8";
 
                   return (
                     <div key={tx.id} className="nanad-dashboard-deposits-row">
+                      {/* Kolom kiri: waktu + status */}
                       <div>
-                        <div
+                        {created}
+                        <br />
+                        <span
                           style={{
-                            fontSize: "0.8rem",
-                            opacity: 0.9,
-                            marginBottom: "0.15rem",
+                            fontSize: "0.7rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                            color: statusColor,
                           }}
                         >
-                          {created}
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "0.35rem",
-                            marginTop: "0.1rem",
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: "0.7rem",
-                              textTransform: "uppercase",
-                              letterSpacing: "0.08em",
-                              padding: "0.15rem 0.5rem",
-                              borderRadius: "999px",
-                              background: typeBg,
-                              color: typeColor,
-                            }}
-                          >
-                            {typeLabel}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "0.7rem",
-                              textTransform: "uppercase",
-                              letterSpacing: "0.08em",
-                              padding: "0.15rem 0.5rem",
-                              borderRadius: "999px",
-                              background: statusBg,
-                              color: statusColor,
-                            }}
-                          >
-                            {statusLabel}
-                          </span>
-                        </div>
+                          {statusLabel}
+                        </span>
                       </div>
 
+                      {/* Kolom tengah: detail */}
                       <div>
-                        <div style={{ fontSize: "0.9rem", marginBottom: 4 }}>
-                          {typeLabel} {formatCurrency(tx.amount)}
-                        </div>
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            color: typeColor,
+                          }}
+                        >
+                          {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
+                          {formatCurrency(tx.amount)}
+                        </span>
 
                         {tx.user_email && (
-                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
-                            Akun: {tx.user_email}
-                          </div>
+                          <>
+                            <br />
+                            <small>Akun: {tx.user_email}</small>
+                          </>
                         )}
 
                         {tx.sender_name && (
-                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
-                            Atas nama pengirim: {tx.sender_name}
-                          </div>
+                          <>
+                            <br />
+                            <small>
+                              Atas nama pengirim: {tx.sender_name}
+                            </small>
+                          </>
                         )}
 
                         {tx.type === "DEPOSIT" && tx.deposit_target && (
-                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
-                            Rekening tujuan: {tx.deposit_target}
-                          </div>
+                          <>
+                            <br />
+                            <small>
+                              Rekening tujuan: {tx.deposit_target}
+                            </small>
+                          </>
                         )}
 
                         {tx.type === "WITHDRAW" && tx.withdraw_bank_name && (
-                          <div style={{ fontSize: "0.75rem", opacity: 0.9 }}>
-                            ke {tx.withdraw_bank_name} ·{" "}
-                            {tx.withdraw_bank_account} (
-                            {tx.withdraw_bank_holder})
-                          </div>
+                          <>
+                            <br />
+                            <small>
+                              ke {tx.withdraw_bank_name} ·{" "}
+                              {tx.withdraw_bank_account} (
+                              {tx.withdraw_bank_holder})
+                            </small>
+                          </>
                         )}
 
                         {tx.user_note && (
-                          <div
-                            style={{
-                              fontSize: "0.75rem",
-                              opacity: 0.9,
-                              marginTop: "0.2rem",
-                            }}
-                          >
-                            <strong>Catatan kamu:</strong> {tx.user_note}
-                          </div>
+                          <>
+                            <br />
+                            <small>
+                              <strong>Catatan kamu:</strong> {tx.user_note}
+                            </small>
+                          </>
                         )}
 
                         {tx.admin_note && (
-                          <div
-                            style={{
-                              fontSize: "0.75rem",
-                              opacity: 0.9,
-                              marginTop: "0.2rem",
-                            }}
-                          >
-                            <strong>Catatan admin:</strong> {tx.admin_note}
-                          </div>
+                          <>
+                            <br />
+                            <small>
+                              <strong>Catatan admin:</strong> {tx.admin_note}
+                            </small>
+                          </>
                         )}
 
                         {tx.note && (
-                          <div
-                            style={{
-                              fontSize: "0.75rem",
-                              opacity: 0.8,
-                              marginTop: "0.2rem",
-                            }}
-                          >
-                            <strong>Catatan sistem:</strong> {tx.note}
-                          </div>
+                          <>
+                            <br />
+                            <small>
+                              <strong>Catatan sistem:</strong> {tx.note}
+                            </small>
+                          </>
                         )}
 
                         {tx.proof_image_url && (
@@ -990,27 +866,32 @@ export default function WalletPage() {
                             </a>
                           </div>
                         )}
+
+                        <div style={{ marginTop: "0.2rem" }}>
+                          <Link
+                            href={`/wallet/receipt/${tx.id}`}
+                            style={{
+                              fontSize: "0.75rem",
+                              textDecoration: "underline",
+                              opacity: 0.95,
+                              display: "inline-block",
+                              marginTop: "0.1rem",
+                            }}
+                          >
+                            Lihat bukti transaksi (struk)
+                          </Link>
+                        </div>
                       </div>
 
+                      {/* Kolom kanan: nominal singkat */}
                       <div style={{ textAlign: "right" }}>
                         <div
                           style={{
+                            fontWeight: 600,
                             fontSize: "0.9rem",
-                            fontWeight: 500,
                           }}
                         >
                           {formatCurrency(tx.amount)}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "0.7rem",
-                            opacity: 0.8,
-                            marginTop: "0.15rem",
-                          }}
-                        >
-                          Saldo sebelum: {formatCurrency(tx.balance_before)}
-                          <br />
-                          Saldo sesudah: {formatCurrency(tx.balance_after)}
                         </div>
                       </div>
                     </div>
