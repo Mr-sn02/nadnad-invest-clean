@@ -367,7 +367,7 @@ body {
   justify-content: flex-end;
 }
 
-/* Footer */
+/* Footer dasar */
 
 .nanad-dashboard-footer {
   margin-top: 0.4rem;
@@ -378,6 +378,43 @@ body {
   gap: 0.6rem;
   font-size: 0.72rem;
   color: var(--nanad-text-soft);
+}
+
+/* Footer global elegan dengan link legal */
+
+.nanad-footer-global {
+  border-top: 1px solid rgba(148, 163, 184, 0.35);
+  padding-top: 1.2rem;
+  margin-top: 2rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.nanad-footer-main {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.nanad-footer-links a {
+  font-size: 0.78rem;
+  text-decoration: none;
+  color: #e5e7eb;
+}
+
+.nanad-footer-links a:hover {
+  color: #facc15; /* gold */
+}
+
+.nanad-footer-sub {
+  font-size: 0.72rem;
+  max-width: 720px;
+  opacity: 0.8;
 }
 
 /* ================== LANDING PAGE ================== */
@@ -578,22 +615,4 @@ body {
     bottom: 1rem;
     padding-inline: 1rem;
   }
-
-  .nanad-wa-fab {
-  position: fixed;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  background: linear-gradient(to right, #facc15, #eab308);
-  color: #020617;
-  font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  z-index: 50;
-}
-.nanad-wa-fab:hover {
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-}
 }
