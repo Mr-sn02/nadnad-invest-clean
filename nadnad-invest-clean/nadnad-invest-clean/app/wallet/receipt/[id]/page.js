@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import supabase from "../../../../lib/supabaseClient"; // ✅ ini yang benar
+import supabase from "../../../../lib/supabaseClient"; // ✅ path ke supabaseClient
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
@@ -32,7 +32,7 @@ const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
 
 export default function WalletReceiptPage({ params }) {
   const router = useRouter();
-  const { id } = params; // id transaksi
+  const { id } = params; // id transaksi dari URL
 
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -45,7 +45,7 @@ export default function WalletReceiptPage({ params }) {
       setLoading(true);
       setErrorMsg("");
 
-      try:
+      try {                               // ✅ BUKAN "try:" tapi "try {"
         // 1) Pastikan user login
         const {
           data: { user },
@@ -63,7 +63,7 @@ export default function WalletReceiptPage({ params }) {
 
         setViewer(user);
 
-        // 2) Ambil transaksi
+        // 2) Ambil transaksi berdasarkan id
         const { data: txData, error: txErr } = await supabase
           .from("wallet_transactions")
           .select("*")
@@ -76,7 +76,7 @@ export default function WalletReceiptPage({ params }) {
           return;
         }
 
-        // 3) Ambil dompet terkait (untuk cek kepemilikan & info tambahan)
+        // 3) Ambil dompet terkait (untuk cek pemilik)
         const { data: walletData, error: wErr } = await supabase
           .from("wallets")
           .select("*")
@@ -168,7 +168,7 @@ export default function WalletReceiptPage({ params }) {
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
-        {/* Header sederhana */}
+        {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
             <div className="nanad-dashboard-logo">N</div>
@@ -343,7 +343,7 @@ export default function WalletReceiptPage({ params }) {
               </div>
             </div>
 
-            {/* Detail tambahan: rekening dsb */}
+            {/* Detail tambahan */}
             <div
               style={{
                 display: "grid",
@@ -462,7 +462,7 @@ export default function WalletReceiptPage({ params }) {
               </div>
             )}
 
-            {/* Footer kecil struk */}
+            {/* Footer struk */}
             <div
               style={{
                 borderTop: "1px solid rgba(30,64,175,0.5)",
