@@ -65,7 +65,7 @@ export default function ProfilePage() {
     }
   };
 
-  // 👉 Kirim link reset password ke email user
+  // Kirim link reset password ke email user, redirect ke /reset-password
   const handleSendResetLink = async () => {
     if (!user?.email) {
       alert("Email akun tidak ditemukan.");
@@ -81,12 +81,9 @@ export default function ProfilePage() {
       setResetLoading(true);
       setResetMessage("");
 
-      // Jika perlu redirect khusus, bisa pakai opsi redirectTo
-      // const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-      //   redirectTo: `${window.location.origin}/reset-password`,
-      // });
-
-      const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
 
       if (error) {
         console.error("resetPasswordForEmail error:", error.message);
