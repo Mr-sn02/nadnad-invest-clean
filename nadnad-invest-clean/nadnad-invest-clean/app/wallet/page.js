@@ -50,12 +50,14 @@ export default function WalletPage() {
   );
   const [depositProofFile, setDepositProofFile] = useState(null);
   const [depositSenderName, setDepositSenderName] = useState("");
+  const [depositUserNote, setDepositUserNote] = useState("");
 
   // ==== Form WITHDRAW ====
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawBankName, setWithdrawBankName] = useState("");
   const [withdrawBankAccount, setWithdrawBankAccount] = useState("");
   const [withdrawBankHolder, setWithdrawBankHolder] = useState("");
+  const [withdrawUserNote, setWithdrawUserNote] = useState("");
 
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -222,6 +224,7 @@ export default function WalletPage() {
           proof_image_url: proofImageUrl,
           sender_name: depositSenderName.trim(),
           user_email: user.email || null,
+          user_note: depositUserNote.trim() || null,
         });
 
       if (txErr) throw txErr;
@@ -229,6 +232,7 @@ export default function WalletPage() {
       setDepositAmount("");
       setDepositProofFile(null);
       setDepositSenderName("");
+      setDepositUserNote("");
 
       await loadTransactions(wallet.id);
       alert(
@@ -291,6 +295,7 @@ export default function WalletPage() {
           withdraw_bank_account: withdrawBankAccount,
           withdraw_bank_holder: withdrawBankHolder,
           user_email: user.email || null,
+          user_note: withdrawUserNote.trim() || null,
         });
 
       if (txErr) throw txErr;
@@ -299,6 +304,7 @@ export default function WalletPage() {
       setWithdrawBankName("");
       setWithdrawBankAccount("");
       setWithdrawBankHolder("");
+      setWithdrawUserNote("");
 
       await loadTransactions(wallet.id);
       alert("Pengajuan penarikan terkirim dan menunggu persetujuan admin.");
@@ -481,6 +487,21 @@ export default function WalletPage() {
                 />
               </label>
 
+              {/* Catatan user (opsional) */}
+              <label className="nanad-dashboard-deposit-amount">
+                Catatan (opsional)
+                <textarea
+                  placeholder="contoh: simpanan untuk dana darurat, simpanan umroh, dll."
+                  value={depositUserNote}
+                  onChange={(e) => setDepositUserNote(e.target.value)}
+                  style={{
+                    minHeight: "70px",
+                    resize: "vertical",
+                    borderRadius: "18px",
+                  }}
+                />
+              </label>
+
               {/* Rekening tujuan + bukti transfer */}
               <div className="nanad-dashboard-deposit-row">
                 <label>
@@ -606,6 +627,21 @@ export default function WalletPage() {
                   placeholder="contoh: Nama lengkap kamu"
                   value={withdrawBankHolder}
                   onChange={(e) => setWithdrawBankHolder(e.target.value)}
+                />
+              </label>
+
+              {/* Catatan user (opsional) */}
+              <label className="nanad-dashboard-deposit-amount">
+                Catatan (opsional)
+                <textarea
+                  placeholder="contoh: penarikan untuk kebutuhan mendesak, bayar sekolah, dll."
+                  value={withdrawUserNote}
+                  onChange={(e) => setWithdrawUserNote(e.target.value)}
+                  style={{
+                    minHeight: "70px",
+                    resize: "vertical",
+                    borderRadius: "18px",
+                  }}
                 />
               </label>
 
@@ -902,6 +938,42 @@ export default function WalletPage() {
                           </div>
                         )}
 
+                        {tx.user_note && (
+                          <div
+                            style={{
+                              fontSize: "0.75rem",
+                              opacity: 0.9,
+                              marginTop: "0.2rem",
+                            }}
+                          >
+                            <strong>Catatan kamu:</strong> {tx.user_note}
+                          </div>
+                        )}
+
+                        {tx.admin_note && (
+                          <div
+                            style={{
+                              fontSize: "0.75rem",
+                              opacity: 0.9,
+                              marginTop: "0.2rem",
+                            }}
+                          >
+                            <strong>Catatan admin:</strong> {tx.admin_note}
+                          </div>
+                        )}
+
+                        {tx.note && (
+                          <div
+                            style={{
+                              fontSize: "0.75rem",
+                              opacity: 0.8,
+                              marginTop: "0.2rem",
+                            }}
+                          >
+                            <strong>Catatan sistem:</strong> {tx.note}
+                          </div>
+                        )}
+
                         {tx.proof_image_url && (
                           <div style={{ marginTop: "0.2rem" }}>
                             <a
@@ -916,18 +988,6 @@ export default function WalletPage() {
                             >
                               Lihat bukti transfer
                             </a>
-                          </div>
-                        )}
-
-                        {tx.note && (
-                          <div
-                            style={{
-                              fontSize: "0.75rem",
-                              opacity: 0.9,
-                              marginTop: "0.2rem",
-                            }}
-                          >
-                            {tx.note}
                           </div>
                         )}
                       </div>
