@@ -14,41 +14,38 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-// 5 digit angka acak (10000–99999)
 function generateGroupCode() {
+  // 5 digit angka, misal "34821"
   return String(Math.floor(10000 + Math.random() * 90000));
 }
 
-export default function ArisanListPage() {
+export default function ArisanPage() {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [groups, setGroups] = useState([]);
+  const [myGroups, setMyGroups] = useState([]);
 
-  // Form buat grup baru
-  const [name, setName] = useState("");
-  const [monthlyAmount, setMonthlyAmount] = useState("");
-  const [totalRounds, setTotalRounds] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [description, setDescription] = useState("");
+  // cari berdasar ID grup (5 digit)
+  const [searchCode, setSearchCode] = useState("");
+  const [searchError, setSearchError] = useState("");
+
+  // form buat grup baru
+  const [newName, setNewName] = useState("");
+  const [newMonthly, setNewMonthly] = useState("");
+  const [newRounds, setNewRounds] = useState("");
+  const [newStartDate, setNewStartDate] = useState("");
   const [creating, setCreating] = useState(false);
 
-  // Form join via Kode Grup
-  const [searchCode, setSearchCode] = useState("");
-  const [searchMsg, setSearchMsg] = useState("");
-  const [searching, setSearching] = useState(false);
-
-  // --------- LOAD DATA AWAL (USER + GRUP YANG DIA IKUTI) ---------
+  // ---- LOAD USER + GRUP-GRUPNYA ----
   useEffect(() => {
     const init = async () => {
       setLoading(true);
       setErrorMsg("");
 
       try {
-        // cek login
         const {
           data: { user },
           error,
@@ -65,10 +62,59 @@ export default function ArisanListPage() {
 
         setUser(user);
 
-        await loadGroups(user.id);
+        // 1) grup di mana user adalah anggota
+        const { data: memberRows, error: mErr } = await supabase
+          .from("arisan_members")
+          .select("group_id")
+          .eq("user_id", user.id);
+
+        if (mErr) {
+          console.error("load members error:", mErr.message);
+        }
+
+        const memberGroupIds = (memberRows || [])
+          .map((r) => r.group_id)
+          .filter(Boolean);
+
+        let groupsFromMember = [];
+        if (memberGroupIds.length > 0) {
+          const { data: g1, error: g1Err } = await supabase
+            .from("arisan_groups")
+            .select("*")
+            .in("id", memberGroupIds);
+
+          if (g1Err) {
+            console.error("load groups by member error:", g1Err.message);
+          } else {
+            groupsFromMember = g1 || [];
+          }
+        }
+
+        // 2) grup yang user buat (owner)
+        const { data: g2, error: g2Err } = await supabase
+          .from("arisan_groups")
+          .select("*")
+          .eq("owner_user_id", user.id);
+
+        if (g2Err) {
+          console.error("load groups by owner error:", g2Err.message);
+        }
+
+        const merged = [...groupsFromMember];
+        (g2 || []).forEach((g) => {
+          if (!merged.find((x) => x.id === g.id)) merged.push(g);
+        });
+
+        setMyGroups(
+          merged.sort(
+            (a, b) =>
+              new Date(b.created_at || 0).getTime() -
+              new Date(a.created_at || 0).getTime()
+          )
+        );
       } catch (err) {
-        console.error("Arisan list init error:", err);
-        setErrorMsg("Terjadi kesalahan saat memuat daftar arisan.");
+        console.error("Arisan page init error:", err);
+        setErrorMsg("Gagal memuat halaman arisan.");
       } finally {
         setLoading(false);
       }
@@ -77,242 +123,144 @@ export default function ArisanListPage() {
     init();
   }, [router]);
 
-  const loadGroups = async (userId) => {
-    setErrorMsg("");
+  // ---- CARI GRUP DARI ID (5 digit) ----
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setSearchError("");
 
-    // Grup yang diikuti (via arisan_members)
-    const { data: membership, error: memErr } = await supabase
-      .from("arisan_members")
-      .select("group_id")
-      .eq("user_id", userId);
+    const code = searchCode.trim();
 
-    if (memErr) {
-      console.error("Load membership error:", memErr.message);
-      setErrorMsg("Gagal memuat keikutsertaan arisan.");
+    if (!code || code.length !== 5) {
+      setSearchError("ID Grup harus 5 digit angka.");
       return;
     }
 
-    const memberGroupIds = (membership || []).map((m) => m.group_id);
+    try {
+      const { data, error } = await supabase
+        .from("arisan_groups")
+        .select("id, group_code, name")
+        .eq("group_code", code)
+        .maybeSingle();
 
-    // Grup yang dimiliki (owner_user_id)
-    const { data: owned, error: ownErr } = await supabase
-      .from("arisan_groups")
-      .select("*")
-      .eq("owner_user_id", userId);
+      if (error) {
+        console.error("Search group error:", error.message);
+        setSearchError("Terjadi kesalahan saat mencari grup.");
+        return;
+      }
 
-    if (ownErr) {
-      console.error("Load owned groups error:", ownErr.message);
-      setErrorMsg("Gagal memuat data arisan yang kamu kelola.");
-      return;
+      if (!data) {
+        setSearchError("Grup dengan ID tersebut tidak ditemukan.");
+        return;
+      }
+
+      router.push(`/arisan/${data.id}`);
+    } catch (err) {
+      console.error("Search group unexpected error:", err);
+      setSearchError("Terjadi kesalahan saat mencari grup.");
     }
-
-    const ownedIds = (owned || []).map((g) => g.id);
-
-    const allIds = Array.from(new Set([...memberGroupIds, ...ownedIds]));
-
-    if (allIds.length === 0) {
-      setGroups([]);
-      return;
-    }
-
-    const { data: groupsData, error: gErr } = await supabase
-      .from("arisan_groups")
-      .select("*")
-      .in("id", allIds)
-      .order("created_at", { ascending: true });
-
-    if (gErr) {
-      console.error("Load groups error:", gErr.message);
-      setErrorMsg("Gagal memuat daftar grup arisan.");
-      return;
-    }
-
-    setGroups(groupsData || []);
   };
 
-  // --------- BUAT GRUP ARISAN BARU (DENGAN KODE 5 DIGIT) ---------
-
+  // ---- BUAT GRUP BARU ----
   const handleCreateGroup = async (e) => {
     e.preventDefault();
     if (!user) return;
 
     setErrorMsg("");
 
-    if (!name.trim() || !monthlyAmount || !totalRounds || !startDate) {
-      setErrorMsg("Nama, nominal iuran, jumlah putaran, dan tanggal mulai wajib diisi.");
+    if (!newName.trim()) {
+      setErrorMsg("Nama grup arisan wajib diisi.");
       return;
     }
 
-    const amount = Number(monthlyAmount);
-    const rounds = Number(totalRounds);
-
-    if (!amount || amount <= 0) {
-      setErrorMsg("Nominal iuran per putaran harus lebih besar dari 0.");
-      return;
-    }
-    if (!rounds || rounds <= 0) {
-      setErrorMsg("Jumlah putaran harus lebih besar dari 0.");
-      return;
-    }
+    const monthly = Number(newMonthly) || 0;
+    const rounds = Number(newRounds) || 0;
 
     try {
       setCreating(true);
 
-      // generate kode unik max 5 percobaan (kemungkinan tabrakan sangat kecil)
+      // generate group_code unik
       let finalCode = null;
-
       for (let i = 0; i < 5; i++) {
         const candidate = generateGroupCode();
-        const { data: existing, error: checkErr } = await supabase
+        const { data: exist, error: exErr } = await supabase
           .from("arisan_groups")
           .select("id")
           .eq("group_code", candidate)
           .maybeSingle();
 
-        if (checkErr) {
-          console.error("Check group_code error:", checkErr.message);
+        if (exErr) {
+          console.error("Check group_code error:", exErr.message);
+          continue;
         }
-
-        if (!existing) {
+        if (!exist) {
           finalCode = candidate;
           break;
         }
       }
+      if (!finalCode) finalCode = generateGroupCode();
 
-      if (!finalCode) {
-        setErrorMsg(
-          "Gagal membuat kode grup unik. Coba simpan lagi beberapa saat lagi."
-        );
-        return;
-      }
-
-      // insert grup arisan
-      const { data: grp, error: gErr } = await supabase
+      // insert grup
+      const { data: created, error: createErr } = await supabase
         .from("arisan_groups")
         .insert({
-          name: name.trim(),
-          description: description.trim() || null,
-          monthly_amount: amount,
-          total_rounds: rounds,
-          start_date: startDate,
-          status: "ACTIVE",
-          owner_user_id: user.id,
+          name: newName.trim(),
+          description: null,
           group_code: finalCode,
+          monthly_amount: monthly,
+          total_rounds: rounds,
+          start_date: newStartDate || null,
+          owner_user_id: user.id,
+          status: "ACTIVE",
         })
         .select("*")
         .single();
 
-      if (gErr) {
-        console.error("Create group error:", gErr);
+      if (createErr) {
+        console.error("Create group error:", createErr.message);
         setErrorMsg(
-          "Gagal membuat grup arisan: " +
-            (gErr.message || "cek struktur tabel arisan_groups di Supabase.")
+          createErr.message || "Gagal membuat grup arisan. Coba lagi."
         );
         return;
       }
 
-      // otomatis tambahkan pembuat sebagai anggota urutan ke-1
-      const { error: mErr } = await supabase.from("arisan_members").insert({
-        group_id: grp.id,
+      // otomatis owner ikut sebagai anggota posisi 1
+      await supabase.from("arisan_members").insert({
+        group_id: created.id,
         user_id: user.id,
-        nickname: null,
         position: 1,
         status: "ACTIVE",
       });
 
-      if (mErr) {
-        console.error("Insert member (owner) error:", mErr);
-        alert(
-          "Grup berhasil dibuat, tetapi gagal menambahkan kamu sebagai anggota. Tambah manual dari Supabase kalau perlu."
-        );
-      }
+      setNewName("");
+      setNewMonthly("");
+      setNewRounds("");
+      setNewStartDate("");
 
-      // reset form
-      setName("");
-      setMonthlyAmount("");
-      setTotalRounds("");
-      setStartDate("");
-      setDescription("");
-
-      // reload
-      await loadGroups(user.id);
+      setMyGroups((prev) => [created, ...prev]);
 
       alert(
-        `Grup arisan baru berhasil dibuat.\nID Grup (kode arisan) kamu: ${finalCode}\nBagikan 5 digit ini ke teman/pelanggan untuk ikut arisan.`
+        `Grup arisan berhasil dibuat.\nID Grup: ${finalCode}\nBagikan ID ini ke teman/pelanggan untuk mereka gabung.`
       );
     } catch (err) {
       console.error("Create group unexpected error:", err);
-      setErrorMsg(
-        "Terjadi kesalahan saat membuat grup arisan: " +
-          (err.message || "error tak dikenal.")
-      );
+      setErrorMsg("Terjadi kesalahan saat membuat grup arisan.");
     } finally {
       setCreating(false);
     }
   };
 
-  // --------- CARI GRUP DARI KODE 5 DIGIT ---------
-
-  const handleSearchByCode = async (e) => {
-    e.preventDefault();
-    setSearchMsg("");
-
-    const code = searchCode.trim();
-
-    if (!/^\d{5}$/.test(code)) {
-      setSearchMsg("Masukkan 5 digit angka (contoh: 12345).");
-      return;
-    }
-
-    try {
-      setSearching(true);
-
-      const { data: grp, error } = await supabase
-        .from("arisan_groups")
-        .select("id, name, group_code, status")
-        .eq("group_code", code)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Search group by code error:", error.message);
-        setSearchMsg(
-          "Terjadi kesalahan saat mencari grup. Coba lagi beberapa saat."
-        );
-        return;
-      }
-
-      if (!grp) {
-        setSearchMsg("Grup dengan ID tersebut tidak ditemukan.");
-        return;
-      }
-
-      // kalau ketemu → langsung ke halaman detail grup
-      router.push(`/arisan/${grp.id}`);
-    } catch (err) {
-      console.error("Search group code unexpected error:", err);
-      setSearchMsg(
-        "Terjadi kesalahan saat mencari grup: " +
-          (err.message || "error tak dikenal.")
-      );
-    } finally {
-      setSearching(false);
-    }
-  };
-
-  // ----------------- RENDER -----------------
-
   if (loading) {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p className="nanad-dashboard-body">Memuat daftar arisan...</p>
+          <p className="nanad-dashboard-body">Memuat halaman arisan...</p>
         </div>
       </main>
     );
   }
 
   if (!user) {
-    return null;
+    return null; // sudah diarahkan ke login
   }
 
   return (
@@ -325,7 +273,7 @@ export default function ArisanListPage() {
             <div>
               <p className="nanad-dashboard-brand-title">Nanad Invest</p>
               <p className="nanad-dashboard-brand-sub">
-                Arisan · Grup &amp; kode undangan
+                Arisan bersama sesama pengguna
               </p>
             </div>
           </div>
@@ -348,78 +296,91 @@ export default function ArisanListPage() {
           </div>
         </header>
 
-        {/* Intro & search by code */}
+        {/* Intro */}
         <section className="nanad-dashboard-welcome">
-          <p className="nanad-dashboard-eyebrow">Arisan space</p>
+          <p className="nanad-dashboard-eyebrow">Nanad Arisan</p>
           <h1 className="nanad-dashboard-heading">
-            Arisan bersama teman &amp; pelanggan dengan kode 5 digit.
+            Kelola arisan bersama kawan &amp; pelanggan, tercatat rapi di satu
+            ruang.
           </h1>
           <p className="nanad-dashboard-body">
-            Setiap grup arisan memiliki <strong>ID Grup</strong> berupa 5 digit angka.
-            Bagikan kode ini ke kawan atau pelanggan kamu. Mereka cukup masuk ke
-            halaman arisan, masukkan ID Grup, lalu bergabung dari akun masing-masing.
+            Setiap grup arisan punya <strong>ID Grup 5 digit</strong> yang bisa
+            dibagikan ke peserta lain. Iuran tiap putaran bisa dicatat dan
+            dipotong dari saldo dompet Nanad Invest.
           </p>
-
-          {/* Form cari grup dari kode */}
-          <form
-            onSubmit={handleSearchByCode}
-            style={{
-              marginTop: "0.9rem",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "0.6rem",
-              alignItems: "center",
-            }}
-          >
-            <input
-              type="text"
-              maxLength={5}
-              placeholder="Masukkan ID Grup (5 digit, contoh: 12345)"
-              value={searchCode}
-              onChange={(e) => {
-                // hanya angka
-                const v = e.target.value.replace(/\D/g, "").slice(0, 5);
-                setSearchCode(v);
-              }}
-              style={{
-                borderRadius: "999px",
-                border: "1px solid rgba(148,163,184,0.7)",
-                background:
-                  "radial-gradient(circle at top, rgba(248,250,252,0.04), rgba(15,23,42,1))",
-                padding: "0.45rem 0.9rem",
-                fontSize: "0.8rem",
-                color: "#e5e7eb",
-                outline: "none",
-                minWidth: "220px",
-              }}
-            />
-            <button
-              type="submit"
-              disabled={searching}
-              className="nanad-dashboard-deposit-submit"
-              style={{ fontSize: "0.76rem", padding: "0.4rem 1rem" }}
-            >
-              {searching ? "Mencari..." : "Cari grup dari ID"}
-            </button>
-            {searchMsg && (
-              <p
-                className="nanad-dashboard-body"
-                style={{ fontSize: "0.78rem", color: "#fecaca" }}
-              >
-                {searchMsg}
-              </p>
-            )}
-          </form>
         </section>
 
-        {/* Grid: daftar grup & form buat grup */}
+        {/* Cari grup + daftar & buat grup */}
         <section className="nanad-dashboard-table-section">
-          {/* Daftar grup yang diikuti / dikelola */}
+          {/* Cari grup dari ID */}
+          <div className="nanad-dashboard-deposits">
+            <div className="nanad-dashboard-deposits-header">
+              <h3>Cari &amp; gabung ke grup arisan</h3>
+              <p>
+                Masukkan <strong>ID Grup 5 digit</strong> yang dibagikan oleh
+                admin arisan, lalu masuk ke halaman detail untuk bergabung.
+              </p>
+            </div>
+
+            <form
+              onSubmit={handleSearch}
+              style={{
+                marginTop: "0.85rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.6rem",
+              }}
+            >
+              <div className="nanad-dashboard-deposit-row">
+                <label>
+                  Masukkan ID Grup (5 digit, contoh 34821)
+                  <input
+                    type="text"
+                    maxLength={5}
+                    value={searchCode}
+                    onChange={(e) =>
+                      setSearchCode(e.target.value.replace(/[^0-9]/g, ""))
+                    }
+                    style={{
+                      width: "100%",
+                      borderRadius: "999px",
+                      border: "1px solid rgba(148,163,184,0.7)",
+                      background:
+                        "radial-gradient(circle at top, rgba(248,250,252,0.06), rgba(15,23,42,1))",
+                      padding: "0.4rem 0.8rem",
+                      color: "white",
+                      fontSize: "0.8rem",
+                    }}
+                    placeholder="contoh: 34821"
+                  />
+                </label>
+              </div>
+
+              {searchError && (
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ color: "#fecaca", fontSize: "0.78rem" }}
+                >
+                  {searchError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className="nanad-dashboard-deposit-submit"
+              >
+                Cari grup dari ID
+              </button>
+            </form>
+          </div>
+
+          {/* Daftar arisan milik user + buat baru */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Arisan kamu</h3>
               <p>
-                Semua grup arisan yang kamu ikuti atau kamu kelola dari akun ini.
+                Semua grup arisan yang kamu ikuti atau kamu buat. Pilih salah
+                satu untuk melihat jadwal putaran &amp; iuran.
               </p>
             </div>
 
@@ -432,191 +393,158 @@ export default function ArisanListPage() {
               </p>
             )}
 
-            {groups.length === 0 ? (
+            {myGroups.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.75rem" }}
               >
-                Kamu belum tergabung di grup arisan mana pun. Kamu bisa membuat grup
-                arisan baru di sebelah kanan, atau bergabung dengan memasukkan ID
-                grup di atas.
+                Kamu belum tergabung atau membuat grup arisan mana pun.
               </p>
             ) : (
               <div
                 className="nanad-dashboard-deposits-rows"
                 style={{ marginTop: "0.75rem" }}
               >
-                {groups.map((g) => (
+                {myGroups.map((g) => (
                   <div key={g.id} className="nanad-dashboard-deposits-row">
                     <div>
                       Dibuat{" "}
                       {g.created_at
                         ? new Date(g.created_at).toLocaleDateString("id-ID")
                         : "-"}
-                      <br />
-                      <small>
-                        ID Grup:{" "}
-                        <span
-                          style={{
-                            fontFamily: "monospace",
-                            letterSpacing: "0.12em",
-                            fontSize: "0.8rem",
-                          }}
-                        >
-                          {g.group_code || "Belum ada"}
-                        </span>
-                      </small>
                     </div>
                     <div>
                       <strong>{g.name}</strong>
                       <br />
-                      <span
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "#e5e7eb",
-                        }}
-                      >
-                        Iuran{" "}
-                        <strong>
-                          {formatCurrency(g.monthly_amount || 0)}
-                        </strong>{" "}
-                        · {g.total_rounds} putaran · Mulai{" "}
-                        {g.start_date
-                          ? new Date(g.start_date).toLocaleDateString(
-                              "id-ID"
-                            )
-                          : "-"}
-                      </span>
-                      {g.description && (
-                        <p
-                          className="nanad-dashboard-body"
-                          style={{ marginTop: "0.3rem", fontSize: "0.78rem" }}
-                        >
-                          {g.description}
-                        </p>
-                      )}
-                      <p
-                        className="nanad-dashboard-body"
-                        style={{ marginTop: "0.2rem", fontSize: "0.76rem" }}
-                      >
-                        Status:{" "}
-                        <strong style={{ textTransform: "uppercase" }}>
-                          {g.status}
-                        </strong>
-                      </p>
-                      <p
-                        className="nanad-dashboard-body"
-                        style={{ marginTop: "0.2rem", fontSize: "0.76rem" }}
-                      >
-                        Bagikan ID Grup ini ke kawan/pelanggan yang ingin ikut
-                        arisan:{" "}
+                      {g.group_code && (
                         <span
                           style={{
-                            fontFamily: "monospace",
-                            letterSpacing: "0.12em",
+                            fontSize: "0.78rem",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "#e5e7eb",
                           }}
                         >
-                          {g.group_code || "Belum ada"}
+                          ID GRUP:{" "}
+                          <span style={{ fontFamily: "monospace" }}>
+                            {g.group_code}
+                          </span>
                         </span>
-                      </p>
+                      )}
+                      <br />
+                      <span
+                        style={{
+                          fontSize: "0.78rem",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        Iuran: {formatCurrency(g.monthly_amount || 0)} · Putaran:{" "}
+                        {g.total_rounds || "-"}
+                      </span>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                      }}
-                    >
+                    <div>
                       <Link
                         href={`/arisan/${g.id}`}
                         className="nanad-dashboard-deposit-submit"
-                        style={{ fontSize: "0.78rem", padding: "0.45rem 1rem" }}
                       >
-                        Buka detail
+                        Buka grup
                       </Link>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </div>
 
-          {/* Form buat grup baru */}
-          <div className="nanad-dashboard-deposits">
+            {/* Form buat grup baru */}
+            <hr
+              style={{
+                margin: "1.1rem 0 0.8rem",
+                borderColor: "rgba(30,64,175,0.4)",
+              }}
+            />
+
             <div className="nanad-dashboard-deposits-header">
               <h3>Buat grup arisan baru</h3>
               <p>
-                Grup baru otomatis memiliki <strong>ID Grup 5 digit</strong>.
-                Bagikan ID tersebut ke peserta lain agar mereka bisa ikut arisan
-                dari akun Nanad Invest masing-masing.
+                Grup baru otomatis memiliki ID Grup 5 digit. Bagikan ID
+                tersebut ke peserta lain agar mereka bisa ikut arisan dari akun
+                Nanad Invest masing-masing.
               </p>
             </div>
 
             <form
               onSubmit={handleCreateGroup}
               className="nanad-dashboard-deposit-form"
-              style={{ marginTop: "0.9rem" }}
             >
               <label className="nanad-dashboard-deposit-amount">
                 Nama grup arisan
                 <input
                   type="text"
-                  placeholder="contoh: Arisan Pelanggan Premium Q1"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="contoh: Arisan Ramah 2025"
                 />
               </label>
 
               <div className="nanad-dashboard-deposit-row">
                 <label>
-                  Iuran per putaran
+                  Iuran per putaran (Rp)
                   <input
                     type="number"
                     min="0"
                     step="1000"
-                    placeholder="contoh: 500000"
-                    value={monthlyAmount}
-                    onChange={(e) => setMonthlyAmount(e.target.value)}
+                    value={newMonthly}
+                    onChange={(e) => setNewMonthly(e.target.value)}
+                    placeholder="contoh: 100000"
+                    style={{
+                      width: "100%",
+                      borderRadius: "999px",
+                      border: "1px solid rgba(148,163,184,0.7)",
+                      background:
+                        "radial-gradient(circle at top, rgba(248,250,252,0.06), rgba(15,23,42,1))",
+                      padding: "0.4rem 0.8rem",
+                      color: "white",
+                      fontSize: "0.8rem",
+                    }}
                   />
                 </label>
                 <label>
-                  Jumlah putaran
+                  Total putaran
                   <input
                     type="number"
                     min="1"
-                    step="1"
-                    placeholder="contoh: 10"
-                    value={totalRounds}
-                    onChange={(e) => setTotalRounds(e.target.value)}
+                    value={newRounds}
+                    onChange={(e) => setNewRounds(e.target.value)}
+                    placeholder="contoh: 12"
+                    style={{
+                      width: "100%",
+                      borderRadius: "999px",
+                      border: "1px solid rgba(148,163,184,0.7)",
+                      background:
+                        "radial-gradient(circle at top, rgba(248,250,252,0.06), rgba(15,23,42,1))",
+                      padding: "0.4rem 0.8rem",
+                      color: "white",
+                      fontSize: "0.8rem",
+                    }}
                   />
                 </label>
               </div>
 
               <label className="nanad-dashboard-deposit-amount">
-                Tanggal mulai putaran pertama
+                Tanggal mulai arisan (opsional)
                 <input
                   type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </label>
-
-              <label className="nanad-dashboard-deposit-amount">
-                Deskripsi (opsional)
-                <input
-                  type="text"
-                  placeholder="contoh: Arisan khusus pelanggan aktif yang ingin menabung terjadwal."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={newStartDate}
+                  onChange={(e) => setNewStartDate(e.target.value)}
                 />
               </label>
 
               <button
                 type="submit"
-                disabled={creating}
                 className="nanad-dashboard-deposit-submit"
+                disabled={creating}
               >
-                {creating ? "Membuat grup..." : "Buat grup arisan"}
+                {creating ? "Memproses..." : "Buat grup arisan"}
               </button>
             </form>
           </div>
@@ -624,12 +552,13 @@ export default function ArisanListPage() {
 
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. Arisan module.
+            © {new Date().getFullYear()} Nanad Invest. Arisan &amp; saving
+            circle.
           </span>
           <span>
-            ID Grup 5 digit memudahkan peserta untuk bergabung dari akun masing-masing.
-            Pastikan aturan dan kesepakatan arisan dijelaskan dengan jelas di luar
-            sistem ini.
+            Sistem ini mencatat iuran dan saldo secara internal. Aturan rinci
+            arisan (jadwal penerima, denda, dsb.) tetap perlu disepakati antara
+            peserta di luar sistem.
           </span>
         </footer>
       </div>
