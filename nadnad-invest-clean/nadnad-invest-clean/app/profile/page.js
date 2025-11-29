@@ -24,6 +24,9 @@ export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
+
   useEffect(() => {
     const loadUser = async () => {
       setLoading(true);
@@ -59,6 +62,46 @@ export default function ProfilePage() {
     } catch (err) {
       console.error("Logout error:", err);
       alert("Gagal logout. Coba lagi.");
+    }
+  };
+
+  // 👉 Kirim link reset password ke email user
+  const handleSendResetLink = async () => {
+    if (!user?.email) {
+      alert("Email akun tidak ditemukan.");
+      return;
+    }
+
+    const ok = window.confirm(
+      `Kirim link ganti password ke email:\n${user.email} ?`
+    );
+    if (!ok) return;
+
+    try {
+      setResetLoading(true);
+      setResetMessage("");
+
+      // Jika perlu redirect khusus, bisa pakai opsi redirectTo
+      // const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+      //   redirectTo: `${window.location.origin}/reset-password`,
+      // });
+
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+
+      if (error) {
+        console.error("resetPasswordForEmail error:", error.message);
+        setResetMessage("Gagal mengirim link ganti password. Coba lagi nanti.");
+        return;
+      }
+
+      setResetMessage(
+        "Link ganti password telah dikirim ke email kamu. Silakan cek inbox atau folder spam."
+      );
+    } catch (err) {
+      console.error("Unexpected reset error:", err);
+      setResetMessage("Terjadi kesalahan saat mengirim link ganti password.");
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -116,7 +159,7 @@ export default function ProfilePage() {
           <button
             type="button"
             className="nanad-dashboard-logout"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/dashboard")}
           >
             Kembali ke dashboard
           </button>
@@ -136,7 +179,10 @@ export default function ProfilePage() {
           <div className="nanad-dashboard-stat-grid">
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">Email</p>
-              <p className="nanad-dashboard-stat-number" style={{ fontSize: 16 }}>
+              <p
+                className="nanad-dashboard-stat-number"
+                style={{ fontSize: 16 }}
+              >
                 {user?.email}
               </p>
             </div>
@@ -151,7 +197,10 @@ export default function ProfilePage() {
             </div>
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">Bergabung sejak</p>
-              <p className="nanad-dashboard-stat-number" style={{ fontSize: 14 }}>
+              <p
+                className="nanad-dashboard-stat-number"
+                style={{ fontSize: 14 }}
+              >
                 {formatDate(user?.created_at)}
               </p>
             </div>
@@ -215,15 +264,28 @@ export default function ProfilePage() {
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() =>
-                alert(
-                  "Fitur ganti password bisa dihubungkan dengan Supabase Auth reset password via email."
-                )
-              }
+              onClick={handleSendResetLink}
+              disabled={resetLoading}
             >
-              Ganti password (coming soon)
+              {resetLoading
+                ? "Mengirim link ganti password..."
+                : "Kirim link ganti password"}
             </button>
           </div>
+
+          {/* Pesan status reset password */}
+          {resetMessage && (
+            <p
+              className="nanad-dashboard-body"
+              style={{
+                marginTop: "0.75rem",
+                fontSize: "0.8rem",
+                color: "#e5e7eb",
+              }}
+            >
+              {resetMessage}
+            </p>
+          )}
         </section>
 
         {/* Footer kecil */}
@@ -232,8 +294,8 @@ export default function ProfilePage() {
             © {new Date().getFullYear()} Nanad Invest. Account & security page.
           </span>
           <span>
-            Untuk reset password resmi, gunakan mekanisme yang disediakan oleh
-            penyedia autentikasi (Supabase Auth).
+            Untuk pengaturan password, gunakan link resmi yang dikirim ke email
+            melalui fitur reset password Nanad Invest (Supabase Auth).
           </span>
         </footer>
       </div>
