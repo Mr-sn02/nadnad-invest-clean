@@ -25,3 +25,17 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+// app/layout.js (bagian bawah)
+import Footer from "./components/Footer";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="id">
+      <body className="bg-black text-slate-100">
+        {children}
+        <Footer />
+      </body>
+    </html>
+  );
+}
