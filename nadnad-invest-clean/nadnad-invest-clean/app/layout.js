@@ -1,5 +1,6 @@
 // app/layout.js
 import "./globals.css";
+import Footer from "./components/Footer";
 
 export const metadata = {
   title: "Nanad Invest",
@@ -9,7 +10,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <body>
+      <body className="bg-black text-slate-100">
         {children}
 
         {/* TOMBOL PENGADUAN WHATSAPP NANAD INVEST */}
@@ -21,19 +22,7 @@ export default function RootLayout({ children }) {
         >
           Pengaduan WhatsApp
         </a>
-      </body>
-    </html>
-  );
-}
 
-// app/layout.js (bagian bawah)
-import Footer from "./components/Footer";
-
-export default function RootLayout({ children }) {
-  return (
-    <html lang="id">
-      <body className="bg-black text-slate-100">
-        {children}
         <Footer />
       </body>
     </html>
