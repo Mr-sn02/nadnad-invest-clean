@@ -328,6 +328,25 @@ export default function WalletPage() {
     return okType && okStatus;
   });
 
+  // Ringkasan transaksi disetujui (dipakai untuk statistik kecil)
+  const approvedDeposits = transactions
+    .filter(
+      (tx) =>
+        tx.type === "DEPOSIT" &&
+        (tx.status === "APPROVED" || tx.status === "COMPLETED")
+    )
+    .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+  const approvedWithdrawals = transactions
+    .filter(
+      (tx) =>
+        tx.type === "WITHDRAW" &&
+        (tx.status === "APPROVED" || tx.status === "COMPLETED")
+    )
+    .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+  const netFlow = approvedDeposits - approvedWithdrawals;
+
   // ==== RENDER: state loading / error ====
   if (loading) {
     return (
@@ -611,6 +630,62 @@ export default function WalletPage() {
                 <strong>menunggu persetujuan admin</strong>. Kamu bisa menyaring
                 berdasarkan jenis transaksi dan status di bawah ini.
               </p>
+            </div>
+
+            {/* Ringkasan transaksi disetujui */}
+            <div
+              className="nanad-dashboard-stat-grid"
+              style={{ marginTop: "0.75rem" }}
+            >
+              <div className="nanad-dashboard-stat-card">
+                <p className="nanad-dashboard-stat-label">
+                  Total deposit disetujui
+                </p>
+                <p className="nanad-dashboard-stat-number">
+                  {formatCurrency(approvedDeposits)}
+                </p>
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ marginTop: "0.3rem", fontSize: "0.8rem" }}
+                >
+                  Akumulasi semua transaksi <strong>DEPOSIT</strong> dengan
+                  status <strong>APPROVED / COMPLETED</strong> yang tercatat
+                  pada riwayat ini.
+                </p>
+              </div>
+
+              <div className="nanad-dashboard-stat-card">
+                <p className="nanad-dashboard-stat-label">
+                  Total penarikan disetujui
+                </p>
+                <p className="nanad-dashboard-stat-number">
+                  {formatCurrency(approvedWithdrawals)}
+                </p>
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ marginTop: "0.3rem", fontSize: "0.8rem" }}
+                >
+                  Akumulasi semua transaksi <strong>WITHDRAW</strong> yang sudah
+                  disetujui admin dan tercatat selesai.
+                </p>
+              </div>
+
+              <div className="nanad-dashboard-stat-card">
+                <p className="nanad-dashboard-stat-label">
+                  Aliran bersih disetujui
+                </p>
+                <p className="nanad-dashboard-stat-number">
+                  {formatCurrency(netFlow)}
+                </p>
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ marginTop: "0.3rem", fontSize: "0.8rem" }}
+                >
+                  Selisih antara{" "}
+                  <strong>deposit disetujui - penarikan disetujui</strong>.
+                  Nilai positif berarti dana lebih banyak masuk daripada keluar.
+                </p>
+              </div>
             </div>
 
             {/* Filter bar */}
