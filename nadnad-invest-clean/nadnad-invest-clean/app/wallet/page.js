@@ -360,7 +360,7 @@ export default function WalletPage() {
           <button
             type="button"
             className="nanad-dashboard-logout"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/dashboard")}
           >
             Kembali ke dashboard
           </button>
