@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Cek apakah token recovery valid → akan ada session user sementara
+  // Cek apakah token recovery valid -> Supabase akan kasih user sementara
   useEffect(() => {
     const checkUser = async () => {
       setChecking(true);
@@ -78,7 +78,6 @@ export default function ResetPasswordPage() {
       }
 
       setMessage("Password berhasil diubah. Kamu bisa login dengan password baru.");
-      // Opsional: redirect otomatis ke login setelah beberapa detik
       setTimeout(() => {
         router.push("/login");
       }, 2500);
@@ -190,14 +189,4 @@ export default function ResetPasswordPage() {
 
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. Reset password.
-          </span>
-          <span>
-            Jangan bagikan link reset password ini ke siapa pun. Jika kamu tidak
-            merasa meminta reset, segera abaikan email tersebut.
-          </span>
-        </footer>
-      </div>
-    </main>
-  );
-}
+            © {new Date().getFullYear
