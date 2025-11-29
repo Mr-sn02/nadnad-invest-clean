@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import supabase from "../../lib/supbaseClient"; // pastikan nama file client benar
+import supabase from "../../lib/supabaseClient"; // ✅ pastikan nama & path sesuai
 
 // Format rupiah
 function formatCurrency(value) {
@@ -277,7 +277,7 @@ export default function ArisanPage() {
           total_rounds: rounds,
           start_date: newStartDate || null,
           owner_user_id: user.id,
-          created_by_user_id: user.id, // ← inilah kolom yang sebelumnya bikin error
+          created_by_user_id: user.id, // kolom NOT NULL di DB
           status: "ACTIVE",
         })
         .select("*")
@@ -490,7 +490,9 @@ export default function ArisanPage() {
                           color: "#facc15",
                         }}
                       >
-                        {role === "OWNER" ? "Kamu sebagai pemilik" : "Kamu sebagai peserta"}
+                        {role === "OWNER"
+                          ? "Kamu sebagai pemilik"
+                          : "Kamu sebagai peserta"}
                       </span>
                     </div>
 
