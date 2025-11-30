@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import supabase from "../../../../lib/supabaseClient"; // ✅ path ke supabaseClient
+import supabase from "../../../../lib/supabaseClient";
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
@@ -45,7 +45,7 @@ export default function WalletReceiptPage({ params }) {
       setLoading(true);
       setErrorMsg("");
 
-      try {                               // ✅ BUKAN "try:" tapi "try {"
+      try {
         // 1) Pastikan user login
         const {
           data: { user },
@@ -88,8 +88,7 @@ export default function WalletReceiptPage({ params }) {
         }
 
         // 4) Proteksi: hanya pemilik dompet atau admin yang boleh lihat
-        const isAdmin =
-          user.email && ADMIN_EMAILS.includes(user.email);
+        const isAdmin = user.email && ADMIN_EMAILS.includes(user.email);
         if (walletData && walletData.user_id !== user.id && !isAdmin) {
           setErrorMsg("Kamu tidak memiliki akses ke bukti transaksi ini.");
           return;
@@ -114,9 +113,7 @@ export default function WalletReceiptPage({ params }) {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p className="nanad-dashboard-body">
-            Memuat bukti transaksi...
-          </p>
+          <p className="nanad-dashboard-body">Memuat bukti transaksi...</p>
         </div>
       </main>
     );
@@ -171,11 +168,11 @@ export default function WalletReceiptPage({ params }) {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
+            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Bukti transaksi dompet
+                Bukti transaksi dompet pintar
               </p>
             </div>
           </div>
@@ -244,7 +241,7 @@ export default function WalletReceiptPage({ params }) {
                     fontWeight: 600,
                   }}
                 >
-                  {typeLabel} dompet Nanad Invest
+                  {typeLabel} Dompet Nadnad
                 </h1>
                 <p
                   style={{
@@ -270,7 +267,7 @@ export default function WalletReceiptPage({ params }) {
                     marginBottom: "0.35rem",
                   }}
                 >
-                  NANAD INVEST
+                  DOMPET NADNAD
                 </div>
                 <div style={{ fontSize: "0.75rem", opacity: 0.8 }}>
                   ID transaksi:
@@ -369,7 +366,7 @@ export default function WalletReceiptPage({ params }) {
                 {tx.type === "DEPOSIT" ? (
                   <>
                     <p style={{ opacity: 0.7, marginBottom: "0.1rem" }}>
-                      Rekening tujuan Nanad Invest:
+                      Rekening tujuan Dompet Nadnad:
                     </p>
                     <p style={{ marginBottom: "0.4rem" }}>
                       {tx.deposit_target || "-"}
@@ -415,7 +412,8 @@ export default function WalletReceiptPage({ params }) {
                 <p style={{ marginBottom: "0.3rem" }}>
                   <strong>Catatan pengguna:</strong>{" "}
                   <span style={{ opacity: 0.9 }}>
-                    {tx.user_note || "— tidak ada catatan khusus dari pengguna —"}
+                    {tx.user_note ||
+                      "— tidak ada catatan khusus dari pengguna —"}
                   </span>
                 </p>
 
@@ -428,9 +426,7 @@ export default function WalletReceiptPage({ params }) {
 
                 <p style={{ marginBottom: "0.3rem" }}>
                   <strong>Catatan sistem:</strong>{" "}
-                  <span style={{ opacity: 0.9 }}>
-                    {tx.note || "—"}
-                  </span>
+                  <span style={{ opacity: 0.9 }}>{tx.note || "—"}</span>
                 </p>
               </div>
             </div>
@@ -475,12 +471,12 @@ export default function WalletReceiptPage({ params }) {
               }}
             >
               <span>
-                © {new Date().getFullYear()} Nanad Invest · Bukti transaksi
+                © {new Date().getFullYear()} Dompet Nadnad · Bukti transaksi
                 dompet.
               </span>
               <span>
-                Dokumen ini tidak menjamin imbal hasil dan hanya untuk
-                keperluan pencatatan personal.
+                Dokumen ini tidak menjamin imbal hasil dan hanya untuk keperluan
+                pencatatan personal.
               </span>
             </div>
           </div>
