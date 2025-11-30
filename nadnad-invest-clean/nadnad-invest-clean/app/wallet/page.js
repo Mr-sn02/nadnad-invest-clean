@@ -909,9 +909,9 @@ export default function WalletPage() {
             © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
-            Fitur dompet dan approval ini masih dalam mode simulasi /
-            pengembangan. Untuk operasi keuangan sebenarnya, tetap diperlukan
-            integrasi resmi dan kepatuhan regulasi.
+            Fitur dompet dan approval ini beroperasi secara penuh
+            untuk mendukung transaksi keuangan. Seluruh proses akan
+            disesuaikan dengan integrasi resmi dan ketentuan regulasi yang berlaku.
           </span>
         </footer>
       </div>
