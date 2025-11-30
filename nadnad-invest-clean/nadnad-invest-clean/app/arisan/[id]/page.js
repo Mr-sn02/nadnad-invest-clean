@@ -3,7 +3,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
 import supabase from "../../../lib/supabaseClient";
 
 // Format rupiah
@@ -48,6 +47,8 @@ export default function ArisanGroupDetailPage() {
   const [winnerLoadingRoundId, setWinnerLoadingRoundId] = useState(null);
   const [chatText, setChatText] = useState("");
   const [chatSending, setChatSending] = useState(false);
+
+  const [walletBalance, setWalletBalance] = useState(null);
 
   // apakah user adalah owner grup?
   const isOwner = useMemo(
@@ -159,6 +160,19 @@ export default function ArisanGroupDetailPage() {
         } else {
           setMessages(msgList || []);
         }
+
+        // 8) Dompet user (opsional untuk ditampilkan)
+        const { data: wallet, error: wErr } = await supabase
+          .from("wallets")
+          .select("balance")
+          .eq("user_id", u.id)
+          .maybeSingle();
+
+        if (wErr) {
+          console.error("load wallet error:", wErr.message);
+        } else {
+          setWalletBalance(wallet?.balance ?? 0);
+        }
       } catch (err) {
         console.error("Unexpected arisan group init error:", err);
         setPageError("Terjadi kesalahan saat memuat grup arisan.");
@@ -240,103 +254,52 @@ export default function ArisanGroupDetailPage() {
     }
   };
 
-  // Setor iuran dari dompet ke putaran tertentu
+  // Setor iuran dari dompet ke putaran tertentu (pakai RPC)
   const handlePayFromWallet = async (round) => {
     if (!user || !group || !membership) {
       alert("Kamu harus menjadi anggota grup untuk setor iuran.");
       return;
     }
 
+    // Cek apakah sudah pernah setor untuk putaran ini
+    const key = `${round.id}-${user.id}`;
+    if (paymentMap.has(key)) {
+      alert("Kamu sudah tercatat setor iuran untuk putaran ini.");
+      return;
+    }
+
+    const amount = group.per_round_amount;
+
     setPayLoadingRoundId(round.id);
     try {
-      // 1) Ambil dompet user
-      const { data: wallet, error: wErr } = await supabase
-        .from("wallets")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (wErr) {
-        console.error("wallet load error:", wErr.message);
-        alert("Gagal memuat dompet.");
-        return;
-      }
-
-      if (!wallet) {
-        alert(
-          "Dompet Nanad kamu belum ada. Silakan buka halaman Wallet terlebih dahulu agar dompet dibuat otomatis."
-        );
-        return;
-      }
-
-      const amount = group.per_round_amount;
-      if ((wallet.balance || 0) < amount) {
+      // (Opsional) cek saldo lokal
+      if (walletBalance !== null && walletBalance < amount) {
         alert(
           `Saldo dompet kamu kurang. Saldo: ${formatCurrency(
-            wallet.balance
+            walletBalance
           )}, iuran putaran: ${formatCurrency(amount)}`
         );
+        setPayLoadingRoundId(null);
         return;
       }
 
-      // Cek apakah sudah pernah setor untuk putaran ini
-      const key = `${round.id}-${user.id}`;
-      if (paymentMap.has(key)) {
-        alert("Kamu sudah tercatat setor iuran untuk putaran ini.");
+      // Panggil function di database
+      const { error: rpcErr } = await supabase.rpc(
+        "pay_arisan_round_from_wallet",
+        {
+          p_group_id: group.id,
+          p_round_id: round.id,
+          p_amount: amount,
+        }
+      );
+
+      if (rpcErr) {
+        console.error("RPC pay_arisan_round_from_wallet error:", rpcErr.message);
+        alert(rpcErr.message || "Gagal mencatat setoran arisan.");
         return;
       }
 
-      const before = wallet.balance || 0;
-      const after = before - amount;
-
-      // 2) Catat pembayaran arisan_round_payments
-      const { error: payErr } = await supabase
-        .from("arisan_round_payments")
-        .insert({
-          group_id: group.id,
-          round_id: round.id,
-          user_id: user.id,
-          wallet_id: wallet.id,
-          amount,
-        });
-
-      if (payErr) {
-        console.error("insert payment error:", payErr.message);
-        alert("Gagal mencatat setoran arisan.");
-        return;
-      }
-
-      // 3) Update saldo dompet & transaksi dompet
-      const { error: updWalletErr } = await supabase
-        .from("wallets")
-        .update({ balance: after })
-        .eq("id", wallet.id);
-
-      if (updWalletErr) {
-        console.error("update wallet error:", updWalletErr.message);
-        alert("Gagal memperbarui saldo dompet.");
-        return;
-      }
-
-      const { error: txErr } = await supabase
-        .from("wallet_transactions")
-        .insert({
-          wallet_id: wallet.id,
-          type: "ARISAN_PAY",
-          amount,
-          balance_before: before,
-          balance_after: after,
-          status: "COMPLETED",
-          note: `Setoran arisan putaran ${round.round_number} grup ${group.name}`,
-          user_email: user.email || null,
-        });
-
-      if (txErr) {
-        console.error("wallet tx error:", txErr.message);
-        // tidak fatal untuk user, saldo sudah berubah
-      }
-
-      // 4) refresh payments
+      // refresh payments
       const { data: payList, error: payReloadErr } = await supabase
         .from("arisan_round_payments")
         .select("*")
@@ -347,7 +310,18 @@ export default function ArisanGroupDetailPage() {
         setPayments(payList || []);
       }
 
-      alert("Setoran arisan berhasil dicatat.");
+      // refresh saldo dompet
+      const { data: wallet, error: wErr } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!wErr) {
+        setWalletBalance(wallet?.balance ?? walletBalance);
+      }
+
+      alert("Setoran arisan berhasil dicatat dari Dompet Nadnad.");
     } catch (err) {
       console.error("pay from wallet unexpected error:", err);
       alert("Terjadi kesalahan saat mencatat setoran arisan.");
@@ -356,12 +330,13 @@ export default function ArisanGroupDetailPage() {
     }
   };
 
-  // Owner menetapkan pemenang + auto kredit ke dompet
+  // Owner menetapkan pemenang + auto kredit ke dompet (pakai RPC)
   const handleSetWinnerAndCredit = async (round, winnerUserId) => {
     if (!isOwner) {
       alert("Hanya pemilik grup yang bisa menetapkan pemenang.");
       return;
     }
+    if (!winnerUserId) return;
 
     setWinnerLoadingRoundId(round.id);
     try {
@@ -369,6 +344,7 @@ export default function ArisanGroupDetailPage() {
       const winnerMember = members.find((m) => m.user_id === winnerUserId);
       if (!winnerMember) {
         alert("Anggota pemenang tidak ditemukan.");
+        setWinnerLoadingRoundId(null);
         return;
       }
 
@@ -382,6 +358,7 @@ export default function ArisanGroupDetailPage() {
       if (payErr) {
         console.error("load round payments error:", payErr.message);
         alert("Gagal membaca setoran putaran.");
+        setWinnerLoadingRoundId(null);
         return;
       }
 
@@ -400,81 +377,32 @@ export default function ArisanGroupDetailPage() {
         }
       }
 
-      // Ambil / buat dompet pemenang
-      const { data: existingWallet, error: wErr } = await supabase
-        .from("wallets")
-        .select("*")
-        .eq("user_id", winnerUserId)
-        .maybeSingle();
+      // Panggil function di database untuk kredit ke dompet pemenang
+      const { error: rpcErr } = await supabase.rpc(
+        "payout_arisan_round_to_wallet",
+        {
+          p_round_id: round.id,
+          p_winner_user_id: winnerUserId,
+          p_amount: pot,
+        }
+      );
 
-      let winnerWallet = existingWallet;
-      if (wErr) {
-        console.error("winner wallet load error:", wErr.message);
-        alert("Gagal memuat dompet pemenang.");
+      if (rpcErr) {
+        console.error(
+          "RPC payout_arisan_round_to_wallet error:",
+          rpcErr.message
+        );
+        alert(rpcErr.message || "Gagal mengkredit dompet pemenang.");
+        setWinnerLoadingRoundId(null);
         return;
       }
 
-      if (!winnerWallet) {
-        const { data: createdWallet, error: createErr } = await supabase
-          .from("wallets")
-          .insert({
-            user_id: winnerUserId,
-            user_email: winnerMember.user_email,
-            balance: 0,
-          })
-          .select("*")
-          .single();
-
-        if (createErr) {
-          console.error("create winner wallet error:", createErr.message);
-          alert("Gagal membuat dompet pemenang.");
-          return;
-        }
-        winnerWallet = createdWallet;
-      }
-
-      let before = winnerWallet.balance || 0;
-      let after = before + pot;
-
-      // Kredit dompet jika ada pot > 0
-      if (pot > 0) {
-        const { error: updWalletErr } = await supabase
-          .from("wallets")
-          .update({ balance: after })
-          .eq("id", winnerWallet.id);
-
-        if (updWalletErr) {
-          console.error("update winner wallet error:", updWalletErr.message);
-          alert("Gagal mengkredit dompet pemenang.");
-          return;
-        }
-
-        const { error: txErr } = await supabase
-          .from("wallet_transactions")
-          .insert({
-            wallet_id: winnerWallet.id,
-            type: "ARISAN_WIN",
-            amount: pot,
-            balance_before: before,
-            balance_after: after,
-            status: "COMPLETED",
-            note: `Kredit kemenangan arisan putaran ${round.round_number} grup ${group.name}`,
-            user_email: winnerMember.user_email || null,
-          });
-
-        if (txErr) {
-          console.error("winner wallet tx error:", txErr.message);
-          // tidak fatal, saldo sudah masuk
-        }
-      }
-
-      // Update info putaran
+      // Update info putaran (status & winner)
       const { error: updRoundErr } = await supabase
         .from("arisan_rounds")
         .update({
           status: "CLOSED",
           winner_user_id: winnerUserId,
-          winner_wallet_id: winnerWallet.id,
           winner_credit_amount: pot,
         })
         .eq("id", round.id);
@@ -482,6 +410,7 @@ export default function ArisanGroupDetailPage() {
       if (updRoundErr) {
         console.error("update round error:", updRoundErr.message);
         alert("Gagal memperbarui status putaran.");
+        setWinnerLoadingRoundId(null);
         return;
       }
 
@@ -658,6 +587,16 @@ export default function ArisanGroupDetailPage() {
               {group.description}
             </p>
           )}
+
+          {walletBalance !== null && (
+            <p
+              className="nanad-dashboard-body"
+              style={{ marginTop: "0.4rem", fontSize: "0.85rem" }}
+            >
+              Saldo Dompet Nadnad kamu:{" "}
+              <strong>{formatCurrency(walletBalance)}</strong>
+            </p>
+          )}
         </section>
 
         {/* Status keanggotaan */}
@@ -822,7 +761,14 @@ export default function ArisanGroupDetailPage() {
                       )}
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", alignItems: "flex-end" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.4rem",
+                        alignItems: "flex-end",
+                      }}
+                    >
                       {userHasJoined && !userPaid && (
                         <button
                           type="button"
@@ -998,7 +944,9 @@ export default function ArisanGroupDetailPage() {
 
         {/* Footer */}
         <footer className="nanad-dashboard-footer">
-          <span>© {new Date().getFullYear()} Nanad Invest. Arisan module (beta).</span>
+          <span>
+            © {new Date().getFullYear()} Nanad Invest. Arisan module (beta).
+          </span>
           <span>
             Fitur arisan di aplikasi ini bersifat pencatatan &amp; simulasi.
             Pengelolaan dana nyata tetap mengikuti kesepakatan dan regulasi di
