@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import supabase from "../../lib/supabaseClient";
 
 // Format rupiah
@@ -23,7 +24,7 @@ const DEPOSIT_TARGETS = [
   },
   {
     id: "BRI-CABANG",
-    label: "BRI · 5556667778 · a.n. Nanad Invest Bandung", // rekening cabang
+    label: "BRI · 5556667778 · a.n. Dompet Nadnad Bandung", // rekening cabang (brand baru)
   },
   {
     id: "DANA-SON",
@@ -143,7 +144,7 @@ export default function WalletPage() {
         await loadTransactions(currentWallet.id);
       } catch (err) {
         console.error("Unexpected wallet init error:", err);
-        setLoadError("Terjadi kesalahan saat memuat dompet Nanad Invest.");
+        setLoadError("Terjadi kesalahan saat memuat Dompet Nadnad.");
       } finally {
         setLoading(false);
       }
@@ -322,9 +323,7 @@ export default function WalletPage() {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p className="nanad-dashboard-body">
-            Memuat dompet Nanad Invest...
-          </p>
+          <p className="nanad-dashboard-body">Memuat Dompet Nadnad...</p>
         </div>
       </main>
     );
@@ -337,7 +336,7 @@ export default function WalletPage() {
           <section className="nanad-dashboard-welcome">
             <p className="nanad-dashboard-eyebrow">Wallet error</p>
             <h1 className="nanad-dashboard-heading">
-              Gagal memuat dompet Nanad Invest.
+              Gagal memuat Dompet Nadnad.
             </h1>
             <p className="nanad-dashboard-body" style={{ color: "#fecaca" }}>
               {loadError}
@@ -358,8 +357,7 @@ export default function WalletPage() {
 
   // Filter transaksi di client
   const filteredTransactions = transactions.filter((tx) => {
-    const matchType =
-      filterType === "ALL" ? true : tx.type === filterType;
+    const matchType = filterType === "ALL" ? true : tx.type === filterType;
     const matchStatus =
       filterStatus === "ALL" ? true : tx.status === filterStatus;
     return matchType && matchStatus;
@@ -372,11 +370,18 @@ export default function WalletPage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
+            <div className="nanad-dashboard-logo" style={{ overflow: "hidden" }}>
+              <Image
+                src="/dompet-nadnad-logo.png"
+                alt="Logo Dompet Nadnad"
+                width={40}
+                height={40}
+              />
+            </div>
             <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Wallet · Simpanan &amp; transaksi
+                Dompet pintar · Saldo &amp; transaksi
               </p>
             </div>
           </div>
@@ -401,9 +406,9 @@ export default function WalletPage() {
 
         {/* Ringkasan saldo */}
         <section className="nanad-dashboard-welcome">
-          <p className="nanad-dashboard-eyebrow">Wallet balance</p>
+          <p className="nanad-dashboard-eyebrow">Saldo dompet pintar</p>
           <h1 className="nanad-dashboard-heading">
-            Saldo dompet Nanad Invest kamu.
+            Saldo Dompet Nadnad kamu.
           </h1>
           <p className="nanad-dashboard-body">
             Pengajuan deposit dan penarikan di halaman ini akan berstatus{" "}
@@ -434,7 +439,7 @@ export default function WalletPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Ajukan deposit</h3>
               <p>
-                Lakukan transfer ke salah satu rekening Nanad Invest di bawah
+                Lakukan transfer ke salah satu rekening Dompet Nadnad di bawah
                 ini, lalu isi nominal, nama pengirim, dan (opsional) unggah
                 bukti transfer. Admin akan mengecek dan menyetujui secara
                 manual.
@@ -538,9 +543,9 @@ export default function WalletPage() {
               >
                 Jika nomor rekening tujuan terlihat berbeda dari informasi
                 resmi, tidak aktif, atau kamu ragu,{" "}
-                <strong>jangan melakukan transfer</strong>. Segera hubungi
-                admin melalui tombol <strong>Pengaduan WhatsApp</strong> di
-                pojok kanan bawah untuk konfirmasi nomor rekening.
+                <strong>jangan melakukan transfer</strong>. Segera hubungi admin
+                melalui tombol <strong>Pengaduan WhatsApp</strong> di pojok
+                kanan bawah untuk konfirmasi nomor rekening.
               </p>
 
               {/* Tombol submit */}
@@ -678,7 +683,11 @@ export default function WalletPage() {
                       cursor: "pointer",
                     }}
                   >
-                    {t === "ALL" ? "Semua" : t === "DEPOSIT" ? "Deposit" : "Penarikan"}
+                    {t === "ALL"
+                      ? "Semua"
+                      : t === "DEPOSIT"
+                      ? "Deposit"
+                      : "Penarikan"}
                   </button>
                 ))}
               </div>
@@ -905,7 +914,7 @@ export default function WalletPage() {
         {/* Footer */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. All rights reserved.
+            © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
             Fitur dompet dan approval ini masih dalam mode simulasi /
