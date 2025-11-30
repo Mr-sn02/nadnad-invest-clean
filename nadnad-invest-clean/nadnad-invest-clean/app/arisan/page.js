@@ -63,7 +63,7 @@ export default function ArisanHomePage() {
 
         // ambil semua grup yang diikuti user
         const { data, error: gErr } = await supabase
-          .from("arisan_members")
+          .from("arisan_memberships") // 🔁 PAKAI TABEL INI
           .select(
             `
             id,
@@ -205,13 +205,14 @@ export default function ArisanHomePage() {
         return;
       }
 
-      // catat owner sebagai member
+      // catat owner sebagai member di arisan_memberships
       const { data: ownerMember, error: mErr } = await supabase
-        .from("arisan_members")
+        .from("arisan_memberships") // 🔁 DI SINI JUGA
         .insert({
           group_id: newGroup.id,
           user_id: user.id,
           user_email: user.email,
+          display_name: user.email,
           role: "OWNER",
         })
         .select("*")
