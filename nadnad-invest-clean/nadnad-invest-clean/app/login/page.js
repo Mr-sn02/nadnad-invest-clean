@@ -58,7 +58,6 @@ export default function LoginPage() {
     setResetError("");
     setResetMessage("");
 
-    // Kalau user sudah isi email di form login, boleh dipakai juga
     const targetEmail = (resetEmail || email).trim();
     if (!targetEmail) {
       setResetError("Masukkan email yang terdaftar terlebih dahulu.");
@@ -99,21 +98,21 @@ export default function LoginPage() {
       <div className="nanad-auth-shell">
         {/* Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div className="nanad-auth-logo">N</div>
+          <div className="nanad-auth-logo nanad-logo-n">N</div>
           <div>
-            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+            <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
             <p className="nanad-dashboard-brand-sub">
-              Ruang pribadi perencanaan dana
+              Dompet pintar pelanggan &amp; komunitas
             </p>
           </div>
         </div>
 
         {/* Judul */}
         <div>
-          <h1 className="nanad-auth-title">Masuk ke Nanad Invest</h1>
+          <h1 className="nanad-auth-title">Masuk ke Dompet Nadnad</h1>
           <p className="nanad-auth-sub">
             Gunakan email dan kata sandi yang telah terdaftar untuk mengakses
-            dashboard dan dompet kamu.
+            dompet, arisan, dan ruang pencatatan keuangan kamu.
           </p>
         </div>
 
@@ -191,10 +190,11 @@ export default function LoginPage() {
               className="nanad-dashboard-body"
               style={{ fontSize: "0.8rem", marginBottom: "0.5rem" }}
             >
-              Masukkan email yang terdaftar di Nanad Invest. Kami akan
-              mengirimkan link untuk mengatur ulang password. Link tersebut akan
-              mengarahkan kamu ke halaman <strong>Profil</strong>, di mana kamu
-              bisa mengganti password melalui form ganti password.
+              Masukkan email yang terdaftar di <strong>Dompet Nadnad</strong>.
+              Kami akan mengirimkan link untuk mengatur ulang password. Link
+              tersebut akan mengarahkan kamu ke halaman{" "}
+              <strong>Profil</strong>, di mana kamu bisa mengganti password
+              melalui form ganti password.
             </p>
 
             <form
@@ -250,7 +250,7 @@ export default function LoginPage() {
         <div className="nanad-auth-footer">
           Belum punya akun?{" "}
           <Link href="/register" style={{ color: "#f5d17a" }}>
-            Daftar Nanad Invest
+            Daftar Dompet Nadnad
           </Link>
         </div>
       </div>
