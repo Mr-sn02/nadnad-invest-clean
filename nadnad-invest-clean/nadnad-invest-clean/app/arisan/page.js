@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 // format rupiah
@@ -60,14 +61,13 @@ export default function ArisanHomePage() {
 
         setUser(user);
 
-        // ambil semua grup yang diikuti user (dari arisan_memberships)
+        // ambil semua grup yang diikuti user
         const { data, error: gErr } = await supabase
-          .from("arisan_memberships")
+          .from("arisan_members")
           .select(
             `
             id,
             role,
-            joined_at,
             group:arisan_groups(
               id,
               group_code,
@@ -90,7 +90,6 @@ export default function ArisanHomePage() {
             data?.map((row) => ({
               memberId: row.id,
               role: row.role,
-              joined_at: row.joined_at,
               ...row.group,
             })) || [];
           setGroups(cleaned);
@@ -185,7 +184,7 @@ export default function ArisanHomePage() {
         return;
       }
 
-      // 1) Buat grup arisan baru
+      // buat grup
       const { data: newGroup, error: gErr } = await supabase
         .from("arisan_groups")
         .insert({
@@ -206,28 +205,53 @@ export default function ArisanHomePage() {
         return;
       }
 
-      // 2) Catat pembuat grup sebagai OWNER di arisan_memberships
-      const { error: mErr } = await supabase
-        .from("arisan_memberships")
+      // catat owner sebagai member
+      const { data: ownerMember, error: mErr } = await supabase
+        .from("arisan_members")
         .insert({
           group_id: newGroup.id,
           user_id: user.id,
           user_email: user.email,
-          display_name: user.email,
           role: "OWNER",
-        });
+        })
+        .select("*")
+        .single();
 
       if (mErr) {
-        console.error("create owner membership error:", mErr.message);
+        console.error("create member error:", mErr.message);
         alert(
-          "Grup berhasil dibuat, tapi gagal mencatat keanggotaan owner. Hubungi admin jika masalah berlanjut."
+          "Grup berhasil dibuat, tetapi gagal mencatat keanggotaan owner. Hubungi admin."
         );
-        // lanjut, karena grup sudah ada
+        // masih lanjut, karena grup sudah ada
       }
 
-      // (PUTARAN TIDAK DIBUAT DI SINI)
-      // Putaran sekarang dibuat otomatis oleh TRIGGER di database
-      // create_rounds_for_new_arisan_group() setelah insert ke arisan_groups
+      // pre-generate putaran
+      const roundsPayload = [];
+      const baseDate = startDate ? new Date(startDate) : null;
+
+      for (let i = 1; i <= rounds; i++) {
+        let date = null;
+        if (baseDate) {
+          const d = new Date(baseDate);
+          d.setDate(d.getDate() + (i - 1) * 30); // 30 hari per putaran (simulasi)
+          date = d.toISOString().split("T")[0];
+        }
+        roundsPayload.push({
+          group_id: newGroup.id,
+          round_number: i,
+          scheduled_date: date,
+        });
+      }
+
+      if (roundsPayload.length > 0) {
+        const { error: rErr } = await supabase
+          .from("arisan_rounds")
+          .insert(roundsPayload);
+
+        if (rErr) {
+          console.error("create rounds error:", rErr.message);
+        }
+      }
 
       alert(
         `Grup arisan berhasil dibuat.\nNama: ${newGroup.name}\nID Grup: ${newGroup.group_code}`
@@ -259,11 +283,11 @@ export default function ArisanHomePage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
+            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Arisan module · Simulasi kelompok
+                Arisan pintar · Kelola kelompok
               </p>
             </div>
           </div>
@@ -279,14 +303,15 @@ export default function ArisanHomePage() {
 
         {/* Intro + cari grup */}
         <section className="nanad-dashboard-welcome">
-          <p className="nanad-dashboard-eyebrow">Arisan Nanad</p>
+          <p className="nanad-dashboard-eyebrow">Arisan Dompet Nadnad</p>
           <h1 className="nanad-dashboard-heading">
             Kelola arisan bersama pelanggan atau kawan dekatmu.
           </h1>
           <p className="nanad-dashboard-body">
             Setiap grup arisan punya ID grup 5 digit angka. Peserta bisa masuk
-            lewat ID tersebut, kemudian menyetor iuran dari saldo dompet
-            Nanad Invest mereka. Pemenang putaran akan menerima saldo otomatis.
+            lewat ID tersebut, kemudian menyetor iuran dari saldo{" "}
+            <strong>Dompet Nadnad</strong> mereka. Pemenang putaran akan
+            menerima saldo ke dompetnya.
           </p>
 
           <form
@@ -413,8 +438,8 @@ export default function ArisanHomePage() {
               <h3>Buat grup arisan baru</h3>
               <p>
                 Grup baru otomatis punya ID grup 5 digit. Bagikan ID tersebut
-                ke peserta lain agar mereka bisa ikut arisan dari akun Nanad
-                Invest masing-masing.
+                ke peserta lain agar mereka bisa ikut arisan dari akun{" "}
+                <strong>Dompet Nadnad</strong> masing-masing.
               </p>
             </div>
 
@@ -427,7 +452,7 @@ export default function ArisanHomePage() {
                 Nama grup arisan
                 <input
                   type="text"
-                  placeholder="contoh: Arisan bulanan Nanad"
+                  placeholder="contoh: Arisan bulanan Nadnad"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
                 />
@@ -472,7 +497,7 @@ export default function ArisanHomePage() {
                 disabled={creating}
                 className="nanad-dashboard-deposit-submit"
               >
-                {creating ? "Membuat grup..." : "Buat grup"}
+                {creating ? "Membuat grup..." : "Buat grup arisan"}
               </button>
             </form>
 
@@ -488,7 +513,7 @@ export default function ArisanHomePage() {
 
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. Arisan module (beta).
+            © {new Date().getFullYear()} Dompet Nadnad. Arisan module (beta).
           </span>
           <span>
             Fitur arisan tidak menggantikan perjanjian tertulis antar peserta.
