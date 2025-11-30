@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 // format rupiah
@@ -61,13 +60,14 @@ export default function ArisanHomePage() {
 
         setUser(user);
 
-        // ambil semua grup yang diikuti user
+        // ambil semua grup yang diikuti user (dari arisan_memberships)
         const { data, error: gErr } = await supabase
-          .from("arisan_members")
+          .from("arisan_memberships")
           .select(
             `
             id,
             role,
+            joined_at,
             group:arisan_groups(
               id,
               group_code,
@@ -90,6 +90,7 @@ export default function ArisanHomePage() {
             data?.map((row) => ({
               memberId: row.id,
               role: row.role,
+              joined_at: row.joined_at,
               ...row.group,
             })) || [];
           setGroups(cleaned);
@@ -184,7 +185,7 @@ export default function ArisanHomePage() {
         return;
       }
 
-      // buat grup
+      // 1) Buat grup arisan baru
       const { data: newGroup, error: gErr } = await supabase
         .from("arisan_groups")
         .insert({
@@ -205,53 +206,28 @@ export default function ArisanHomePage() {
         return;
       }
 
-      // catat owner sebagai member
-      const { data: ownerMember, error: mErr } = await supabase
-        .from("arisan_members")
+      // 2) Catat pembuat grup sebagai OWNER di arisan_memberships
+      const { error: mErr } = await supabase
+        .from("arisan_memberships")
         .insert({
           group_id: newGroup.id,
           user_id: user.id,
           user_email: user.email,
+          display_name: user.email,
           role: "OWNER",
-        })
-        .select("*")
-        .single();
+        });
 
       if (mErr) {
-        console.error("create member error:", mErr.message);
+        console.error("create owner membership error:", mErr.message);
         alert(
-          "Grup berhasil dibuat, tetapi gagal mencatat keanggotaan owner. Hubungi admin."
+          "Grup berhasil dibuat, tapi gagal mencatat keanggotaan owner. Hubungi admin jika masalah berlanjut."
         );
-        // masih lanjut, karena grup sudah ada
+        // lanjut, karena grup sudah ada
       }
 
-      // pre-generate putaran
-      const roundsPayload = [];
-      const baseDate = startDate ? new Date(startDate) : null;
-
-      for (let i = 1; i <= rounds; i++) {
-        let date = null;
-        if (baseDate) {
-          const d = new Date(baseDate);
-          d.setDate(d.getDate() + (i - 1) * 30); // 30 hari per putaran (simulasi)
-          date = d.toISOString().split("T")[0];
-        }
-        roundsPayload.push({
-          group_id: newGroup.id,
-          round_number: i,
-          scheduled_date: date,
-        });
-      }
-
-      if (roundsPayload.length > 0) {
-        const { error: rErr } = await supabase
-          .from("arisan_rounds")
-          .insert(roundsPayload);
-
-        if (rErr) {
-          console.error("create rounds error:", rErr.message);
-        }
-      }
+      // (PUTARAN TIDAK DIBUAT DI SINI)
+      // Putaran sekarang dibuat otomatis oleh TRIGGER di database
+      // create_rounds_for_new_arisan_group() setelah insert ke arisan_groups
 
       alert(
         `Grup arisan berhasil dibuat.\nNama: ${newGroup.name}\nID Grup: ${newGroup.group_code}`
@@ -496,7 +472,7 @@ export default function ArisanHomePage() {
                 disabled={creating}
                 className="nanad-dashboard-deposit-submit"
               >
-                {creating ? "Membuat grup..." : "Membuat grup..."}
+                {creating ? "Membuat grup..." : "Buat grup"}
               </button>
             </form>
 
