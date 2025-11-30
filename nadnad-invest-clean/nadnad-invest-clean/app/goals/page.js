@@ -89,7 +89,7 @@ export default function GoalsPage() {
 
         if (!existing) {
           setErrorMsg(
-            "Dompet belum tersedia. Silakan buka halaman Wallet terlebih dahulu agar dompet dibuat otomatis."
+            "Dompet belum tersedia. Silakan buka halaman Dompet terlebih dahulu agar dompet dibuat otomatis."
           );
           return;
         }
@@ -260,7 +260,7 @@ export default function GoalsPage() {
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
           <p className="nanad-dashboard-body">
-            Memuat halaman Tabungan / Goals Nanad Invest...
+            Memuat halaman Tabungan / Goals Dompet Nadnad...
           </p>
         </div>
       </main>
@@ -303,7 +303,9 @@ export default function GoalsPage() {
     0
   );
   const overallPercent =
-    totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 100)) : 0;
+    totalTarget > 0
+      ? Math.min(100, Math.round((totalSaved / totalTarget) * 100))
+      : 0;
 
   return (
     <main className="nanad-dashboard-page">
@@ -311,11 +313,12 @@ export default function GoalsPage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
+            {/* Logo N elegan */}
+            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Tabungan &amp; Goals Khusus
+                Tabungan &amp; goals dompet pintar
               </p>
             </div>
           </div>
@@ -326,7 +329,7 @@ export default function GoalsPage() {
               className="nanad-dashboard-logout"
               onClick={() => router.push("/wallet")}
             >
-              Kembali ke Wallet
+              Kembali ke Dompet
             </button>
             <button
               type="button"
@@ -349,7 +352,7 @@ export default function GoalsPage() {
             <strong>kantong tabungan (goals)</strong> seperti dana darurat, DP
             rumah, modal usaha, atau tujuan lain. Nominal di goals ini{" "}
             <strong>bersifat perencanaan</strong> dan tidak otomatis mengunci
-            saldo dompet utama.
+            saldo dompet utama Dompet Nadnad.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -459,9 +462,10 @@ export default function GoalsPage() {
                 style={{ fontSize: "0.76rem", marginTop: "0.4rem" }}
               >
                 Catatan: angka di sini{" "}
-                <strong>tidak mengurangi saldo</strong> dompet utama secara
-                otomatis. Kamu tetap mengelola transfer nyata di rekening dan
-                hanya menjadikan halaman ini sebagai panduan &amp; pencatatan.
+                <strong>tidak mengurangi saldo</strong> dompet utama Dompet
+                Nadnad secara otomatis. Kamu tetap mengelola transfer nyata di
+                rekening dan hanya menjadikan halaman ini sebagai panduan
+                &amp; pencatatan.
               </p>
             </form>
           </div>
@@ -544,7 +548,9 @@ export default function GoalsPage() {
                             marginBottom: "0.25rem",
                           }}
                         >
-                          <span>Target: {formatCurrency(g.target_amount)}</span>
+                          <span>
+                            Target: {formatCurrency(g.target_amount)}
+                          </span>
                           <span>
                             Terkumpul: {formatCurrency(g.current_amount)} (
                             {percent}%)
@@ -612,8 +618,7 @@ export default function GoalsPage() {
                             style={{
                               width: "130px",
                               borderRadius: "999px",
-                              border:
-                                "1px solid rgba(148,163,184,0.7)",
+                              border: "1px solid rgba(148,163,184,0.7)",
                               background:
                                 "radial-gradient(circle at top, rgba(248,250,252,0.04), rgba(15,23,42,1))",
                               padding: "0.3rem 0.7rem",
@@ -625,7 +630,10 @@ export default function GoalsPage() {
                           <button
                             type="button"
                             className="nanad-dashboard-deposit-submit"
-                            style={{ fontSize: "0.72rem", padding: "0.45rem 0.9rem" }}
+                            style={{
+                              fontSize: "0.72rem",
+                              padding: "0.45rem 0.9rem",
+                            }}
                             onClick={() => handleAdjustGoal(g, "ADD")}
                           >
                             Tambah
@@ -633,7 +641,10 @@ export default function GoalsPage() {
                           <button
                             type="button"
                             className="nanad-dashboard-logout"
-                            style={{ fontSize: "0.72rem", padding: "0.45rem 0.9rem" }}
+                            style={{
+                              fontSize: "0.72rem",
+                              padding: "0.45rem 0.9rem",
+                            }}
                             onClick={() => handleAdjustGoal(g, "SUB")}
                           >
                             Kurangi
@@ -688,8 +699,8 @@ export default function GoalsPage() {
         {/* Footer kecil */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. Saving buckets &amp; goals
-            planning.
+            © {new Date().getFullYear()} Dompet Nadnad. Saving buckets &amp;
+            goals planning.
           </span>
           <span>
             Angka di halaman ini bersifat perencanaan. Untuk saldo resmi, selalu
