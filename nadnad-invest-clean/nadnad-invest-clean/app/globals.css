@@ -616,3 +616,24 @@ body {
     padding-inline: 1rem;
   }
 }
+
+.nanad-dashboard-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+/* Logo "N" elegan untuk Dompet Nadnad */
+.nanad-logo-n {
+  background: radial-gradient(circle at 30% 0%, #facc15, #854d0e);
+  color: #fefce8;
+  box-shadow:
+    0 0 0 1px rgba(251, 191, 36, 0.45),
+    0 8px 18px rgba(15, 23, 42, 0.9);
+  letter-spacing: 0.06em;
+}
