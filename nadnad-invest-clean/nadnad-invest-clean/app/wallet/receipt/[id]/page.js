@@ -475,8 +475,8 @@ export default function WalletReceiptPage({ params }) {
                 dompet.
               </span>
               <span>
-                Dokumen ini tidak menjamin imbal hasil dan hanya untuk keperluan
-                pencatatan personal.
+                Dokumen ini merupakan bukti pencatatan transaksi dan tidak
+                merupakan jaminan imbal hasil dalam bentuk apa pun.
               </span>
             </div>
           </div>
