@@ -1,7 +1,13 @@
+// app/navbar.js
 "use client";
 
 import { useEffect } from "react";
 
+/**
+ * NavbarScroll
+ * Komponen kecil untuk menambahkan class "scrolled" ke elemen .navbar
+ * saat halaman di-scroll. Dipakai oleh UI Dompet Nadnad.
+ */
 export default function NavbarScroll() {
   useEffect(() => {
     const nav = document.querySelector(".navbar");
