@@ -135,7 +135,7 @@ export default function ProfilePage() {
           <section className="nanad-dashboard-welcome">
             <p className="nanad-dashboard-eyebrow">Profile error</p>
             <h1 className="nanad-dashboard-heading">
-              Gagal memuat profil Nanad Invest.
+              Gagal memuat profil Dompet Nadnad.
             </h1>
             <p className="nanad-dashboard-body" style={{ color: "#fecaca" }}>
               {error}
@@ -160,11 +160,12 @@ export default function ProfilePage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
+            {/* Logo N elegan */}
+            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Profil akun &amp; keamanan
+                Profil akun &amp; keamanan dompet pintar
               </p>
             </div>
           </div>
@@ -182,11 +183,12 @@ export default function ProfilePage() {
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Your account</p>
           <h1 className="nanad-dashboard-heading">
-            Detail akun Nanad Invest kamu.
+            Detail akun Dompet Nadnad kamu.
           </h1>
           <p className="nanad-dashboard-body">
             Jaga kerahasiaan email, password, dan kode OTP. Jangan pernah
-            membagikan data login kepada siapa pun, termasuk admin.
+            membagikan data login kepada siapa pun, termasuk pihak yang
+            mengaku admin Dompet Nadnad.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -248,7 +250,7 @@ export default function ProfilePage() {
               </li>
               <li>
                 Selalu cek alamat website sebelum login. Pastikan domain resmi
-                Nanad Invest.
+                Dompet Nadnad / Nanad kamu, bukan tiruan.
               </li>
               <li>
                 Jika ada aktivitas mencurigakan, segera gunakan tombol{" "}
@@ -366,7 +368,8 @@ export default function ProfilePage() {
         {/* Footer kecil */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. Account & security page.
+            © {new Date().getFullYear()} Dompet Nadnad. Account &amp; security
+            page.
           </span>
           <span>
             Jaga selalu kerahasiaan akun kamu. Untuk keamanan tambahan, ganti
