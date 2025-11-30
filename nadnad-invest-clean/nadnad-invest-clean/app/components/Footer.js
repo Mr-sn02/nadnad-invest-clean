@@ -19,13 +19,10 @@ export default function Footer() {
       </div>
 
       <p className="nanad-footer-sub">
-        Dompet Nadnad merupakan platform dompet digital berizin yang
-        menyediakan layanan pengelolaan, pencatatan, dan perencanaan keuangan
-        pribadi secara aman dan tepercaya. Seluruh aktivitas operasional Dompet
-        Nadnad mengikuti standar keamanan, integrasi sistem, serta regulasi yang
-        berlaku. Untuk transaksi keuangan, pengguna tetap dianjurkan menggunakan
-        rekening resmi dan memastikan kepatuhan terhadap ketentuan peraturan
-        perundang-undangan.
+        Dompet Nadnad adalah layanan dompet digital berizin yang menyediakan
+        fitur pengelolaan dan pencatatan keuangan secara aman, terpadu, dan
+        tepercaya. Seluruh operasional mengikuti standar keamanan sistem serta
+        regulasi yang berlaku.
       </p>
     </footer>
   );
