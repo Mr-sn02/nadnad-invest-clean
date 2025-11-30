@@ -38,7 +38,7 @@ export default function ArisanGroupDetailPage() {
   const [membership, setMembership] = useState(null);
   const [members, setMembers] = useState([]);
   const [rounds, setRounds] = useState([]);
-  const [payments, setPayments] = useState([]); // semua pembayaran di grup
+  const [payments, setPayments] = useState([]);
   const [messages, setMessages] = useState([]);
 
   const [pageError, setPageError] = useState("");
@@ -50,7 +50,6 @@ export default function ArisanGroupDetailPage() {
 
   const [walletBalance, setWalletBalance] = useState(null);
 
-  // apakah user adalah owner grup?
   const isOwner = useMemo(
     () => membership?.role === "OWNER",
     [membership]
@@ -134,7 +133,7 @@ export default function ArisanGroupDetailPage() {
           setRounds(roundList || []);
         }
 
-        // 6) Pembayaran semua anggota (dipakai owner untuk cek pot)
+        // 6) Pembayaran semua anggota
         const { data: payList, error: payErr } = await supabase
           .from("arisan_round_payments")
           .select("*")
@@ -161,7 +160,7 @@ export default function ArisanGroupDetailPage() {
           setMessages(msgList || []);
         }
 
-        // 8) Dompet user (opsional untuk ditampilkan)
+        // 8) Dompet user
         const { data: wallet, error: wErr } = await supabase
           .from("wallets")
           .select("balance")
@@ -184,17 +183,7 @@ export default function ArisanGroupDetailPage() {
     init();
   }, [groupId, router]);
 
-  // Map bantuan: pembayaran per round + user
-  const paymentMap = useMemo(() => {
-    const map = new Map();
-    for (const p of payments) {
-      const key = `${p.round_id}-${p.user_id}`;
-      map.set(key, p);
-    }
-    return map;
-  }, [payments]);
-
-  // Hitung total setoran per putaran (dipakai pot arisan)
+  // Hitung total setoran per putaran
   const totalPaidPerRound = useMemo(() => {
     const agg = {};
     for (const p of payments) {
@@ -202,8 +191,6 @@ export default function ArisanGroupDetailPage() {
     }
     return agg;
   }, [payments]);
-
-  // ================== AKSI ===================
 
   // User join grup ini
   const handleJoinGroup = async () => {
@@ -254,7 +241,7 @@ export default function ArisanGroupDetailPage() {
     }
   };
 
-  // Setor iuran dari dompet ke putaran tertentu (pakai RPC)
+  // Setor iuran dari dompet ke putaran tertentu via RPC
   const handlePayFromWallet = async (round) => {
     if (!user || !group || !membership) {
       alert("Kamu harus menjadi anggota grup untuk setor iuran.");
@@ -262,8 +249,10 @@ export default function ArisanGroupDetailPage() {
     }
 
     // Cek apakah sudah pernah setor untuk putaran ini
-    const key = `${round.id}-${user.id}`;
-    if (paymentMap.has(key)) {
+    const alreadyPaid = payments.some(
+      (p) => p.round_id === round.id && p.user_id === user.id
+    );
+    if (alreadyPaid) {
       alert("Kamu sudah tercatat setor iuran untuk putaran ini.");
       return;
     }
@@ -272,7 +261,7 @@ export default function ArisanGroupDetailPage() {
 
     setPayLoadingRoundId(round.id);
     try {
-      // (Opsional) cek saldo lokal
+      // cek saldo lokal
       if (walletBalance !== null && walletBalance < amount) {
         alert(
           `Saldo dompet kamu kurang. Saldo: ${formatCurrency(
@@ -296,6 +285,7 @@ export default function ArisanGroupDetailPage() {
       if (rpcErr) {
         console.error("RPC pay_arisan_round_from_wallet error:", rpcErr.message);
         alert(rpcErr.message || "Gagal mencatat setoran arisan.");
+        setPayLoadingRoundId(null);
         return;
       }
 
@@ -330,7 +320,7 @@ export default function ArisanGroupDetailPage() {
     }
   };
 
-  // Owner menetapkan pemenang + auto kredit ke dompet (pakai RPC)
+  // Owner menetapkan pemenang + auto kredit ke dompet via RPC
   const handleSetWinnerAndCredit = async (round, winnerUserId) => {
     if (!isOwner) {
       alert("Hanya pemilik grup yang bisa menetapkan pemenang.");
@@ -340,32 +330,7 @@ export default function ArisanGroupDetailPage() {
 
     setWinnerLoadingRoundId(round.id);
     try {
-      // Cari anggota winner
-      const winnerMember = members.find((m) => m.user_id === winnerUserId);
-      if (!winnerMember) {
-        alert("Anggota pemenang tidak ditemukan.");
-        setWinnerLoadingRoundId(null);
-        return;
-      }
-
-      // Hitung pot (total iuran yang sudah tercatat)
-      const { data: roundPays, error: payErr } = await supabase
-        .from("arisan_round_payments")
-        .select("amount")
-        .eq("group_id", group.id)
-        .eq("round_id", round.id);
-
-      if (payErr) {
-        console.error("load round payments error:", payErr.message);
-        alert("Gagal membaca setoran putaran.");
-        setWinnerLoadingRoundId(null);
-        return;
-      }
-
-      let pot = 0;
-      for (const p of roundPays || []) {
-        pot += p.amount || 0;
-      }
+      const pot = totalPaidPerRound[round.id] || 0;
 
       if (pot <= 0) {
         const ok = window.confirm(
@@ -377,7 +342,6 @@ export default function ArisanGroupDetailPage() {
         }
       }
 
-      // Panggil function di database untuk kredit ke dompet pemenang
       const { error: rpcErr } = await supabase.rpc(
         "payout_arisan_round_to_wallet",
         {
@@ -397,7 +361,7 @@ export default function ArisanGroupDetailPage() {
         return;
       }
 
-      // Update info putaran (status & winner)
+      // Update info putaran
       const { error: updRoundErr } = await supabase
         .from("arisan_rounds")
         .update({
@@ -537,7 +501,6 @@ export default function ArisanGroupDetailPage() {
   }
 
   const userHasJoined = !!membership;
-  const memberCount = members.length;
 
   return (
     <main className="nanad-dashboard-page">
@@ -599,7 +562,7 @@ export default function ArisanGroupDetailPage() {
           )}
         </section>
 
-        {/* Status keanggotaan */}
+        {/* Status keanggotaan & anggota */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
@@ -714,12 +677,15 @@ export default function ArisanGroupDetailPage() {
               style={{ marginTop: "0.6rem" }}
             >
               {rounds.map((r) => {
-                const userKey = `${r.id}-${user?.id}`;
-                const userPaid = user && paymentMap.has(userKey);
                 const totalRoundPaid = totalPaidPerRound[r.id] || 0;
                 const winnerMember =
                   r.winner_user_id &&
                   members.find((m) => m.user_id === r.winner_user_id);
+                const userPaid =
+                  !!user &&
+                  payments.some(
+                    (p) => p.round_id === r.id && p.user_id === user.id
+                  );
 
                 return (
                   <div key={r.id} className="nanad-dashboard-deposits-row">
