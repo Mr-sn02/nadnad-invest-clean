@@ -10,11 +10,11 @@ export default function AboutPage() {
         {/* Header mini */}
         <header className="nanad-landing-header">
           <div className="nanad-landing-brand">
-            <div className="nanad-landing-logo">N</div>
+            <div className="nanad-landing-logo nanad-logo-n">N</div>
             <div>
-              <p className="nanad-landing-brand-title">Nanad Invest</p>
+              <p className="nanad-landing-brand-title">Dompet Nadnad</p>
               <p className="nanad-landing-brand-sub">
-                Personal Planning &amp; Simulation Space
+                Dompet pintar pelanggan &amp; komunitas
               </p>
             </div>
           </div>
@@ -40,55 +40,68 @@ export default function AboutPage() {
         <section className="nanad-landing-section nanad-landing-section-soft">
           <div className="nanad-landing-section-header">
             <p className="nanad-landing-eyebrow">About</p>
-            <h2>Tentang Nanad Invest</h2>
+            <h2>Tentang Dompet Nadnad</h2>
           </div>
 
-          <div style={{ marginTop: "0.9rem", fontSize: "0.85rem", lineHeight: 1.7 }}>
+          <div
+            style={{
+              marginTop: "0.9rem",
+              fontSize: "0.85rem",
+              lineHeight: 1.7,
+            }}
+          >
             <p style={{ marginBottom: "0.7rem" }}>
-              <strong>Nanad Invest</strong> adalah ruang digital untuk menyusun rencana
-              keuangan pribadi dengan cara yang sederhana, terstruktur, dan mudah dipahami.
-              Fokus utama kami adalah membantu pengguna melihat gambaran besar: berapa banyak
-              yang ingin dicapai, berapa yang sudah ditabung, dan berapa lama lagi target itu
-              realistis tercapai.
+              <strong>Dompet Nadnad</strong> adalah ruang digital untuk
+              mengelola <em>dompet pintar</em> bagi pelanggan, komunitas, dan
+              kelompok arisan. Fokusnya bukan hanya saldo, tetapi alur
+              pencatatan: siapa menyetor, siapa menarik, siapa menang arisan,
+              dan bagaimana semuanya terdokumentasi dengan rapi.
             </p>
 
             <p style={{ marginBottom: "0.7rem" }}>
-              Nanad Invest tidak menjual produk investasi dan tidak menerima titipan dana
-              dari pengguna. Semua transaksi uang tetap terjadi di rekening bank, e-wallet,
-              atau platform investasi yang pengguna pilih sendiri. Dashboard Nanad Invest
-              digunakan untuk <em>mencatat, mensimulasikan, dan memvisualisasikan</em> rencana
-              tersebut.
+              Dompet Nadnad tidak menyimpan dana dan tidak menerima titipan
+              uang dari pengguna. Seluruh pergerakan dana nyata tetap terjadi di{" "}
+              <strong>rekening bank, e-wallet, atau kanal pembayaran resmi</strong>{" "}
+              yang disepakati di luar aplikasi. Dompet Nadnad berfungsi sebagai{" "}
+              <em>papan kontrol</em> untuk mencatat, mensimulasikan, dan
+              merapikan alur transaksi tersebut.
             </p>
 
             <p style={{ marginBottom: "0.7rem" }}>
-              Kami percaya bahwa sebelum memilih produk keuangan apa pun, setiap orang
-              berhak memiliki ruang yang tenang untuk berpikir: apa tujuan keuangannya,
-              seberapa besar kemampuannya saat ini, dan seperti apa prioritas hidupnya.
-              Nanad Invest dirancang sebagai ruang refleksi tersebut.
+              Dengan Dompet Nadnad, pemilik usaha atau pengelola komunitas bisa
+              membuat dompet pelanggan, mengatur arisan, dan mengeluarkan bukti
+              transaksi (struk) yang mudah diakses. Setiap pengajuan deposit
+              dan penarikan tetap melalui persetujuan manual admin, sehingga
+              jalur administrasi lebih terkontrol dan transparan.
             </p>
 
             <p style={{ marginBottom: "0.7rem" }}>
-              Pengembangan Nanad Invest masih berjalan dan akan terus berevolusi:
-              mulai dari tampilan progres rencana, catatan emosi saat mengambil keputusan
-              finansial, hingga insight sederhana yang membantu pengguna tetap konsisten
-              pada rencananya.
+              Pengembangan Dompet Nadnad bersifat bertahap: mulai dari dompet
+              dasar, arisan, tabungan/goal, hingga fitur-fitur lanjutan seperti
+              integrasi dengan sistem usaha, catatan histori pelanggan, dan
+              insight sederhana untuk membantu pengelola mengambil keputusan.
             </p>
 
             <p style={{ marginBottom: "0.4rem" }}>
-              Untuk saran kolaborasi, umpan balik, atau pertanyaan terkait penggunaan,
-              silakan hubungi kami melalui email:
+              Untuk saran kolaborasi, umpan balik, atau pertanyaan terkait
+              penggunaan, kamu dapat menghubungi kami melalui email:
               <br />
-              <strong>support@nanadinvest.app</strong> (contoh, silakan ganti dengan email resmi).
+              <strong>support@dompetnadnad.app</strong>{" "}
+              <span style={{ opacity: 0.8 }}>
+                (contoh, silakan ganti dengan email resmi kamu).
+              </span>
             </p>
           </div>
         </section>
 
         <footer className="nanad-landing-footer">
           <div className="nanad-landing-footer-left">
-            <span>© {new Date().getFullYear()} Nanad Invest. All rights reserved.</span>
             <span>
-              Nanad Invest adalah ruang simulasi &amp; perencanaan keuangan pribadi, bukan
-              platform penitipan dana maupun penyedia produk investasi.
+              © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
+            </span>
+            <span>
+              Dompet Nadnad adalah ruang pencatatan &amp; simulasi transaksi,
+              bukan platform penitipan dana maupun penyedia produk investasi.
             </span>
           </div>
           <div className="nanad-landing-footer-links">
