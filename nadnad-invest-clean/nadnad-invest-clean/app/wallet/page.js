@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import supabase from "../../lib/supabaseClient";
 
 // Format rupiah
@@ -370,14 +369,7 @@ export default function WalletPage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo" style={{ overflow: "hidden" }}>
-              <Image
-                src="/dompet-nadnad-logo.png"
-                alt="Logo Dompet Nadnad"
-                width={40}
-                height={40}
-              />
-            </div>
+            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
             <div>
               <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
