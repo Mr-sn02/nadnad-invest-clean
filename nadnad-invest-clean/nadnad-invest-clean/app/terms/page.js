@@ -10,10 +10,12 @@ export default function TermsPage() {
             Syarat &amp; Ketentuan · Terms &amp; Conditions
           </h1>
           <p className="nanad-dashboard-body">
-            Dokumen ini menjelaskan ketentuan umum penggunaan platform Nanad
-            Invest sebagai ruang pencatatan dan perencanaan keuangan pribadi.
-            This document describes the general terms for using Nanad Invest as
-            a personal financial planning &amp; journaling space.
+            Dokumen ini menjelaskan ketentuan umum penggunaan platform{" "}
+            <strong>Dompet Nadnad</strong> sebagai{" "}
+            <strong>dompet pintar</strong> untuk pencatatan dan perencanaan
+            keuangan pribadi. This document describes the general terms for using{" "}
+            <strong>Dompet Nadnad</strong> as a smart wallet and personal
+            financial planning &amp; journaling space.
           </p>
         </section>
 
@@ -21,9 +23,10 @@ export default function TermsPage() {
           <div className="nanad-dashboard-deposits-header">
             <h3>Syarat &amp; Ketentuan – Bahasa Indonesia</h3>
             <p>
-              Ringkasan ketentuan penggunaan Nanad Invest untuk pengguna di
-              Indonesia. Ini bukan nasihat hukum. Untuk kebutuhan resmi,
-              konsultasikan dengan penasihat hukum berizin.
+              Ringkasan ketentuan penggunaan{" "}
+              <strong>Dompet Nadnad</strong> untuk pengguna di Indonesia. Ini
+              bukan nasihat hukum. Untuk kebutuhan resmi, konsultasikan dengan
+              penasihat hukum berizin.
             </p>
           </div>
 
@@ -34,12 +37,15 @@ export default function TermsPage() {
             <h4 style={{ marginTop: "0" }}>1. Ruang Lingkup Layanan</h4>
             <ol style={{ paddingLeft: "1.25rem" }}>
               <li>
-                Nanad Invest berfungsi sebagai{" "}
-                <strong>alat bantu pencatatan, pemantauan, dan perencanaan</strong>{" "}
-                alur dana pribadi atau kelompok terbatas.
+                <strong>Dompet Nadnad</strong> berfungsi sebagai{" "}
+                <strong>
+                  alat bantu pencatatan, pemantauan, dan perencanaan
+                </strong>{" "}
+                alur dana pribadi atau kelompok terbatas, termasuk simulasi
+                arus masuk dan keluar melalui dompet pintar.
               </li>
               <li>
-                Nanad Invest <strong>bukan</strong> bank, lembaga keuangan,
+                Dompet Nadnad <strong>bukan</strong> bank, lembaga keuangan,
                 manajer investasi, money changer, maupun penyedia jasa pinjaman
                 berbasis izin otoritas keuangan.
               </li>
@@ -59,11 +65,11 @@ export default function TermsPage() {
                 kode OTP, dan sejenisnya).
               </li>
               <li>
-                Segala aktivitas yang terjadi melalui akun pengguna
-                <strong>dianggap berasal dari pengguna tersebut</strong>. Pengguna
-                bertanggung jawab atas penyalahgunaan yang terjadi karena
-                pembagian akses, kelalaian penjagaan perangkat, atau penggunaan
-                kata sandi yang lemah.
+                Segala aktivitas yang terjadi melalui akun pengguna{" "}
+                <strong>dianggap berasal dari pengguna tersebut</strong>.
+                Pengguna bertanggung jawab atas penyalahgunaan yang terjadi
+                karena pembagian akses, kelalaian penjagaan perangkat, atau
+                penggunaan kata sandi yang lemah.
               </li>
               <li>
                 Pengelola berhak membatasi atau memblokir akses jika terdapat
@@ -76,8 +82,8 @@ export default function TermsPage() {
             <ol style={{ paddingLeft: "1.25rem" }}>
               <li>
                 Data yang dimasukkan pengguna (misalnya nominal, catatan
-                transaksi, label dompet) digunakan untuk menampilkan ringkasan
-                dan riwayat di dalam aplikasi.
+                transaksi, label dompet, dan catatan arisan/tabungan) digunakan
+                untuk menampilkan ringkasan dan riwayat di dalam aplikasi.
               </li>
               <li>
                 Pengelola dapat menggunakan data agregat dan anonim untuk
@@ -119,8 +125,8 @@ export default function TermsPage() {
               </li>
               <li>
                 Versi terbaru akan ditampilkan di halaman ini. Penggunaan
-                berkelanjutan atas Nanad Invest dianggap sebagai{" "}
-                <strong>persetujuan</strong> atas perubahan tersebut.
+                berkelanjutan atas <strong>Dompet Nadnad</strong> dianggap
+                sebagai <strong>persetujuan</strong> atas perubahan tersebut.
               </li>
             </ol>
           </div>
@@ -130,9 +136,9 @@ export default function TermsPage() {
           <div className="nanad-dashboard-deposits-header">
             <h3>Terms &amp; Conditions – English Version</h3>
             <p>
-              English summary of Nanad Invest&apos;s terms of use. This is not
-              legal advice and should be reviewed by a qualified legal
-              professional if used for formal purposes.
+              English summary of <strong>Dompet Nadnad</strong>&apos;s terms of
+              use. This is not legal advice and should be reviewed by a
+              qualified legal professional if used for formal purposes.
             </p>
           </div>
 
@@ -143,12 +149,15 @@ export default function TermsPage() {
             <h4 style={{ marginTop: "0" }}>1. Scope of Service</h4>
             <ol style={{ paddingLeft: "1.25rem" }}>
               <li>
-                Nanad Invest acts as a{" "}
-                <strong>tool for recording, monitoring, and planning</strong>{" "}
-                personal or small-group cash flows.
+                <strong>Dompet Nadnad</strong> acts as a{" "}
+                <strong>
+                  tool for recording, monitoring, and planning
+                </strong>{" "}
+                personal or small-group cash flows, including smart-wallet style
+                simulations of deposits and withdrawals.
               </li>
               <li>
-                Nanad Invest is <strong>not</strong> a bank, financial
+                Dompet Nadnad is <strong>not</strong> a bank, financial
                 institution, investment manager, money remitter, or lending
                 platform regulated by financial authorities.
               </li>
@@ -182,8 +191,9 @@ export default function TermsPage() {
             <h4>3. Data, Privacy, and Records</h4>
             <ol style={{ paddingLeft: "1.25rem" }}>
               <li>
-                User-entered data (amounts, notes, wallet labels) is used to
-                display summaries and history within the app.
+                User-entered data (amounts, notes, wallet labels, group savings
+                notes, etc.) is used to display summaries and history within the
+                app.
               </li>
               <li>
                 Aggregated and anonymised data may be used for internal
@@ -222,7 +232,7 @@ export default function TermsPage() {
               </li>
               <li>
                 The latest version will be published on this page. Continued use
-                of Nanad Invest constitutes{" "}
+                of <strong>Dompet Nadnad</strong> constitutes{" "}
                 <strong>acceptance of the updated terms</strong>.
               </li>
             </ol>
