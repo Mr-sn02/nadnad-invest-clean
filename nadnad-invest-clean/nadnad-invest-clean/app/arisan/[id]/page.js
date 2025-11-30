@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import supabase from "../../../lib/supabaseClient";
 
 // Format rupiah
@@ -44,12 +43,11 @@ export default function ArisanGroupPage() {
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
 
-  // join form (kalau user belum jadi member di grup)
+  // join form
   const [joining, setJoining] = useState(false);
 
   const isMember =
-    user &&
-    memberships.some((m) => m.user_id === user.id);
+    !!user && memberships.some((m) => m.user_id === user.id);
 
   // ---- Load user + data grup ----
   useEffect(() => {
@@ -182,6 +180,7 @@ export default function ArisanGroupPage() {
     }
   };
 
+  // ✅ versi diperbaiki: langsung update state memberships
   const handleJoinGroup = async () => {
     if (!user || !group) return;
     if (isMember) return;
@@ -196,7 +195,7 @@ export default function ArisanGroupPage() {
         user.user_metadata?.name ||
         user.email;
 
-      const { error } = await supabase
+      const { data: inserted, error } = await supabase
         .from("arisan_memberships")
         .insert({
           group_id: group.id,
@@ -204,7 +203,9 @@ export default function ArisanGroupPage() {
           user_email: user.email,
           display_name: displayName,
           role: "MEMBER",
-        });
+        })
+        .select("*")
+        .single();
 
       if (error) {
         console.error("join group error:", error.message);
@@ -212,16 +213,8 @@ export default function ArisanGroupPage() {
         return;
       }
 
-      // reload memberships
-      const { data: memberData, error: mErr } = await supabase
-        .from("arisan_memberships")
-        .select("*")
-        .eq("group_id", group.id)
-        .order("joined_at", { ascending: true });
-
-      if (!mErr) {
-        setMemberships(memberData || []);
-      }
+      // Langsung tambahkan ke state supaya UI berubah tanpa reload
+      setMemberships((prev) => [...prev, inserted]);
 
       alert("Berhasil bergabung ke grup arisan.");
     } catch (err) {
@@ -508,7 +501,8 @@ export default function ArisanGroupPage() {
                 </p>
               ) : (
                 messages.map((msg) => {
-                  const mine = user && msg.sender_user_id === user.id;
+                  const mine =
+                    user && msg.sender_user_id === user.id;
                   const timeStr = new Date(
                     msg.created_at
                   ).toLocaleTimeString("id-ID", {
@@ -552,7 +546,9 @@ export default function ArisanGroupPage() {
                             msg.sender_email ||
                             "Anggota"}
                           {" · "}
-                          <span style={{ opacity: 0.8 }}>{timeStr}</span>
+                          <span style={{ opacity: 0.8 }}>
+                            {timeStr}
+                          </span>
                         </div>
                         <div>{msg.content}</div>
                       </div>
@@ -614,7 +610,7 @@ export default function ArisanGroupPage() {
             </button>
           </div>
 
-          {/* Kolom kanan bisa kamu isi fitur lain nanti */}
+          {/* Kolom kanan: placeholder fitur lanjutan */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Ruang pengembangan fitur</h3>
