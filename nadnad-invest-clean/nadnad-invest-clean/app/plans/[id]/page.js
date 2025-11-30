@@ -1,8 +1,9 @@
+// app/plans/[id]/page.js  (atau app/plans/page.js jika memang di situ)
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { supabase } from "../../../lib/supabaseClient";
+import supabase from "../../../lib/supabaseClient"; // ✅ sama seperti file lain
 
 export default function PlanDetailPage() {
   const router = useRouter();
@@ -21,7 +22,9 @@ export default function PlanDetailPage() {
 
     const { data: planData, error: planError } = await supabase
       .from("plans")
-      .select("id, name, duration_months, monthly_amount, final_estimate, created_at")
+      .select(
+        "id, name, duration_months, monthly_amount, final_estimate, created_at"
+      )
       .eq("id", pid)
       .eq("user_id", uid)
       .single();
@@ -74,9 +77,7 @@ export default function PlanDetailPage() {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p style={{ color: "#e5e7eb" }}>
-            ID rencana tidak valid.
-          </p>
+          <p style={{ color: "#e5e7eb" }}>ID rencana tidak valid.</p>
         </div>
       </main>
     );
@@ -100,7 +101,7 @@ export default function PlanDetailPage() {
         <div className="nanad-dashboard-shell">
           <button
             type="button"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/dashboard")}
             style={{
               fontSize: "0.8rem",
               marginBottom: "0.75rem",
@@ -124,8 +125,7 @@ export default function PlanDetailPage() {
   );
   const target = Number(plan.final_estimate) || 0;
   const remaining = target > totalSaved ? target - totalSaved : 0;
-  const pct =
-    target > 0 ? Math.min(100, (totalSaved / target) * 100) : 0;
+  const pct = target > 0 ? Math.min(100, (totalSaved / target) * 100) : 0;
 
   const firstDepositDate = deposits[0]?.created_at
     ? new Date(deposits[0].created_at).toLocaleDateString("id-ID", {
@@ -152,16 +152,20 @@ export default function PlanDetailPage() {
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
-        {/* HEADER SEDERHANA */}
+        {/* HEADER */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-header-left">
-            <div className="nanad-dashboard-logo">N</div>
+            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">
-                Nanad Invest — Detail Rencana
-              </p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                {userEmail || "-"}
+                Detail rencana tabungan &amp; setoran
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.75rem", opacity: 0.8 }}
+              >
+                Akun: {userEmail || "-"}
               </p>
             </div>
           </div>
@@ -170,9 +174,9 @@ export default function PlanDetailPage() {
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
             >
-              ← Kembali
+              ← Kembali ke dashboard
             </button>
           </div>
         </header>
@@ -183,8 +187,8 @@ export default function PlanDetailPage() {
             <p className="nanad-dashboard-eyebrow">Rencana aktif</p>
             <h1 className="nanad-plan-detail-title">{plan.name}</h1>
             <p className="nanad-plan-detail-sub">
-              Durasi rencana: {plan.duration_months} bulan · Setoran
-              bulanan: Rp{" "}
+              Durasi rencana: {plan.duration_months} bulan · Setoran bulanan:{" "}
+              Rp{" "}
               {Number(plan.monthly_amount).toLocaleString("id-ID", {
                 maximumFractionDigits: 0,
               })}
@@ -232,9 +236,9 @@ export default function PlanDetailPage() {
             </div>
 
             <p className="nanad-plan-detail-footnote">
-              Angka di atas adalah ringkasan kasar. Kamu tetap bisa
-              melanjutkan pencatatan setoran dari dashboard utama Nanad
-              Invest.
+              Angka di atas adalah ringkasan kasar berdasarkan setoran yang
+              tercatat di rencana ini. Catatan dompet utama tetap bisa kamu
+              lihat di dashboard Dompet Nadnad.
             </p>
           </div>
 
@@ -266,8 +270,8 @@ export default function PlanDetailPage() {
             </div>
 
             <p className="nanad-plan-detail-side-note">
-              Detail ini membantu kamu melihat ritme menabung: apakah sudah
-              konsisten, perlu ditambah, atau cukup dipertahankan.
+              Statistik ini membantu kamu menilai ritme menabung: apakah sudah
+              konsisten, perlu dinaikkan, atau cukup dipertahankan.
             </p>
           </aside>
         </section>
@@ -278,8 +282,9 @@ export default function PlanDetailPage() {
 
           {deposits.length === 0 ? (
             <p className="nanad-plan-detail-empty">
-              Belum ada setoran yang tercatat untuk rencana ini. Silakan
-              menambahkan setoran dari dashboard utama.
+              Belum ada setoran yang tercatat untuk rencana ini. Kamu bisa
+              menambahkan setoran dari fitur pencatatan di dashboard Dompet
+              Nadnad.
             </p>
           ) : (
             <>
@@ -291,14 +296,11 @@ export default function PlanDetailPage() {
                 </div>
                 {deposits.map((dep) => {
                   const dateLabel = dep.created_at
-                    ? new Date(dep.created_at).toLocaleDateString(
-                        "id-ID",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }
-                      )
+                    ? new Date(dep.created_at).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
                     : "-";
 
                   return (
@@ -319,8 +321,9 @@ export default function PlanDetailPage() {
                 })}
               </div>
               <p className="nanad-dashboard-deposits-footnote">
-                Data di atas hanya menampilkan setoran untuk rencana ini
-                saja. Riwayat global tetap tersedia di dashboard.
+                Data di atas hanya menampilkan setoran yang dihubungkan dengan
+                rencana ini. Riwayat transaksi dompet secara keseluruhan tetap
+                tidak berubah dan bisa dilihat di halaman dompet.
               </p>
             </>
           )}
