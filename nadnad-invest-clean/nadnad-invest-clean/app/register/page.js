@@ -23,6 +23,11 @@ export default function RegisterPage() {
       return;
     }
 
+    if (password.length < 6) {
+      setErrorMsg("Kata sandi minimal 6 karakter.");
+      return;
+    }
+
     if (password !== confirm) {
       setErrorMsg("Kata sandi dan konfirmasi tidak sama.");
       return;
@@ -53,24 +58,27 @@ export default function RegisterPage() {
   return (
     <main className="nanad-auth-page">
       <div className="nanad-auth-shell">
+        {/* Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div className="nanad-auth-logo">N</div>
+          <div className="nanad-auth-logo nanad-logo-n">N</div>
           <div>
-            <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+            <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
             <p className="nanad-dashboard-brand-sub">
-              Langkah awal ruang finansial elegan
+              Dompet pintar pelanggan &amp; komunitas
             </p>
           </div>
         </div>
 
+        {/* Judul */}
         <div>
-          <h1 className="nanad-auth-title">Daftar akun Nanad Invest</h1>
+          <h1 className="nanad-auth-title">Daftar akun Dompet Nadnad</h1>
           <p className="nanad-auth-sub">
-            Buat akun untuk mulai mencatat setoran, penarikan, dan rencana
-            simpanan di satu ruang yang rapi dan mewah.
+            Buat akun untuk mulai menggunakan dompet pintar, arisan pelanggan,
+            dan papan pencatatan keuangan yang rapi dalam satu ruang elegan.
           </p>
         </div>
 
+        {/* Form register */}
         <form onSubmit={handleRegister} className="nanad-auth-form">
           <div className="nanad-auth-field">
             Email
@@ -120,10 +128,11 @@ export default function RegisterPage() {
           </button>
         </form>
 
+        {/* Footer: sudah punya akun */}
         <div className="nanad-auth-footer">
           Sudah punya akun?{" "}
           <Link href="/login" style={{ color: "#f5d17a" }}>
-            Masuk di sini
+            Masuk ke Dompet Nadnad
           </Link>
         </div>
       </div>
