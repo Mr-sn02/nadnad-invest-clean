@@ -1,8 +1,9 @@
 // app/promo/balance-boost/page.js
+"use client";
 
 import Link from "next/link";
 
-export default function BalanceBoostPromoPage() {
+export default function BalanceBoostPage() {
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
@@ -13,244 +14,229 @@ export default function BalanceBoostPromoPage() {
             <div>
               <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Halaman Promo · Balance Boost Event
+                Event Promo · Balance Boost
               </p>
             </div>
           </div>
 
           <div style={{ display: "flex", gap: "0.6rem" }}>
-            <Link href="/dashboard" className="nanad-dashboard-logout">
-              Kembali ke dashboard
-            </Link>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => (window.location.href = "/dashboard")}
+            >
+              Dashboard
+            </button>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={() => (window.location.href = "/wallet")}
+            >
+              Buka Dompet
+            </button>
           </div>
         </header>
 
-        {/* INTRO PROMO */}
+        {/* INTRO */}
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Promo terbatas</p>
           <h1 className="nanad-dashboard-heading">
-            Balance Boost Event · Kesempatan bonus saldo dompet.
+            Balance Boost – event apresiasi setoran Dompet Nadnad.
           </h1>
           <p className="nanad-dashboard-body">
-            Selama periode promo, sebagian pengguna yang aktif menyetor ke
-            Dompet Nadnad berkesempatan mendapatkan{" "}
-            <strong>bonus saldo tambahan</strong> sebagai bentuk apresiasi.
-            Promo ini bersifat <strong>undian berhadiah</strong>,{" "}
-            <strong>bukan janji keuntungan pasti</strong> dan tidak berlaku
-            selamanya.
+            Balance Boost adalah event promosi terbatas dari{" "}
+            <strong>Dompet Nadnad</strong> untuk mengapresiasi pengguna yang
+            aktif menyetor dana ke dompetnya selama periode event. Sebagian
+            pengguna yang beruntung berpeluang mendapatkan{" "}
+            <strong>bonus saldo tambahan</strong> berdasarkan total setoran yang
+            tercatat di Dompet Nadnad.
           </p>
 
           <p
             className="nanad-dashboard-body"
-            style={{ marginTop: "0.65rem", fontSize: "0.82rem", color: "#e5e7eb" }}
+            style={{ marginTop: "0.5rem", fontSize: "0.82rem", color: "#e5e7eb" }}
           >
-            Detail teknis (periode, cara ikut, dan pengumuman pemenang) dapat
-            disesuaikan dan diumumkan oleh admin Dompet Nadnad melalui kanal
-            komunikasi resmi (misalnya grup WhatsApp/Telegram).
+            Periode contoh: <strong>1 Januari – 31 Maret 2026</strong> (3 bulan
+            promo). Silakan sesuaikan waktu resmi sesuai keputusan kamu.
           </p>
+
+          <div
+            style={{
+              marginTop: "0.9rem",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "0.6rem",
+            }}
+          >
+            <Link
+              href="/promo/balance-boost/join"
+              className="nanad-dashboard-deposit-submit"
+            >
+              Daftar ikut Balance Boost
+            </Link>
+            <Link href="/wallet" className="nanad-dashboard-logout">
+              Buka halaman Dompet Nadnad
+            </Link>
+          </div>
         </section>
 
-        {/* GRID TIER PROMO */}
+        {/* TIER DETAIL */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Struktur Bonus Berdasarkan Tier Setoran</h3>
+              <h3>Struktur tier &amp; peluang bonus</h3>
               <p>
-                Tier di bawah ini adalah contoh struktur untuk periode promo
-                selama ±3 bulan. Kamu bisa menyesuaikan jumlah pemenang dan
-                nominal maksimal sesuai budget promo yang tersedia.
+                Tier di bawah ini berdasarkan total setoran yang tercatat di
+                Dompet Nadnad selama 1 bulan periode event. Bonus diberikan
+                kepada pengguna yang <strong>beruntung</strong>, bukan semua
+                peserta.
               </p>
             </div>
 
             <div
-              className="nanad-dashboard-deposits-rows"
-              style={{ marginTop: "0.9rem", display: "grid", gap: "0.85rem" }}
+              className="nanad-dashboard-body"
+              style={{ marginTop: "0.9rem", fontSize: "0.88rem" }}
             >
-              {/* BRONZE */}
-              <div className="nanad-dashboard-deposits-row">
-                <div>
-                  <strong>Tier Bronze</strong>
-                  <br />
-                  <span style={{ fontSize: "0.8rem", color: "#e5e7eb" }}>
-                    Total setoran bulanan: Rp 100.000 s.d. &lt; Rp 1.000.000
-                  </span>
-                </div>
-                <div style={{ fontSize: "0.86rem" }}>
-                  <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
-                    <li>Contoh: 30 pemenang per bulan.</li>
-                    <li>Bonus hingga ±1% dari total setoran bulan itu.</li>
-                    <li>
-                      Batas maksimum bonus contoh:{" "}
-                      <strong>Rp 25.000 per user per bulan promo</strong>.
-                    </li>
-                  </ul>
-                </div>
-                <div style={{ textAlign: "right", fontSize: "0.8rem" }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "999px",
-                      border: "1px solid rgba(148,163,184,0.6)",
-                    }}
-                  >
-                    Bronze · up to ~1%
-                  </span>
-                </div>
+              {/* Bronze */}
+              <div
+                style={{
+                  borderRadius: "18px",
+                  padding: "0.9rem 1rem",
+                  border: "1px solid rgba(148,163,184,0.4)",
+                  marginBottom: "0.75rem",
+                  background:
+                    "radial-gradient(circle at top, rgba(148,163,184,0.12), rgba(15,23,42,1))",
+                }}
+              >
+                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
+                  🟤 Tier Bronze – Rp 100.000 s.d. &lt; Rp 1.000.000
+                </h4>
+                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
+                  <li>Contoh: 30 pemenang per bulan.</li>
+                  <li>Peluang bonus hingga ±1% dari total setoran bulan itu.</li>
+                  <li>Batas maksimum bonus, misal: Rp 25.000 per user.</li>
+                </ul>
               </div>
 
-              {/* SILVER */}
-              <div className="nanad-dashboard-deposits-row">
-                <div>
-                  <strong>Tier Silver</strong>
-                  <br />
-                  <span style={{ fontSize: "0.8rem", color: "#e5e7eb" }}>
-                    Total setoran bulanan: Rp 1.000.000 s.d. &lt; Rp 10.000.000
-                  </span>
-                </div>
-                <div style={{ fontSize: "0.86rem" }}>
-                  <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
-                    <li>Contoh: 20 pemenang per bulan.</li>
-                    <li>Bonus hingga ±2% dari total setoran bulan itu.</li>
-                    <li>
-                      Batas maksimum bonus contoh:{" "}
-                      <strong>Rp 150.000 per user per bulan promo</strong>.
-                    </li>
-                  </ul>
-                </div>
-                <div style={{ textAlign: "right", fontSize: "0.8rem" }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "999px",
-                      border: "1px solid rgba(148,163,184,0.6)",
-                    }}
-                  >
-                    Silver · up to ~2%
-                  </span>
-                </div>
+              {/* Silver */}
+              <div
+                style={{
+                  borderRadius: "18px",
+                  padding: "0.9rem 1rem",
+                  border: "1px solid rgba(148,163,184,0.4)",
+                  marginBottom: "0.75rem",
+                  background:
+                    "radial-gradient(circle at top, rgba(191,219,254,0.12), rgba(15,23,42,1))",
+                }}
+              >
+                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
+                  ⚪ Tier Silver – Rp 1.000.000 s.d. &lt; Rp 10.000.000
+                </h4>
+                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
+                  <li>Contoh: 20 pemenang per bulan.</li>
+                  <li>Peluang bonus hingga ±2% dari total setoran.</li>
+                  <li>Batas maksimum bonus, misal: Rp 150.000 per user.</li>
+                </ul>
               </div>
 
-              {/* GOLD */}
-              <div className="nanad-dashboard-deposits-row">
-                <div>
-                  <strong>Tier Gold</strong>
-                  <br />
-                  <span style={{ fontSize: "0.8rem", color: "#e5e7eb" }}>
-                    Total setoran bulanan: Rp 10.000.000 s.d. &lt; Rp 50.000.000
-                  </span>
-                </div>
-                <div style={{ fontSize: "0.86rem" }}>
-                  <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
-                    <li>Contoh: 10 pemenang per bulan.</li>
-                    <li>Bonus hingga ±3% dari total setoran bulan itu.</li>
-                    <li>
-                      Batas maksimum bonus contoh:{" "}
-                      <strong>Rp 600.000 per user per bulan promo</strong>.
-                    </li>
-                  </ul>
-                </div>
-                <div style={{ textAlign: "right", fontSize: "0.8rem" }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "999px",
-                      border: "1px solid rgba(148,163,184,0.6)",
-                    }}
-                  >
-                    Gold · up to ~3%
-                  </span>
-                </div>
+              {/* Gold */}
+              <div
+                style={{
+                  borderRadius: "18px",
+                  padding: "0.9rem 1rem",
+                  border: "1px solid rgba(234,179,8,0.6)",
+                  marginBottom: "0.75rem",
+                  background:
+                    "radial-gradient(circle at top, rgba(250,204,21,0.12), rgba(15,23,42,1))",
+                }}
+              >
+                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
+                  🟡 Tier Gold – Rp 10.000.000 s.d. &lt; Rp 50.000.000
+                </h4>
+                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
+                  <li>Contoh: 10 pemenang per bulan.</li>
+                  <li>Peluang bonus hingga ±3% dari total setoran.</li>
+                  <li>Batas maksimum bonus, misal: Rp 600.000 per user.</li>
+                </ul>
               </div>
 
-              {/* DIAMOND */}
-              <div className="nanad-dashboard-deposits-row">
-                <div>
-                  <strong>Tier Diamond</strong>
-                  <br />
-                  <span style={{ fontSize: "0.8rem", color: "#e5e7eb" }}>
-                    Total setoran bulanan: Rp 50.000.000 ke atas
-                  </span>
-                </div>
-                <div style={{ fontSize: "0.86rem" }}>
-                  <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
-                    <li>Contoh: 5 pemenang per bulan.</li>
-                    <li>Bonus hingga ±5% dari total setoran bulan itu.</li>
-                    <li>
-                      Batas maksimum bonus contoh:{" "}
-                      <strong>Rp 1.500.000 per user per bulan promo</strong>.
-                    </li>
-                  </ul>
-                </div>
-                <div style={{ textAlign: "right", fontSize: "0.8rem" }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "999px",
-                      border: "1px solid rgba(148,163,184,0.6)",
-                    }}
-                  >
-                    Diamond · up to ~5%
-                  </span>
-                </div>
+              {/* Diamond */}
+              <div
+                style={{
+                  borderRadius: "18px",
+                  padding: "0.9rem 1rem",
+                  border: "1px solid rgba(147,197,253,0.6)",
+                  marginBottom: "0.75rem",
+                  background:
+                    "radial-gradient(circle at top, rgba(191,219,254,0.16), rgba(15,23,42,1))",
+                }}
+              >
+                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
+                  🔷 Tier Diamond – Rp 50.000.000 ke atas
+                </h4>
+                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
+                  <li>Contoh: 5 pemenang per bulan.</li>
+                  <li>Peluang bonus hingga ±5% dari total setoran.</li>
+                  <li>Batas maksimum bonus, misal: Rp 1.500.000 per user.</li>
+                </ul>
               </div>
             </div>
           </div>
 
-          {/* CATATAN & DISCLAIMER KHUSUS PROMO */}
+          {/* CATATAN PENTING */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Catatan penting promo Balance Boost</h3>
+              <h3>Catatan penting &amp; batasan</h3>
               <p>
-                Bagian ini bisa ditampilkan ke user agar mereka paham bahwa
-                promo ini bentuk apresiasi, bukan janji keuntungan tetap.
+                Event ini dirancang untuk mendorong kebiasaan menabung dan
+                membantu Dompet Nadnad dikenal lebih luas dari mulut ke mulut.
               </p>
             </div>
 
-            <ul
+            <div
               className="nanad-dashboard-body"
-              style={{ marginTop: "0.8rem", fontSize: "0.86rem", paddingLeft: "1.1rem" }}
+              style={{ marginTop: "0.9rem", fontSize: "0.86rem", lineHeight: 1.8 }}
             >
-              <li style={{ marginBottom: "0.4rem" }}>
-                Promo ini bersifat{" "}
-                <strong>undian terbatas selama periode tertentu</strong>, bukan
-                program imbal hasil berkelanjutan.
-              </li>
-              <li style={{ marginBottom: "0.4rem" }}>
-                Tidak semua pengguna akan menjadi pemenang. Peluang menang
-                bergantung pada jumlah peserta dan mekanisme pemilihan yang
-                diatur oleh admin.
-              </li>
-              <li style={{ marginBottom: "0.4rem" }}>
-                Bonus diberikan dalam bentuk{" "}
-                <strong>penyesuaian saldo dompet Dompet Nadnad</strong> dan
-                dicatat sebagai transaksi khusus (misalnya: &quot;BONUS_PROMO&quot;).
-              </li>
-              <li style={{ marginBottom: "0.4rem" }}>
-                Periode berlakunya promo, kriteria kelayakan, dan cara
-                pengumuman pemenang wajib diinformasikan secara tertulis oleh
-                admin (misalnya melalui grup resmi atau halaman pengumuman).
-              </li>
-              <li style={{ marginBottom: "0.4rem" }}>
-                Dompet Nadnad{" "}
-                <strong>tidak menjanjikan keuntungan tetap atau berulang</strong>.
-                Promo dapat dihentikan sewaktu-waktu setelah periode berakhir.
-              </li>
-            </ul>
+              <ul style={{ paddingLeft: "1.1rem", marginBottom: "0.6rem" }}>
+                <li>
+                  Bonus bersifat <strong>hadiah promosi</strong> untuk sebagian
+                  pengguna yang beruntung, <strong>bukan</strong> janji
+                  keuntungan tetap.
+                </li>
+                <li>
+                  Tidak semua peserta akan menerima bonus. Pemilihan pemenang
+                  dilakukan berdasarkan mekanisme undian / seleksi internal yang
+                  diumumkan oleh pengelola Dompet Nadnad.
+                </li>
+                <li>
+                  Seluruh setoran tetap dilakukan di luar aplikasi (rekening
+                  bank / e-wallet), lalu dicatat di halaman Wallet Dompet
+                  Nadnad.
+                </li>
+                <li>
+                  Event dapat dihentikan, diubah mekanismenya, atau tidak
+                  diperpanjang setelah 3 bulan sesuai kebijakan pengelola.
+                </li>
+              </ul>
+
+              <p style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
+                Dompet Nadnad adalah ruang pencatatan &amp; perencanaan. Dompet
+                Nadnad tidak menerima titipan dana langsung, tidak menyalurkan
+                dana ke pihak lain, dan tidak memberikan nasihat investasi.
+              </p>
+            </div>
           </div>
         </section>
 
         {/* FOOTER */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Dompet Nadnad. Balance Boost Promo Page.
+            © {new Date().getFullYear()} Dompet Nadnad. Balance Boost Promo.
           </span>
           <span>
-            Dompet Nadnad adalah ruang simulasi &amp; perencanaan dana pribadi.
-            Promo ini bersifat apresiasi, bukan janji imbal hasil berkelanjutan.
+            Event promosi ini bersifat terbatas dan tidak membentuk janji
+            keuntungan tetap. Semua keputusan finansial tetap menjadi tanggung
+            jawab pengguna.
           </span>
         </footer>
       </div>
