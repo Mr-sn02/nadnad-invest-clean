@@ -93,11 +93,11 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">N</div>
+            <div className="nanad-dashboard-logo">D</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Dashboard ruang finansial pribadi
+                Dashboard dompet &amp; rencana pribadi
               </p>
             </div>
           </div>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
                 style={{ marginTop: "0.35rem" }}
               >
                 Ini adalah identitas login yang digunakan untuk mengakses ruang
-                Nanad Invest kamu.
+                Dompet Nadnad kamu.
               </p>
             </div>
 
@@ -197,8 +197,9 @@ export default function DashboardPage() {
           }}
         >
           <p style={{ margin: 0 }}>
-            🎁 <strong>Promo Nadnad Balance Boost</strong> · Catat setoranmu dan
-            dapatkan kesempatan hadiah bonus saldo ke dompet Nadnad (periode terbatas).
+            🎁 <strong>Promo Dompet Nadnad · Balance Boost</strong> · Catat
+            setoranmu dan dapatkan kesempatan hadiah bonus saldo ke dompet
+            Nadnad (periode terbatas, sesuai ketentuan promo).
           </p>
           <Link
             href="/promo/balance-boost"
@@ -215,7 +216,7 @@ export default function DashboardPage() {
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Akses utama</h3>
-              <p>Menu yang sering kamu gunakan dalam Nanad Invest.</p>
+              <p>Menu yang sering kamu gunakan di Dompet Nadnad.</p>
             </div>
 
             <div
@@ -256,7 +257,8 @@ export default function DashboardPage() {
                 <div>Arisan bersama pengguna</div>
                 <div>
                   Kelola grup arisan dengan jadwal terencana, iuran bulanan, dan
-                  catat setoran dari saldo dompet Nanad Invest sebagai simulasi alur dana.
+                  catat setoran dari saldo dompet Dompet Nadnad sebagai simulasi
+                  alur dana.
                 </div>
                 <div>
                   <Link href="/arisan" className="nanad-dashboard-logout">
@@ -310,7 +312,7 @@ export default function DashboardPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Catatan & kenyamanan penggunaan</h3>
               <p>
-                Beberapa hal penting sebelum kamu menggunakan Nanad Invest
+                Beberapa hal penting sebelum kamu menggunakan Dompet Nadnad
                 secara rutin.
               </p>
             </div>
@@ -320,7 +322,7 @@ export default function DashboardPage() {
               style={{ marginTop: "0.75rem", paddingLeft: "1.1rem" }}
             >
               <li style={{ marginBottom: "0.4rem" }}>
-                Nanad Invest berperan sebagai{" "}
+                Dompet Nadnad berperan sebagai{" "}
                 <strong>ruang pencatatan &amp; perencanaan</strong>, bukan
                 sebagai lembaga investasi berizin.
               </li>
@@ -347,10 +349,10 @@ export default function DashboardPage() {
         {/* Footer + info loading/error */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Nanad Invest. All rights reserved.
+            © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
-            Nanad Invest tidak memberikan janji keuntungan tertentu. Segala
+            Dompet Nadnad tidak memberikan janji keuntungan tertentu. Segala
             keputusan finansial tetap menjadi tanggung jawab masing-masing
             pengguna.
           </span>
