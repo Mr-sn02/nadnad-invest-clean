@@ -19,7 +19,7 @@ function formatCurrency(value) {
 const DEPOSIT_TARGETS = [
   {
     id: "BCA-UTAMA",
-    label: "BCA · 1234567890 · a.n. Ratri Candra Agustin", // rekening utama
+    label: "BCA · 1234567890 · a.n. MONEYMALL", // rekening utama
   },
   {
     id: "BRI-CABANG",
