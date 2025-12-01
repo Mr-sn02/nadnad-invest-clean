@@ -10,18 +10,18 @@ export default function LandingPage() {
         {/* NAVBAR */}
         <header className="nanad-landing-header">
           <div className="nanad-landing-brand">
-            <div className="nanad-landing-logo">N</div>
+            <div className="nanad-landing-logo">D</div>
             <div>
-              <p className="nanad-landing-brand-title">Nanad Invest</p>
+              <p className="nanad-landing-brand-title">Dompet Nadnad</p>
               <p className="nanad-landing-brand-sub">
-                Personal Planning &amp; Simulation Space
+                Dompet perencanaan &amp; simulasi dana
               </p>
             </div>
           </div>
 
           <nav className="nanad-landing-nav">
             <a href="#value" className="nanad-landing-nav-link">
-              Kenapa Nanad?
+              Kenapa Nadnad?
             </a>
             <a href="#how-it-works" className="nanad-landing-nav-link">
               Cara kerja
@@ -54,7 +54,7 @@ export default function LandingPage() {
               <span> semua rencana keuanganmu.</span>
             </h1>
             <p className="nanad-landing-hero-text">
-              Nanad Invest membantumu menyusun rencana dana darurat, rumah,
+              Dompet Nadnad membantumu menyusun rencana dana darurat, rumah,
               liburan, sampai pensiun — dengan simulasi setoran yang jernih,
               tanpa memindahkan uang dari rekening atau e-wallet yang kamu pakai
               sekarang.
@@ -131,8 +131,8 @@ export default function LandingPage() {
               </div>
 
               <p className="nanad-landing-preview-footnote">
-                Tampilan di atas adalah ilustrasi. Angka di dashboard Nanad
-                Invest hanya berasal dari rencana &amp; setoran yang kamu catat
+                Tampilan di atas adalah ilustrasi. Angka di dashboard Dompet
+                Nadnad hanya berasal dari rencana &amp; setoran yang kamu catat
                 sendiri.
               </p>
             </div>
@@ -142,7 +142,7 @@ export default function LandingPage() {
         {/* VALUE PROPOSITION */}
         <section id="value" className="nanad-landing-section">
           <div className="nanad-landing-section-header">
-            <p className="nanad-landing-eyebrow">Kenapa Nanad Invest?</p>
+            <p className="nanad-landing-eyebrow">Kenapa Dompet Nadnad?</p>
             <h2>Tiga hal yang bikin rencana finansialmu lebih tenang.</h2>
           </div>
 
@@ -159,7 +159,7 @@ export default function LandingPage() {
             <article className="nanad-landing-value-card">
               <h3>Simulasi rapi tanpa sentuh dana</h3>
               <p>
-                Nanad Invest tidak menahan uangmu. Kamu tetap menabung di bank,
+                Dompet Nadnad tidak menahan uangmu. Kamu tetap menabung di bank,
                 e-wallet, atau platform favoritmu. Di sini, kamu hanya
                 mensimulasikan setoran dan memantau progres.
               </p>
@@ -200,8 +200,8 @@ export default function LandingPage() {
               <div>
                 <h3>Set setoran &amp; durasi</h3>
                 <p>
-                  Tentukan nominal setoran dan lama waktu rencananya. Nanad
-                  Invest akan menghitung target kasar dan memvisualisasikan
+                  Tentukan nominal setoran dan lama waktu rencananya. Dompet
+                  Nadnad akan menghitung target kasar dan memvisualisasikan
                   progresnya.
                 </p>
               </div>
@@ -212,8 +212,8 @@ export default function LandingPage() {
               <div>
                 <h3>Catat setoran &amp; pantau progres</h3>
                 <p>
-                  Setiap kali menabung di bank/e-wallet, cukup catat di Nanad
-                  Invest. Lihat persentase tercapai untuk tiap rencana, semua di
+                  Setiap kali menabung di bank/e-wallet, cukup catat di Dompet
+                  Nadnad. Lihat persentase tercapai untuk tiap rencana, semua di
                   satu tempat.
                 </p>
               </div>
@@ -228,14 +228,14 @@ export default function LandingPage() {
         >
           <div className="nanad-landing-section-header">
             <p className="nanad-landing-eyebrow">Keamanan &amp; catatan penting</p>
-            <h2>Nanad Invest bukan tempat titip dana atau janji keuntungan.</h2>
+            <h2>Dompet Nadnad bukan tempat titip dana atau janji keuntungan.</h2>
           </div>
 
           <div className="nanad-landing-safety-grid">
             <div className="nanad-landing-safety-card">
               <h3>Uangmu tetap di tempat asalnya</h3>
               <p>
-                Nanad Invest tidak menyimpan, memindahkan, atau mengelola
+                Dompet Nadnad tidak menyimpan, memindahkan, atau mengelola
                 uangmu. Semua transaksi uang terjadi di bank, e-wallet, atau
                 platform investasi yang kamu pilih sendiri.
               </p>
@@ -252,7 +252,7 @@ export default function LandingPage() {
               <h3>Kamu pegang kendali penuh</h3>
               <p>
                 Kamu bisa menghapus, mengubah, atau menambah rencana kapan pun.
-                Nanad Invest hanya menyediakan ruang visual untuk membantumu
+                Dompet Nadnad hanya menyediakan ruang visual untuk membantumu
                 mengambil keputusan yang lebih sadar.
               </p>
             </div>
@@ -271,7 +271,7 @@ export default function LandingPage() {
             </div>
             <div className="nanad-landing-bottom-cta-actions">
               <Link href="/register" className="nanad-landing-cta-primary">
-                Buat akun Nanad Invest
+                Buat akun Dompet Nadnad
               </Link>
               <Link href="/login" className="nanad-landing-cta-secondary">
                 Masuk ke dashboard
@@ -284,11 +284,11 @@ export default function LandingPage() {
         <footer className="nanad-landing-footer">
           <div className="nanad-landing-footer-left">
             <span>
-              © {new Date().getFullYear()} Nanad Invest. All rights reserved.
+              © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
             </span>
             <span>
-              Nanad Invest adalah ruang simulasi &amp; perencanaan keuangan
-              pribadi. Nanad Invest tidak menerima titipan dana, tidak
+              Dompet Nadnad adalah ruang simulasi &amp; perencanaan keuangan
+              pribadi. Dompet Nadnad tidak menerima titipan dana, tidak
               menyalurkan dana, dan tidak menjanjikan imbal hasil investasi apa
               pun.
             </span>
