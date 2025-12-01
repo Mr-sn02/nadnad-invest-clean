@@ -7,6 +7,7 @@ import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 // 🔐 Sementara: daftar email admin.
+// Kalau nanti sudah pakai role di database, bagian ini bisa diganti.
 const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
 
 function formatCurrency(value) {
@@ -93,11 +94,11 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo">D</div>
+            <div className="nanad-dashboard-logo">N</div>
             <div>
               <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Dashboard dompet &amp; rencana pribadi
+                Dashboard dompet &amp; perencanaan dana
               </p>
             </div>
           </div>
@@ -178,38 +179,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Promo strip */}
-        <section
-          style={{
-            marginTop: "1.25rem",
-            marginBottom: "0.75rem",
-            borderRadius: "999px",
-            padding: "0.75rem 1.1rem",
-            border: "1px solid rgba(250,204,21,0.4)",
-            background:
-              "radial-gradient(circle at top, rgba(250,204,21,0.06), rgba(15,23,42,1))",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "0.6rem",
-            fontSize: "0.82rem",
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            🎁 <strong>Promo Dompet Nadnad · Balance Boost</strong> · Catat
-            setoranmu dan dapatkan kesempatan hadiah bonus saldo ke dompet
-            Nadnad (periode terbatas, sesuai ketentuan promo).
-          </p>
-          <Link
-            href="/promo/balance-boost"
-            className="nanad-dashboard-deposit-submit"
-            style={{ fontSize: "0.78rem", paddingInline: "1rem" }}
-          >
-            Lihat detail promo
-          </Link>
-        </section>
-
         {/* Navigasi utama */}
         <section className="nanad-dashboard-table-section">
           {/* Kolom kiri: akses utama */}
@@ -257,8 +226,7 @@ export default function DashboardPage() {
                 <div>Arisan bersama pengguna</div>
                 <div>
                   Kelola grup arisan dengan jadwal terencana, iuran bulanan, dan
-                  catat setoran dari saldo dompet Dompet Nadnad sebagai simulasi
-                  alur dana.
+                  catat setoran dari saldo dompet Dompet Nadnad sebagai simulasi alur dana.
                 </div>
                 <div>
                   <Link href="/arisan" className="nanad-dashboard-logout">
