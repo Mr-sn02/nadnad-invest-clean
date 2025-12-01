@@ -7,7 +7,6 @@ import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 // 🔐 Sementara: daftar email admin.
-// Kalau nanti sudah pakai role di database, bagian ini bisa diganti.
 const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
 
 function formatCurrency(value) {
@@ -94,12 +93,11 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            {/* Logo N elegan (pakai kelas nanad-logo-n yang sama dengan wallet/arisan) */}
-            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
+            <div className="nanad-dashboard-logo">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
+              <p className="nanad-dashboard-brand-title">Nanad Invest</p>
               <p className="nanad-dashboard-brand-sub">
-                Dashboard dompet pintar & ruang finansial pribadi
+                Dashboard ruang finansial pribadi
               </p>
             </div>
           </div>
@@ -126,13 +124,13 @@ export default function DashboardPage() {
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Welcome back</p>
           <h1 className="nanad-dashboard-heading">
-            Ruang tenang untuk mencatat alur dana kamu di Dompet Nadnad.
+            Ruang tenang untuk mencatat alur dana kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Dari satu dashboard, kamu dapat mengakses dompet, tabungan khusus
-            (saving goals), memantau riwayat pengajuan setoran dan penarikan,
-            serta—jika kamu admin—meninjau permintaan pengguna sebelum saldo
-            diperbarui.
+            Dari satu dashboard, kamu dapat mengakses dompet, tabungan
+            khusus (saving goals), memantau riwayat pengajuan setoran dan
+            penarikan, serta—jika kamu admin—meninjau permintaan pengguna
+            sebelum saldo diperbarui.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -145,8 +143,8 @@ export default function DashboardPage() {
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.35rem" }}
               >
-                Ini adalah identitas login yang digunakan untuk mengakses ruang{" "}
-                <strong>Dompet Nadnad</strong> kamu.
+                Ini adalah identitas login yang digunakan untuk mengakses ruang
+                Nanad Invest kamu.
               </p>
             </div>
 
@@ -180,13 +178,44 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* Promo strip */}
+        <section
+          style={{
+            marginTop: "1.25rem",
+            marginBottom: "0.75rem",
+            borderRadius: "999px",
+            padding: "0.75rem 1.1rem",
+            border: "1px solid rgba(250,204,21,0.4)",
+            background:
+              "radial-gradient(circle at top, rgba(250,204,21,0.06), rgba(15,23,42,1))",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.6rem",
+            fontSize: "0.82rem",
+          }}
+        >
+          <p style={{ margin: 0 }}>
+            🎁 <strong>Promo Nadnad Balance Boost</strong> · Catat setoranmu dan
+            dapatkan kesempatan hadiah bonus saldo ke dompet Nadnad (periode terbatas).
+          </p>
+          <Link
+            href="/promo/balance-boost"
+            className="nanad-dashboard-deposit-submit"
+            style={{ fontSize: "0.78rem", paddingInline: "1rem" }}
+          >
+            Lihat detail promo
+          </Link>
+        </section>
+
         {/* Navigasi utama */}
         <section className="nanad-dashboard-table-section">
           {/* Kolom kiri: akses utama */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Akses utama</h3>
-              <p>Menu yang sering kamu gunakan di Dompet Nadnad.</p>
+              <p>Menu yang sering kamu gunakan dalam Nanad Invest.</p>
             </div>
 
             <div
@@ -197,15 +226,14 @@ export default function DashboardPage() {
                 <div>Dompet &amp; pengajuan</div>
                 <div>
                   Kelola saldo melalui pengajuan deposit dan penarikan, simpan
-                  bukti transfer, dan pantau riwayat transaksi kamu di{" "}
-                  <strong>Dompet Nadnad</strong>.
+                  bukti transfer, dan pantau riwayat transaksi kamu.
                 </div>
                 <div>
                   <Link
                     href="/wallet"
                     className="nanad-dashboard-deposit-submit"
                   >
-                    Buka dompet
+                    Buka wallet
                   </Link>
                 </div>
               </div>
@@ -228,8 +256,7 @@ export default function DashboardPage() {
                 <div>Arisan bersama pengguna</div>
                 <div>
                   Kelola grup arisan dengan jadwal terencana, iuran bulanan, dan
-                  catat setoran dari saldo <strong>Dompet Nadnad</strong> sebagai
-                  simulasi alur dana bersama.
+                  catat setoran dari saldo dompet Nanad Invest sebagai simulasi alur dana.
                 </div>
                 <div>
                   <Link href="/arisan" className="nanad-dashboard-logout">
@@ -283,8 +310,8 @@ export default function DashboardPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Catatan & kenyamanan penggunaan</h3>
               <p>
-                Beberapa hal penting sebelum kamu menggunakan Dompet Nadnad
-                sebagai dompet pintar harianmu.
+                Beberapa hal penting sebelum kamu menggunakan Nanad Invest
+                secara rutin.
               </p>
             </div>
 
@@ -293,7 +320,7 @@ export default function DashboardPage() {
               style={{ marginTop: "0.75rem", paddingLeft: "1.1rem" }}
             >
               <li style={{ marginBottom: "0.4rem" }}>
-                <strong>Dompet Nadnad</strong> berperan sebagai{" "}
+                Nanad Invest berperan sebagai{" "}
                 <strong>ruang pencatatan &amp; perencanaan</strong>, bukan
                 sebagai lembaga investasi berizin.
               </li>
@@ -320,10 +347,10 @@ export default function DashboardPage() {
         {/* Footer + info loading/error */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
+            © {new Date().getFullYear()} Nanad Invest. All rights reserved.
           </span>
           <span>
-            Dompet Nadnad tidak memberikan janji keuntungan tertentu. Segala
+            Nanad Invest tidak memberikan janji keuntungan tertentu. Segala
             keputusan finansial tetap menjadi tanggung jawab masing-masing
             pengguna.
           </span>
