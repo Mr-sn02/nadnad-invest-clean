@@ -10,7 +10,7 @@ export default function BalanceBoostPromoPage() {
         {/* HEADER MINI */}
         <header className="nanad-landing-header">
           <div className="nanad-landing-brand">
-            <div className="nanad-landing-logo">D</div>
+            <div className="nanad-landing-logo">N</div>
             <div>
               <p className="nanad-landing-brand-title">Dompet Nadnad</p>
               <p className="nanad-landing-brand-sub">
