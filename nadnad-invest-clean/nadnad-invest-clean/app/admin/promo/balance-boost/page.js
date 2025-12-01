@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import supabase from "../../../lib/supabaseClient";
+import supabase from "../../../../lib/supabaseClient";
 
 // daftar admin (sementara, sama seperti halaman admin lain)
 const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
