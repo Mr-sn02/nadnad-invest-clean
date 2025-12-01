@@ -7,7 +7,6 @@ import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 // 🔐 Sementara: daftar email admin.
-// Kalau nanti sudah pakai role di database, bagian ini bisa diganti.
 const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
 
 function formatCurrency(value) {
@@ -40,7 +39,6 @@ export default function DashboardPage() {
           console.error("Error getUser:", error.message);
         }
 
-        // Belum login → lempar ke /login
         if (!user) {
           router.push("/login");
           return;
@@ -48,7 +46,6 @@ export default function DashboardPage() {
 
         setUser(user);
 
-        // Ambil dompet user (jika ada)
         const { data: existing, error: walletErr } = await supabase
           .from("wallets")
           .select("*")
@@ -231,6 +228,24 @@ export default function DashboardPage() {
                 <div>
                   <Link href="/arisan" className="nanad-dashboard-logout">
                     Buka arisan
+                  </Link>
+                </div>
+              </div>
+
+              {/* 🔥 LINK PROMO BALANCE BOOST */}
+              <div className="nanad-dashboard-deposits-row">
+                <div>Promo Balance Boost</div>
+                <div>
+                  Event promo terbatas di mana sebagian pengguna yang aktif
+                  menyetor berkesempatan mendapatkan bonus saldo sebagai bentuk
+                  apresiasi (tanpa janji keuntungan tetap).
+                </div>
+                <div>
+                  <Link
+                    href="/promo/balance-boost"
+                    className="nanad-dashboard-logout"
+                  >
+                    Lihat promo
                   </Link>
                 </div>
               </div>
