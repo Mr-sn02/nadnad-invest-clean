@@ -10,7 +10,7 @@ export default function LandingPage() {
         {/* NAVBAR */}
         <header className="nanad-landing-header">
           <div className="nanad-landing-brand">
-            <div className="nanad-landing-logo">D</div>
+            <div className="nanad-landing-logo">N</div>
             <div>
               <p className="nanad-landing-brand-title">Dompet Nadnad</p>
               <p className="nanad-landing-brand-sub">
@@ -29,10 +29,6 @@ export default function LandingPage() {
             <a href="#safety" className="nanad-landing-nav-link">
               Keamanan
             </a>
-            {/* Link ke halaman promo */}
-            <Link href="/promo/balance-boost" className="nanad-landing-nav-link">
-              Promo
-            </Link>
 
             <div className="nanad-landing-nav-cta">
               <Link href="/login" className="nanad-landing-nav-ghost">
@@ -65,7 +61,7 @@ export default function LandingPage() {
                 Mulai susun rencana
               </Link>
               <Link href="/login" className="nanad-landing-cta-secondary">
-                Lihat dashboard demo
+                Lihat dashboard
               </Link>
             </div>
 
@@ -297,7 +293,6 @@ export default function LandingPage() {
           <div className="nanad-landing-footer-links">
             <a href="/about">Tentang</a>
             <a href="/legal">Legal &amp; Disclaimer</a>
-            <a href="/promo/balance-boost">Promo</a>
           </div>
         </footer>
       </div>
