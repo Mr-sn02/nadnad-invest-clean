@@ -1,9 +1,289 @@
 // app/promo/balance-boost/page.js
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import supabase from "../../../lib/supabaseClient";
 
-export default function BalanceBoostPage() {
+function formatCurrency(value) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
+}
+
+function tierFromAmount(amount) {
+  if (amount >= 100000 && amount < 1000000) return "BRONZE";      // 100k – <1M
+  if (amount >= 1000000 && amount < 10000000) return "SILVER";     // 1M – <10M
+  if (amount >= 10000000 && amount < 50000000) return "GOLD";      // 10M – <50M
+  if (amount >= 50000000) return "DIAMOND";                        // ≥50M
+  return null;
+}
+
+function tierLabel(tier) {
+  switch (tier) {
+    case "BRONZE":
+      return "Bronze (100k – <1jt)";
+    case "SILVER":
+      return "Silver (1jt – <10jt)";
+    case "GOLD":
+      return "Gold (10jt – <50jt)";
+    case "DIAMOND":
+      return "Diamond (≥50jt)";
+    default:
+      return "-";
+  }
+}
+
+export default function BalanceBoostPromoPage() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [wallet, setWallet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const [amountInput, setAmountInput] = useState("");
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const [entries, setEntries] = useState([]);
+
+  const periodLabel = "Gelombang 1 · Promo 3 bulan Balance Boost";
+
+  const loadEntries = async (uid) => {
+    const { data, error } = await supabase
+      .from("promo_balance_entries")
+      .select("*")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Load promo entries error:", error.message);
+      return;
+    }
+
+    setEntries(data || []);
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+      setErrorMsg("");
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+
+        if (error) {
+          console.error("getUser error:", error.message);
+        }
+
+        if (!user) {
+          router.push("/login");
+          return;
+        }
+
+        setUser(user);
+
+        // cari dompet user
+        const { data: existing, error: walletErr } = await supabase
+          .from("wallets")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (walletErr) {
+          console.error("Wallet load error:", walletErr.message);
+          setErrorMsg(
+            "Gagal memuat dompet utama. Buka halaman Wallet dulu agar dompet dibuat otomatis."
+          );
+          return;
+        }
+
+        if (!existing) {
+          setErrorMsg(
+            "Dompet belum tersedia. Buka halaman Wallet terlebih dahulu agar dompet dibuat otomatis."
+          );
+          return;
+        }
+
+        setWallet(existing);
+        await loadEntries(user.id);
+      } catch (err) {
+        console.error("Promo init error:", err);
+        setErrorMsg("Terjadi kesalahan saat memuat halaman promo.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
+  }, [router]);
+
+  const handleJoinPromo = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    if (!user || !wallet) {
+      setErrorMsg("Dompet belum siap. Coba buka halaman Wallet lebih dulu.");
+      return;
+    }
+
+    const amount = Number(amountInput);
+    if (!amount || amount < 100000) {
+      setErrorMsg("Minimal nominal event adalah Rp 100.000.");
+      return;
+    }
+
+    const tier = tierFromAmount(amount);
+    if (!tier) {
+      setErrorMsg(
+        "Nominal tidak masuk ke salah satu tier. Sesuaikan dengan batas minimal & maksimal tier."
+      );
+      return;
+    }
+
+    if (amount > (wallet.balance || 0)) {
+      setErrorMsg(
+        "Saldo Dompet Nadnad tidak cukup untuk ikut event dengan nominal tersebut."
+      );
+      return;
+    }
+
+    try {
+      setJoinLoading(true);
+
+      // Ambil saldo dompet terbaru (biar lebih aman)
+      const { data: freshWallet, error: freshErr } = await supabase
+        .from("wallets")
+        .select("*")
+        .eq("id", wallet.id)
+        .maybeSingle();
+
+      if (freshErr || !freshWallet) {
+        console.error("Refresh wallet error:", freshErr?.message);
+        setErrorMsg("Gagal memuat dompet terbaru. Coba lagi.");
+        setJoinLoading(false);
+        return;
+      }
+
+      if (amount > (freshWallet.balance || 0)) {
+        setErrorMsg(
+          "Saldo Dompet Nadnad tidak cukup (setelah update terakhir). Coba kurangi nominalnya."
+        );
+        setJoinLoading(false);
+        return;
+      }
+
+      const newBalance = (freshWallet.balance || 0) - amount;
+
+      // 1) Potong saldo dompet (LOCK dana event)
+      const { error: updErr } = await supabase
+        .from("wallets")
+        .update({
+          balance: newBalance,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", freshWallet.id);
+
+      if (updErr) {
+        console.error("Update wallet balance error:", updErr.message);
+        setErrorMsg("Gagal memotong saldo dompet untuk event.");
+        setJoinLoading(false);
+        return;
+      }
+
+      // 2) Catat transaksi kunci dana event
+      const { error: txErr } = await supabase.from("wallet_transactions").insert({
+        wallet_id: freshWallet.id,
+        type: "PROMO_LOCK",
+        status: "COMPLETED",
+        amount: amount,
+        user_email: user.email,
+        user_id: user.id,
+        note: `Ikut Promo Balance Boost tier ${tier}. Dana dikunci dan akan dikembalikan harian selama 30 hari.`,
+        admin_note:
+          "Promo Balance Boost - dana dikunci untuk event (principal akan dikembalikan bertahap 30 hari, plus bonus bila terpilih).",
+        created_at: new Date().toISOString(),
+      });
+
+      if (txErr) {
+        console.error("Insert wallet transaction error:", txErr.message);
+        // saldo sudah terpotong, tapi kita lanjut catat promo entry
+      }
+
+      // 3) Catat keikutsertaan di tabel promo_balance_entries
+      const { error: promoErr } = await supabase
+        .from("promo_balance_entries")
+        .insert({
+          user_id: user.id,
+          user_email: user.email,
+          wallet_id: freshWallet.id,
+          amount: amount,
+          tier,
+          period_label: periodLabel,
+          status: "PENDING", // artinya: sedang berjalan, menunggu jadwal & pencairan dari admin
+        });
+
+      if (promoErr) {
+        console.error("Insert promo entry error:", promoErr.message);
+        setErrorMsg(
+          "Saldo sudah terpotong, tapi gagal mencatat keikutsertaan promo. Segera hubungi admin agar dicek manual."
+        );
+        setJoinLoading(false);
+        return;
+      }
+
+      setWallet({ ...freshWallet, balance: newBalance });
+      setAmountInput("");
+      setSuccessMsg(
+        "Kamu berhasil ikut event Balance Boost. Dana sudah dikunci dan akan dikembalikan harian selama 30 hari oleh admin, lengkap dengan bonus jika kamu terpilih."
+      );
+      await loadEntries(user.id);
+    } catch (err) {
+      console.error("Join promo error:", err);
+      setErrorMsg("Terjadi kesalahan saat mendaftarkan ke event.");
+    } finally {
+      setJoinLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <main className="nanad-dashboard-page">
+        <div className="nanad-dashboard-shell">
+          <p className="nanad-dashboard-body">
+            Memuat halaman promo Balance Boost...
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (errorMsg && !user) {
+    return (
+      <main className="nanad-dashboard-page">
+        <div className="nanad-dashboard-shell">
+          <section className="nanad-dashboard-welcome">
+            <p className="nanad-dashboard-eyebrow">Promo error</p>
+            <h1 className="nanad-dashboard-heading">
+              Gagal memuat halaman promo Balance Boost.
+            </h1>
+            <p className="nanad-dashboard-body" style={{ color: "#fecaca" }}>
+              {errorMsg}
+            </p>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  const amountNumber = Number(amountInput) || 0;
+  const detectedTier = tierFromAmount(amountNumber);
+
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
@@ -14,7 +294,7 @@ export default function BalanceBoostPage() {
             <div>
               <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Event Promo · Balance Boost
+                Promo Balance Boost · Event 3 Bulan
               </p>
             </div>
           </div>
@@ -23,220 +303,301 @@ export default function BalanceBoostPage() {
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() => (window.location.href = "/dashboard")}
+              onClick={() => router.push("/wallet")}
             >
-              Dashboard
+              Kembali ke Dompet
             </button>
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() => (window.location.href = "/wallet")}
+              onClick={() => router.push("/dashboard")}
             >
-              Buka Dompet
+              Dashboard
             </button>
           </div>
         </header>
 
         {/* INTRO */}
         <section className="nanad-dashboard-welcome">
-          <p className="nanad-dashboard-eyebrow">Promo terbatas</p>
+          <p className="nanad-dashboard-eyebrow">Promo spesial</p>
           <h1 className="nanad-dashboard-heading">
-            Balance Boost – event apresiasi setoran Dompet Nadnad.
+            Balance Boost · kunci dana 30 hari, dikembalikan harian + peluang bonus.
           </h1>
           <p className="nanad-dashboard-body">
-            Balance Boost adalah event promosi terbatas dari{" "}
-            <strong>Dompet Nadnad</strong> untuk mengapresiasi pengguna yang
-            aktif menyetor dana ke dompetnya selama periode event. Sebagian
-            pengguna yang beruntung berpeluang mendapatkan{" "}
-            <strong>bonus saldo tambahan</strong> berdasarkan total setoran yang
-            tercatat di Dompet Nadnad.
+            Kamu bisa mengunci dana dari Dompet Nadnad selama 30 hari di event ini.
+            Setiap hari, admin akan mengembalikan sebagian dana (principal) ke dompetmu.
+            Jika kamu termasuk peserta yang terpilih, akan ada{" "}
+            <strong>bonus tambahan</strong> yang ikut dicicil bersama pengembalian
+            principal.
           </p>
 
-          <p
-            className="nanad-dashboard-body"
-            style={{ marginTop: "0.5rem", fontSize: "0.82rem", color: "#e5e7eb" }}
-          >
-            Periode contoh: <strong>1 Januari – 31 Maret 2026</strong> (3 bulan
-            promo). Silakan sesuaikan waktu resmi sesuai keputusan kamu.
-          </p>
+          <div className="nanad-dashboard-stat-grid">
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Saldo Dompet Nadnad</p>
+              <p className="nanad-dashboard-stat-number">
+                {wallet ? formatCurrency(wallet.balance || 0) : "Rp 0"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem", fontSize: "0.8rem" }}
+              >
+                Sebagian saldo bisa kamu kunci untuk ikut event, dan akan
+                dikembalikan sedikit demi sedikit setiap hari selama 30 hari.
+              </p>
+            </div>
 
-          <div
-            style={{
-              marginTop: "0.9rem",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "0.6rem",
-            }}
-          >
-            <Link
-              href="/promo/balance-boost/join"
-              className="nanad-dashboard-deposit-submit"
-            >
-              Daftar ikut Balance Boost
-            </Link>
-            <Link href="/wallet" className="nanad-dashboard-logout">
-              Buka halaman Dompet Nadnad
-            </Link>
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Periode event</p>
+              <p className="nanad-dashboard-stat-number">{periodLabel}</p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem", fontSize: "0.8rem" }}
+              >
+                Event ini bersifat <strong>terbatas 3 bulan</strong> sebagai
+                promo pembuka Dompet Nadnad. Skema dapat berubah atau dihentikan
+                sewaktu-waktu untuk gelombang berikutnya.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* TIER DETAIL */}
+        {/* FORM IKUT EVENT + INFO TIER */}
         <section className="nanad-dashboard-table-section">
+          {/* KIRI: form ikut event */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Struktur tier &amp; peluang bonus</h3>
+              <h3>Ikut event Balance Boost</h3>
               <p>
-                Tier di bawah ini berdasarkan total setoran yang tercatat di
-                Dompet Nadnad selama 1 bulan periode event. Bonus diberikan
-                kepada pengguna yang <strong>beruntung</strong>, bukan semua
-                peserta.
+                Masukkan nominal dari Dompet Nadnad yang ingin kamu kunci untuk
+                event ini. Sistem akan otomatis menentukan kamu masuk{" "}
+                <strong>tier</strong> yang mana.
               </p>
             </div>
 
-            <div
-              className="nanad-dashboard-body"
-              style={{ marginTop: "0.9rem", fontSize: "0.88rem" }}
+            <form
+              onSubmit={handleJoinPromo}
+              className="nanad-dashboard-deposit-form"
             >
-              {/* Bronze */}
-              <div
-                style={{
-                  borderRadius: "18px",
-                  padding: "0.9rem 1rem",
-                  border: "1px solid rgba(148,163,184,0.4)",
-                  marginBottom: "0.75rem",
-                  background:
-                    "radial-gradient(circle at top, rgba(148,163,184,0.12), rgba(15,23,42,1))",
-                }}
-              >
-                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
-                  🟤 Tier Bronze – Rp 100.000 s.d. &lt; Rp 1.000.000
-                </h4>
-                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
-                  <li>Contoh: 30 pemenang per bulan.</li>
-                  <li>Peluang bonus hingga ±1% dari total setoran bulan itu.</li>
-                  <li>Batas maksimum bonus, misal: Rp 25.000 per user.</li>
-                </ul>
-              </div>
+              <label className="nanad-dashboard-deposit-amount">
+                Nominal yang ingin dikunci (dari saldo dompet)
+                <input
+                  type="number"
+                  min="100000"
+                  step="50000"
+                  placeholder="Contoh: 250000, 1000000, 7500000"
+                  value={amountInput}
+                  onChange={(e) => setAmountInput(e.target.value)}
+                />
+              </label>
 
-              {/* Silver */}
-              <div
-                style={{
-                  borderRadius: "18px",
-                  padding: "0.9rem 1rem",
-                  border: "1px solid rgba(148,163,184,0.4)",
-                  marginBottom: "0.75rem",
-                  background:
-                    "radial-gradient(circle at top, rgba(191,219,254,0.12), rgba(15,23,42,1))",
-                }}
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.8rem", marginTop: "0.35rem" }}
               >
-                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
-                  ⚪ Tier Silver – Rp 1.000.000 s.d. &lt; Rp 10.000.000
-                </h4>
-                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
-                  <li>Contoh: 20 pemenang per bulan.</li>
-                  <li>Peluang bonus hingga ±2% dari total setoran.</li>
-                  <li>Batas maksimum bonus, misal: Rp 150.000 per user.</li>
-                </ul>
-              </div>
+                Tier yang terdeteksi:{" "}
+                <strong>
+                  {detectedTier
+                    ? tierLabel(detectedTier)
+                    : "Belum memenuhi minimal Rp 100.000"}
+                </strong>
+              </p>
 
-              {/* Gold */}
-              <div
-                style={{
-                  borderRadius: "18px",
-                  padding: "0.9rem 1rem",
-                  border: "1px solid rgba(234,179,8,0.6)",
-                  marginBottom: "0.75rem",
-                  background:
-                    "radial-gradient(circle at top, rgba(250,204,21,0.12), rgba(15,23,42,1))",
-                }}
-              >
-                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
-                  🟡 Tier Gold – Rp 10.000.000 s.d. &lt; Rp 50.000.000
-                </h4>
-                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
-                  <li>Contoh: 10 pemenang per bulan.</li>
-                  <li>Peluang bonus hingga ±3% dari total setoran.</li>
-                  <li>Batas maksimum bonus, misal: Rp 600.000 per user.</li>
-                </ul>
-              </div>
+              {errorMsg && (
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ color: "#fecaca", fontSize: "0.8rem" }}
+                >
+                  {errorMsg}
+                </p>
+              )}
+              {successMsg && (
+                <p
+                  className="nanad-dashboard-body"
+                  style={{ color: "#bbf7d0", fontSize: "0.8rem" }}
+                >
+                  {successMsg}
+                </p>
+              )}
 
-              {/* Diamond */}
-              <div
-                style={{
-                  borderRadius: "18px",
-                  padding: "0.9rem 1rem",
-                  border: "1px solid rgba(147,197,253,0.6)",
-                  marginBottom: "0.75rem",
-                  background:
-                    "radial-gradient(circle at top, rgba(191,219,254,0.16), rgba(15,23,42,1))",
-                }}
+              <button
+                type="submit"
+                className="nanad-dashboard-deposit-submit"
+                disabled={joinLoading}
+                style={{ marginTop: "0.5rem" }}
               >
-                <h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
-                  🔷 Tier Diamond – Rp 50.000.000 ke atas
-                </h4>
-                <ul style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
-                  <li>Contoh: 5 pemenang per bulan.</li>
-                  <li>Peluang bonus hingga ±5% dari total setoran.</li>
-                  <li>Batas maksimum bonus, misal: Rp 1.500.000 per user.</li>
-                </ul>
-              </div>
-            </div>
+                {joinLoading
+                  ? "Memproses..."
+                  : "Ikut event dengan nominal ini"}
+              </button>
+
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.76rem", marginTop: "0.5rem" }}
+              >
+                Dana akan langsung dipotong dari saldo Dompet Nadnad dan{" "}
+                <strong>dikunci 30 hari</strong>. Setiap hari, admin akan
+                mengembalikan sebagian dana ke dompetmu. Jika kamu terpilih
+                sebagai penerima bonus, jumlah harian yang kembali akan lebih
+                besar dari nilai pokok.
+              </p>
+            </form>
           </div>
 
-          {/* CATATAN PENTING */}
+          {/* KANAN: info tier + riwayat keikutsertaan */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Catatan penting &amp; batasan</h3>
+              <h3>Tier &amp; estimasi bonus</h3>
               <p>
-                Event ini dirancang untuk mendorong kebiasaan menabung dan
-                membantu Dompet Nadnad dikenal lebih luas dari mulut ke mulut.
+                Perkiraan hadiah promo per tier. Bonus <strong>bukan janji</strong>,
+                melainkan hadiah untuk peserta yang terpilih sesuai kuota per
+                bulan.
               </p>
             </div>
 
             <div
               className="nanad-dashboard-body"
-              style={{ marginTop: "0.9rem", fontSize: "0.86rem", lineHeight: 1.8 }}
+              style={{ marginTop: "0.75rem", fontSize: "0.84rem" }}
             >
-              <ul style={{ paddingLeft: "1.1rem", marginBottom: "0.6rem" }}>
+              <ul style={{ paddingLeft: "1rem", marginBottom: "0.75rem" }}>
                 <li>
-                  Bonus bersifat <strong>hadiah promosi</strong> untuk sebagian
-                  pengguna yang beruntung, <strong>bukan</strong> janji
-                  keuntungan tetap.
+                  <strong>Bronze</strong> — Rp 100.000 s.d. &lt; Rp 1.000.000
+                  <br />
+                  Kuota pemenang per bulan (misal): 30 orang.
+                  <br />
+                  Hadiah promo: hingga ±1% dari total setoran bulan itu
+                  (maks. contoh: Rp 25.000 per user).
                 </li>
-                <li>
-                  Tidak semua peserta akan menerima bonus. Pemilihan pemenang
-                  dilakukan berdasarkan mekanisme undian / seleksi internal yang
-                  diumumkan oleh pengelola Dompet Nadnad.
+                <li style={{ marginTop: "0.5rem" }}>
+                  <strong>Silver</strong> — Rp 1.000.000 s.d. &lt; Rp 10.000.000
+                  <br />
+                  Kuota pemenang per bulan (misal): 20 orang.
+                  <br />
+                  Hadiah promo: hingga ±2% (maks. contoh: Rp 150.000 per user).
                 </li>
-                <li>
-                  Seluruh setoran tetap dilakukan di luar aplikasi (rekening
-                  bank / e-wallet), lalu dicatat di halaman Wallet Dompet
-                  Nadnad.
+                <li style={{ marginTop: "0.5rem" }}>
+                  <strong>Gold</strong> — Rp 10.000.000 s.d. &lt; Rp 50.000.000
+                  <br />
+                  Kuota pemenang per bulan (misal): 10 orang.
+                  <br />
+                  Hadiah promo: hingga ±3% (maks. contoh: Rp 600.000 per user).
                 </li>
-                <li>
-                  Event dapat dihentikan, diubah mekanismenya, atau tidak
-                  diperpanjang setelah 3 bulan sesuai kebijakan pengelola.
+                <li style={{ marginTop: "0.5rem" }}>
+                  <strong>Diamond</strong> — Rp 50.000.000 ke atas
+                  <br />
+                  Kuota pemenang per bulan (misal): 5 orang.
+                  <br />
+                  Hadiah promo: hingga ±5% (maks. contoh: Rp 1.500.000 per user).
                 </li>
               </ul>
 
-              <p style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
-                Dompet Nadnad adalah ruang pencatatan &amp; perencanaan. Dompet
-                Nadnad tidak menerima titipan dana langsung, tidak menyalurkan
-                dana ke pihak lain, dan tidak memberikan nasihat investasi.
+              <p style={{ fontSize: "0.78rem", color: "#9ca3af" }}>
+                Detail kuota &amp; persentase di atas bisa diubah sewaktu-waktu
+                oleh pengelola Dompet Nadnad, namun konsep utamanya tetap:{" "}
+                <strong>dana pokok dikembalikan 30 hari</strong>, dan bonus
+                hanya untuk sebagian peserta yang beruntung.
               </p>
             </div>
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* RIWAYAT IKUT PROMO USER INI */}
+        <section className="nanad-dashboard-deposits">
+          <div className="nanad-dashboard-deposits-header">
+            <h3>Riwayat keikutsertaan promo kamu</h3>
+            <p>
+              Menampilkan event Balance Boost yang pernah kamu ikuti dari akun
+              dan dompet ini.
+            </p>
+          </div>
+
+          {entries.length === 0 ? (
+            <p
+              className="nanad-dashboard-body"
+              style={{ marginTop: "0.75rem" }}
+            >
+              Kamu belum pernah ikut event Balance Boost. Coba ikuti minimal
+              satu event untuk melihat pola pengembalian harian ke Dompet
+              Nadnad.
+            </p>
+          ) : (
+            <div
+              className="nanad-dashboard-deposits-rows"
+              style={{ marginTop: "0.75rem" }}
+            >
+              {entries.map((e) => {
+                const created = new Date(e.created_at).toLocaleString("id-ID", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+
+                const totalDays = e.total_bonus_days || 0;
+                const daysSent = e.days_sent || 0;
+
+                const sched =
+                  totalDays > 0
+                    ? `${daysSent} / ${totalDays} hari pengembalian`
+                    : "Belum dijadwalkan admin";
+
+                return (
+                  <div key={e.id} className="nanad-dashboard-deposits-row">
+                    <div>
+                      <strong>{tierLabel(e.tier)}</strong>
+                      <br />
+                      <small>{created}</small>
+                      <br />
+                      <small>{e.period_label || "-"}</small>
+                    </div>
+                    <div>
+                      <p style={{ marginBottom: "0.25rem" }}>
+                        Dana dikunci:
+                        <br />
+                        <strong>{formatCurrency(e.amount)}</strong>
+                      </p>
+                      <p style={{ fontSize: "0.78rem" }}>
+                        Jadwal pengembalian:
+                        <br />
+                        <strong>{sched}</strong>
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                        fontSize: "0.78rem",
+                      }}
+                    >
+                      <span>
+                        Status: <strong>{e.status}</strong>
+                      </span>
+                      <span>
+                        Total bonus ditetapkan admin:{" "}
+                        <strong>
+                          {e.admin_bonus_amount
+                            ? formatCurrency(e.admin_bonus_amount)
+                            : "Belum ditentukan"}
+                        </strong>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Dompet Nadnad. Balance Boost Promo.
+            © {new Date().getFullYear()} Dompet Nadnad. Promo Balance Boost.
           </span>
           <span>
-            Event promosi ini bersifat terbatas dan tidak membentuk janji
-            keuntungan tetap. Semua keputusan finansial tetap menjadi tanggung
-            jawab pengguna.
+            Promo ini bersifat hadiah &amp; hiburan, bukan janji imbal hasil
+            tetap. Dana pokok selalu dikembalikan ke dompet, sedangkan bonus
+            hanya untuk sebagian peserta yang beruntung.
           </span>
         </footer>
       </div>
