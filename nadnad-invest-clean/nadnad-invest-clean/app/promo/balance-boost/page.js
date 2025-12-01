@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../../../../lib/supabaseClient";
+import supabase from "../../../lib/supabaseClient";
 
 // GANTI DENGAN EMAIL ADMINMU
 const ADMIN_EMAILS = ["adminmu@contoh.com"];
