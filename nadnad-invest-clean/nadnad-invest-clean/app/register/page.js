@@ -8,6 +8,7 @@ import supabase from "../../lib/supabaseClient";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -18,7 +19,10 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg("");
 
-    if (!email || !password || !confirm) {
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim();
+
+    if (!cleanUsername || !cleanEmail || !password || !confirm) {
       setErrorMsg("Semua kolom wajib diisi.");
       return;
     }
@@ -35,9 +39,16 @@ export default function RegisterPage() {
 
     try {
       setLoading(true);
+
       const { error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
+        options: {
+          // simpan username di user_metadata
+          data: {
+            username: cleanUsername,
+          },
+        },
       });
 
       if (error) {
@@ -45,7 +56,9 @@ export default function RegisterPage() {
         return;
       }
 
-      alert("Pendaftaran berhasil. Silakan masuk menggunakan akun baru.");
+      alert(
+        "Pendaftaran berhasil. Silakan masuk menggunakan email & password yang baru kamu buat."
+      );
       router.push("/login");
     } catch (err) {
       console.error("Register error:", err);
@@ -58,28 +71,35 @@ export default function RegisterPage() {
   return (
     <main className="nanad-auth-page">
       <div className="nanad-auth-shell">
-        {/* Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div className="nanad-auth-logo nanad-logo-n">N</div>
+          <div className="nanad-auth-logo">N</div>
           <div>
             <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
             <p className="nanad-dashboard-brand-sub">
-              Dompet pintar pelanggan &amp; komunitas
+              Langkah awal ruang finansial elegan
             </p>
           </div>
         </div>
 
-        {/* Judul */}
         <div>
           <h1 className="nanad-auth-title">Daftar akun Dompet Nadnad</h1>
           <p className="nanad-auth-sub">
-            Buat akun untuk mulai menggunakan dompet pintar, arisan pelanggan,
-            dan papan pencatatan keuangan yang rapi dalam satu ruang elegan.
+            Buat akun untuk mulai mencatat setoran, penarikan, dan rencana
+            simpanan di satu ruang yang rapi dan mewah.
           </p>
         </div>
 
-        {/* Form register */}
         <form onSubmit={handleRegister} className="nanad-auth-form">
+          <div className="nanad-auth-field">
+            Nama pengguna (username)
+            <input
+              type="text"
+              placeholder="contoh: nadnad.family"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
           <div className="nanad-auth-field">
             Email
             <input
@@ -128,11 +148,10 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {/* Footer: sudah punya akun */}
         <div className="nanad-auth-footer">
           Sudah punya akun?{" "}
           <Link href="/login" style={{ color: "#f5d17a" }}>
-            Masuk ke Dompet Nadnad
+            Masuk di sini
           </Link>
         </div>
       </div>
