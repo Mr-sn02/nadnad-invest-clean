@@ -214,8 +214,7 @@ export default function DashboardPage() {
               <p>
                 Ajak teman pakai Dompet Nadnad. Saat teman daftar pakai link-mu,
                 kalian berdua bisa dapat kesempatan hadiah tambahan di event
-                promo (misalnya tiket undian ekstra Balance Boost) — tanpa janji
-                imbal hasil tetap.
+                promo (misalnya tiket undian ekstra Balance Boost).
               </p>
             </div>
 
@@ -266,9 +265,8 @@ export default function DashboardPage() {
                     style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}
                   >
                     Bagikan kode atau link di bawah ini ke teman / keluarga yang
-                    mau merapikan tabungannya. Tidak ada janji imbal hasil –
-                    hanya kesempatan hadiah tambahan untuk pengguna yang aktif
-                    jika ada event promo.
+                    mau merapikan tabungannya. Nikmati promonya sebelum habis karena
+                    Dompet Nadnad sedang bagi-bagi uang unlimited.
                   </p>
                 </div>
 
@@ -377,9 +375,9 @@ export default function DashboardPage() {
               style={{ marginTop: "0.75rem" }}
             >
               <div className="nanad-dashboard-deposits-row">
-                <div>Dompet &amp; pengajuan</div>
+                <div>Dompet &amp; Tabungan</div>
                 <div>
-                  Kelola saldo melalui pengajuan deposit dan penarikan, simpan
+                  Kelola saldo melalui pengajuan menabung dan penarikan, simpan
                   bukti transfer, dan pantau riwayat transaksi kamu.
                 </div>
                 <div>
@@ -416,6 +414,27 @@ export default function DashboardPage() {
                 <div>
                   <Link href="/arisan" className="nanad-dashboard-logout">
                     Buka arisan
+                  </Link>
+                </div>
+              </div>
+
+           {/* ⭐ BARU: menu event promo Balance Boost (user) */}
+              <div className="nanad-dashboard-deposits-row">
+                <div>Event promo Balance Boost</div>
+                <div>
+                  Ikuti event promo 30 hari. Banjir cuan unlimited, anda bisa 
+                  Selama 3 bulan anda bisa mendapatkan keuntungan dengan 
+                  mengikuti Event dengan keuntungan tak terbatas sesuai tier
+                  yang anda pilih dan setiap harinya dana anda akan terus 
+                  berkembang sesuai aturan promo yang berlaku hingga total 
+                  keuntungan 10% hingga 30%.
+                </div>
+                <div>
+                  <Link
+                    href="/promo/balance-boost"
+                    className="nanad-dashboard-logout"
+                  >
+                    Buka promo
                   </Link>
                 </div>
               </div>
