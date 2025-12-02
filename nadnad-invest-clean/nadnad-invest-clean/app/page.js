@@ -81,7 +81,7 @@ export default function LandingPage() {
           >
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">
-                Dompet &amp; pengelola keungan
+                Dompet &amp; pengelola keuangan
               </p>
               <p className="nanad-dashboard-stat-number">
                 Satu layar untuk menabung &amp; mengelola
