@@ -24,6 +24,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
+  // ➕ baru: pesan kecil setelah copy referral
+  const [copyMsg, setCopyMsg] = useState("");
+
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -87,6 +90,32 @@ export default function DashboardPage() {
   const isAdmin =
     user && user.email && ADMIN_EMAILS.includes(user.email);
 
+  // ➕ BARU: referral code & link
+  const referralCode =
+    wallet?.ref_code ||
+    (user?.user_metadata && user.user_metadata.ref_code) ||
+    "BELUM-AKTIF";
+
+  const baseUrl =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://dompet-nadnad.app";
+
+  const referralLink = `${baseUrl}/register?ref=${encodeURIComponent(
+    referralCode
+  )}`;
+
+  const handleCopyReferral = async () => {
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopyMsg("Link referral tersalin.");
+      setTimeout(() => setCopyMsg(""), 2500);
+    } catch (err) {
+      console.error("Copy error:", err);
+      alert("Gagal menyalin link. Silakan copy manual.");
+    }
+  };
+
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
@@ -95,7 +124,7 @@ export default function DashboardPage() {
           <div className="nanad-dashboard-brand">
             <div className="nanad-dashboard-logo">N</div>
             <div>
-              <p className="nanad-dashboard-brand-title">Dompet Nanad</p>
+              <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
                 Dashboard ruang finansial pribadi
               </p>
@@ -127,10 +156,10 @@ export default function DashboardPage() {
             Ruang tenang untuk mencatat alur dana kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Dari satu dashboard, kamu dapat mengakses dompet, tabungan
-            khusus (saving goals), memantau riwayat pengajuan setoran dan
-            penarikan, serta—jika kamu admin—meninjau permintaan pengguna
-            sebelum saldo diperbarui.
+            Dari satu dashboard, kamu dapat mengakses dompet, tabungan khusus
+            (saving goals), memantau riwayat pengajuan setoran dan penarikan,
+            serta—jika kamu admin—meninjau permintaan pengguna sebelum saldo
+            diperbarui.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -144,7 +173,7 @@ export default function DashboardPage() {
                 style={{ marginTop: "0.35rem" }}
               >
                 Ini adalah identitas login yang digunakan untuk mengakses ruang
-                Dompet Nanad kamu.
+                Dompet Nadnad kamu.
               </p>
             </div>
 
@@ -178,13 +207,170 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* ➕ BARU: Referral & Bagikan Dompet Nadnad */}
+        <section className="nanad-dashboard-table-section">
+          <div className="nanad-dashboard-deposits">
+            <div className="nanad-dashboard-deposits-header">
+              <h3>Bagikan Dompet Nadnad</h3>
+              <p>
+                Ajak teman pakai Dompet Nadnad. Saat teman daftar pakai link-mu,
+                kalian berdua bisa dapat kesempatan hadiah tambahan di event
+                promo (misalnya tiket undian ekstra Balance Boost) — tanpa janji
+                imbal hasil tetap.
+              </p>
+            </div>
+
+            <div
+              style={{
+                marginTop: "0.9rem",
+                padding: "0.95rem 1.1rem",
+                borderRadius: "18px",
+                border: "1px solid rgba(148,163,184,0.5)",
+                background:
+                  "radial-gradient(circle at top, rgba(148,163,184,0.12), rgba(15,23,42,1))",
+                fontSize: "0.85rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "0.75rem",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      opacity: 0.8,
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    Kode referral kamu
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "monospace",
+                      fontSize: "1rem",
+                      letterSpacing: "0.18em",
+                    }}
+                  >
+                    {referralCode || "BELUM-AKTIF"}
+                  </div>
+
+                  <p
+                    className="nanad-dashboard-body"
+                    style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}
+                  >
+                    Bagikan kode atau link di bawah ini ke teman / keluarga yang
+                    mau merapikan tabungannya. Tidak ada janji imbal hasil –
+                    hanya kesempatan hadiah tambahan untuk pengguna yang aktif
+                    jika ada event promo.
+                  </p>
+                </div>
+
+                <div style={{ minWidth: "230px", flexShrink: 0 }}>
+                  <label
+                    style={{
+                      fontSize: "0.75rem",
+                      opacity: 0.85,
+                      display: "block",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    Link pendaftaran dengan referral kamu
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.4rem",
+                      alignItems: "center",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      readOnly
+                      value={referralLink}
+                      style={{
+                        flex: 1,
+                        borderRadius: "999px",
+                        border: "1px solid rgba(148,163,184,0.8)",
+                        background:
+                          "radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,1))",
+                        padding: "0.4rem 0.8rem",
+                        color: "#e5e7eb",
+                        fontSize: "0.8rem",
+                        outline: "none",
+                      }}
+                      onFocus={(e) => e.target.select()}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleCopyReferral}
+                      className="nanad-dashboard-deposit-submit"
+                      style={{
+                        whiteSpace: "nowrap",
+                        paddingInline: "0.9rem",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      Salin
+                    </button>
+                  </div>
+
+                  {copyMsg && (
+                    <p
+                      style={{
+                        fontSize: "0.75rem",
+                        marginTop: "0.3rem",
+                        color: "#a5f3fc",
+                      }}
+                    >
+                      {copyMsg}
+                    </p>
+                  )}
+
+                  {/* Tombol share cepat ke WhatsApp */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const text =
+                        `Aku lagi pakai Dompet Nadnad buat merapikan tabungan ` +
+                        `dan pisahin uang usaha/pribadi.\n\n` +
+                        `Kamu bisa daftar lewat sini: ${referralLink}\n\n` +
+                        `Tidak ada janji imbal hasil, cuma bantu lihat alur uang ` +
+                        `dan ikut event-event hadiah kalau lagi ada.`;
+                      const url = `https://wa.me/?text=${encodeURIComponent(
+                        text
+                      )}`;
+                      window.open(url, "_blank");
+                    }}
+                    className="nanad-dashboard-logout"
+                    style={{
+                      marginTop: "0.5rem",
+                      width: "100%",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Bagikan lewat WhatsApp
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Navigasi utama */}
         <section className="nanad-dashboard-table-section">
           {/* Kolom kiri: akses utama */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Akses utama</h3>
-              <p>Menu yang sering kamu gunakan dalam Dompet Nanad.</p>
+              <p>Menu yang sering kamu gunakan dalam Dompet Nadnad.</p>
             </div>
 
             <div
@@ -225,7 +411,8 @@ export default function DashboardPage() {
                 <div>Arisan bersama pengguna</div>
                 <div>
                   Kelola grup arisan dengan jadwal terencana, iuran bulanan, dan
-                  catat setoran dari saldo dompet Nanad Dompet sebagai simulasi alur dana.
+                  catat setoran dari saldo Dompet Nadnad sebagai simulasi alur
+                  dana.
                 </div>
                 <div>
                   <Link href="/arisan" className="nanad-dashboard-logout">
@@ -270,7 +457,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* ➕ BARU: tombol ke Admin Promo Balance Boost */}
+                  {/* Promo Balance Boost (admin) */}
                   <div className="nanad-dashboard-deposits-row">
                     <div>Promo Balance Boost (admin)</div>
                     <div>
@@ -296,7 +483,7 @@ export default function DashboardPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Catatan & kenyamanan penggunaan</h3>
               <p>
-                Beberapa hal penting sebelum kamu menggunakan Nanad Dompet
+                Beberapa hal penting sebelum kamu menggunakan Dompet Nadnad
                 secara rutin.
               </p>
             </div>
@@ -306,7 +493,7 @@ export default function DashboardPage() {
               style={{ marginTop: "0.75rem", paddingLeft: "1.1rem" }}
             >
               <li style={{ marginBottom: "0.4rem" }}>
-                Nanad Dompet berperan sebagai{" "}
+                Dompet Nadnad berperan sebagai{" "}
                 <strong>ruang pencatatan &amp; perencanaan</strong>, bukan
                 sebagai lembaga investasi berizin.
               </li>
@@ -333,10 +520,10 @@ export default function DashboardPage() {
         {/* Footer + info loading/error */}
         <footer className="nanad-dashboard-footer">
           <span>
-            © {new Date().getFullYear()} Dompet Nanad. All rights reserved.
+            © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
-            Dompet Nanad tidak memberikan janji keuntungan tertentu. Segala
+            Dompet Nadnad tidak memberikan janji keuntungan tertentu. Segala
             keputusan finansial tetap menjadi tanggung jawab masing-masing
             pengguna.
           </span>
