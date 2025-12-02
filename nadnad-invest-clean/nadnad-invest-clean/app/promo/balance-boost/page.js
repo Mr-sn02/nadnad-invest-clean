@@ -15,8 +15,8 @@ const TIERS = [
     min: 100_000,
     max: 999_999,
     bonusPercent: 1,
-    winnersPerMonth: 9999,
-    bonusCap: 25_000,
+    winnersPerMonth: 10000000,
+    bonusCap: 100_000_000,
   },
   {
     id: "SILVER",
@@ -25,8 +25,8 @@ const TIERS = [
     min: 1_000_000,
     max: 9_999_999,
     bonusPercent: 2,
-    winnersPerMonth: 20,
-    bonusCap: 150_000,
+    winnersPerMonth: 10000000,
+    bonusCap: 100_000_000,
   },
   {
     id: "GOLD",
@@ -35,8 +35,8 @@ const TIERS = [
     min: 10_000_000,
     max: 49_999_999,
     bonusPercent: 3,
-    winnersPerMonth: 10,
-    bonusCap: 600_000,
+    winnersPerMonth: 10000000,
+    bonusCap: 100_000_000,
   },
   {
     id: "DIAMOND",
@@ -45,8 +45,8 @@ const TIERS = [
     min: 50_000_000,
     max: 999_999_999_999, // batas atas besar saja
     bonusPercent: 5,
-    winnersPerMonth: 5,
-    bonusCap: 1_500_000,
+    winnersPerMonth: 10000000,
+    bonusCap: 10_000_000_000,
   },
 ];
 
@@ -481,7 +481,7 @@ export default function BalanceBoostPromoPage() {
                   </div>
                   <div style={{ fontSize: "0.8rem" }}>
                     <p style={{ margin: 0 }}>
-                      👤 Kuota contoh:{"unlimited"}
+                      👤 Kuota:Tanpa Batas
                       <strong>{t.winnersPerMonth} pemenang / bulan</strong>
                     </p>
                     <p style={{ margin: 0 }}>
