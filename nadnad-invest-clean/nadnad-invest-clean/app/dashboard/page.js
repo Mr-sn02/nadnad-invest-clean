@@ -543,10 +543,10 @@ export default function DashboardPage() {
             © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
-            Dompet Nadnad tidak memberikan janji keuntungan tertentu. Segala
-            keputusan finansial tetap menjadi tanggung jawab masing-masing
-            pengguna.
-          </span>
+            Dompet Nadnad adalah dompet pintar yang beroperasi secara resmi,
+            transparan, dan dapat dipercaya. Nadnad membantu pengguna dalam 
+            memberikan arahan, rekomendasi, dan pendampingan finansial sesuai
+            kebutuhan pribadi masing-masing.
         </footer>
 
         {loading && (
