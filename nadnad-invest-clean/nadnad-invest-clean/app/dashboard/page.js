@@ -1,3 +1,4 @@
+
 // app/dashboard/page.js
 "use client";
 
@@ -544,9 +545,10 @@ export default function DashboardPage() {
           </span>
           <span>
             Dompet Nadnad adalah dompet pintar yang beroperasi secara resmi,
-            transparan, dan dapat dipercaya. Nadnad membantu pengguna dalam 
+            transparan, dan dapat dipercaya. Nadnad membantu pengguna dalam
             memberikan arahan, rekomendasi, dan pendampingan finansial sesuai
             kebutuhan pribadi masing-masing.
+          </span>
         </footer>
 
         {loading && (
