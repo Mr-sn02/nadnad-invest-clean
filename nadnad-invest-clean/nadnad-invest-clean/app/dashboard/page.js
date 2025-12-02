@@ -518,9 +518,9 @@ export default function DashboardPage() {
                 perencanaan keuangan yang aman dan transparan.
               </li>
               <li style={{ marginBottom: "0.4rem" }}>
-                Dana nyata tetap disimpan dan dikelola pada rekening resmi
-                milik pengguna dan/atau pengelola sesuai kesepakatan dan
-                regulasi yang berlaku.
+                Dana yang anda simpan dan dikelola di Nadnad Dompet Pintar
+                akan memberikan pengalaman menabung terbaik untuk anda, 
+                dan sesuai kesepakatan dan regulasi yang berlaku.
               </li>
               <li style={{ marginBottom: "0.4rem" }}>
                 Jika ada keraguan terkait nomor rekening tujuan atau status
