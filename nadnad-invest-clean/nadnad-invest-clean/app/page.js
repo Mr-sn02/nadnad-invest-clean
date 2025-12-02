@@ -81,18 +81,18 @@ export default function LandingPage() {
           >
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">
-                Dompet &amp; riwayat transaksi
+                Dompet &amp; pengelola keungan
               </p>
               <p className="nanad-dashboard-stat-number">
-                Satu layar untuk setoran &amp; penarikan
+                Satu layar untuk menabung &amp; mengelola
               </p>
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.4rem" }}
               >
-                Pantau saldo Dompet Nadnad, ajukan deposit, penarikan, dan
-                simpan bukti transfer secara rapi. Admin dapat menyetujui atau
-                menolak pengajuan melalui panel khusus.
+                Pantau saldo Dompet Nadnad, ajukan menabung, menarik, dan
+                simpan bukti transfer secara rapi. Proses cepat dengan bimbingan
+                penuh untuk pengalaman menabung terbaik anda.
               </p>
             </div>
 
@@ -101,15 +101,15 @@ export default function LandingPage() {
                 Approval terkontrol
               </p>
               <p className="nanad-dashboard-stat-number">
-                Manual check, transparan, terdokumentasi
+                Auto check, transparan, terdokumentasi
               </p>
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.4rem" }}
               >
-                Setiap perubahan saldo tercatat sebagai transaksi dengan jejak
-                sebelum–sesudah, sehingga alur administrasi tetap jelas dan
-                dapat ditelusuri layaknya dompet pintar yang tertib.
+                Setiap perubahan saldo dicatat sebagai transaksi lengkap dengan
+                sebelum–sesudah, sehingga alur administrasi tetap transparan, 
+                tertib, dan mudah ditelusuri layaknya dompet pintar yang profesional.
               </p>
             </div>
 
@@ -135,9 +135,10 @@ export default function LandingPage() {
             © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
-            Dompet Nadnad tidak memberikan janji imbal hasil tertentu dan tidak
-            bertindak sebagai penasihat keuangan. Gunakan sesuai kebutuhan dan
-            pertimbangan pribadi.
+            Dompet Nadnad adalah dompet pintar yang beroperasi secara resmi,
+            transparan, dan dapat dipercaya. Nadnad membantu pengguna dalam 
+            memberikan arahan, rekomendasi, dan pendampingan finansial sesuai
+            kebutuhan pribadi masing-masing.
           </span>
         </footer>
       </div>
