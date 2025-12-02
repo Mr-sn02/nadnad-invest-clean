@@ -153,13 +153,12 @@ export default function DashboardPage() {
         <section className="nanad-dashboard-welcome">
           <p className="nanad-dashboard-eyebrow">Welcome back</p>
           <h1 className="nanad-dashboard-heading">
-            Ruang tenang untuk mencatat alur dana kamu.
+            Ruang tenang untuk Mengembangkan alur dana kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Dari satu dashboard, kamu dapat mengakses dompet, tabungan khusus
-            (saving goals), memantau riwayat pengajuan setoran dan penarikan,
-            serta—jika kamu admin—meninjau permintaan pengguna sebelum saldo
-            diperbarui.
+            Dari satu Halaman, kamu dapat mengakses dompet, tabungan khusus
+            (saving goals), memantau riwayat Menabung dan menarik dana kamu
+            dengan pengalaman menabung baru di Dompet Pintar Nadnad,.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -186,22 +185,22 @@ export default function DashboardPage() {
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.35rem" }}
               >
-                Saldo ini akan berubah setelah pengajuan deposit dan penarikan{" "}
-                <strong>disetujui secara manual oleh admin.</strong>
+                Saldo ini akan berubah setelah pengajuan menabung dan menarik{" "}
+                <strong>Proses cepat demi kenyamanan pengguna.</strong>
               </p>
             </div>
 
             <div className="nanad-dashboard-stat-card">
               <p className="nanad-dashboard-stat-label">Peran</p>
               <p className="nanad-dashboard-stat-number">
-                {isAdmin ? "Admin & Member" : "Member"}
+                {isAdmin ? "Admin & Nasabah" : "Nasabah"}
               </p>
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.35rem" }}
               >
-                Admin memiliki akses tambahan untuk menyetujui transaksi dan
-                melakukan penyesuaian saldo dompet secara terkontrol.
+                Nasabah adalah anggota yang sudah bergabung dengan Dompet
+                Pintar Nadnad dengan pengalaman menabung yang menyenangkan.
               </p>
             </div>
           </div>
