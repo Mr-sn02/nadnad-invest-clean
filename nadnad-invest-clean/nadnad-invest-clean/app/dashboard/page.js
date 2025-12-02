@@ -513,8 +513,9 @@ export default function DashboardPage() {
             >
               <li style={{ marginBottom: "0.4rem" }}>
                 Dompet Nadnad berperan sebagai{" "}
-                <strong>ruang pencatatan &amp; perencanaan</strong>, bukan
-                sebagai lembaga investasi berizin.
+                <strong>dompet pintar yang berizin, terpercaya, &amp; 
+                ruang pencatatan</strong>, serta 
+                perencanaan keuangan yang aman dan transparan.
               </li>
               <li style={{ marginBottom: "0.4rem" }}>
                 Dana nyata tetap disimpan dan dikelola pada rekening resmi
