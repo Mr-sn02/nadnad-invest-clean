@@ -449,9 +449,9 @@ export default function BalanceBoostPromoPage() {
               >
                 Dengan menekan tombol di atas, kamu menyetujui bahwa dana akan
                 dipotong dari saldo <strong>Dompet Nadnad</strong> sebesar
-                nominal yang kamu isi. Pengembalian pokok + bonus (jika terpilih)
-                akan dikirim kembali ke dompet dalam beberapa kali cicilan harian{" "}
-                <strong>oleh admin</strong>.
+                nominal yang kamu isi. Pengembalian pokok + bonus akan dikirim
+                kembali ke dompet dalam 30 kali pengiriman selama 30 hari{" "}
+                <strong>Secara Otomatis</strong>.
               </p>
             </form>
           </div>
