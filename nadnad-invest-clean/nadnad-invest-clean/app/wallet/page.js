@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
-// Format rupiah
+// 🔐 Daftar email admin (sementara, sampai pakai role di DB)
+const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -15,87 +17,91 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-// Rekening tujuan deposit (SILAKAN GANTI NOMOR & NAMA SESUAI REKENING ASLI)
-const DEPOSIT_TARGETS = [
-  {
-    id: "BCA-UTAMA",
-    label: "BCA · 1234567890 · a.n. MONEYMALL", // rekening utama
-  },
-  {
-    id: "BRI-CABANG",
-    label: "BRI · 5556667778 · a.n. Dompet Nadnad Bandung", // rekening cabang (brand baru)
-  },
-  {
-    id: "DANA-SON",
-    label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
-  },
-];
+// 🧮 Buat nomor "Dompet Nadnad" 8 digit yang unik
+async function generateUniqueAccountNumber() {
+  // coba maksimal 5x
+  for (let i = 0; i < 5; i++) {
+    const num = Math.floor(10000000 + Math.random() * 90000000).toString();
+
+    const { data, error } = await supabase
+      .from("wallets")
+      .select("id")
+      .eq("account_number", num)
+      .maybeSingle();
+
+    if (!error && !data) {
+      return num; // belum dipakai
+    }
+  }
+
+  throw new Error("Gagal membuat nomor Dompet Nadnad yang unik.");
+}
 
 export default function WalletPage() {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
   const [user, setUser] = useState(null);
   const [wallet, setWallet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [transactions, setTransactions] = useState([]);
+  const [txLoading, setTxLoading] = useState(false);
 
-  // ==== Form DEPOSIT ====
-  const [depositAmount, setDepositAmount] = useState("");
-  const [depositTarget, setDepositTarget] = useState(
-    DEPOSIT_TARGETS[0]?.id || ""
-  );
-  const [depositProofFile, setDepositProofFile] = useState(null);
-  const [depositSenderName, setDepositSenderName] = useState("");
-  const [depositUserNote, setDepositUserNote] = useState("");
+  // form deposit
+  const [depAmount, setDepAmount] = useState("");
+  const [depTarget, setDepTarget] = useState("");
+  const [depSenderName, setDepSenderName] = useState("");
+  const [depNote, setDepNote] = useState("");
+  const [depSubmitting, setDepSubmitting] = useState(false);
 
-  // ==== Form WITHDRAW ====
-  const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [withdrawBankName, setWithdrawBankName] = useState("");
-  const [withdrawBankAccount, setWithdrawBankAccount] = useState("");
-  const [withdrawBankHolder, setWithdrawBankHolder] = useState("");
-  const [withdrawUserNote, setWithdrawUserNote] = useState("");
+  // form withdraw
+  const [wdAmount, setWdAmount] = useState("");
+  const [wdBankName, setWdBankName] = useState("");
+  const [wdBankAccount, setWdBankAccount] = useState("");
+  const [wdBankHolder, setWdBankHolder] = useState("");
+  const [wdNote, setWdNote] = useState("");
+  const [wdSubmitting, setWdSubmitting] = useState(false);
 
-  const [actionLoading, setActionLoading] = useState(false);
-
-  // ==== Filter riwayat ====
-  const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW
-  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
-
-  // Ambil riwayat transaksi wallet
+  // ambil riwayat transaksi
   const loadTransactions = async (walletId) => {
-    const { data, error } = await supabase
-      .from("wallet_transactions")
-      .select("*")
-      .eq("wallet_id", walletId)
-      .order("created_at", { ascending: false })
-      .limit(50);
+    setTxLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("wallet_transactions")
+        .select("*")
+        .eq("wallet_id", walletId)
+        .order("created_at", { ascending: false })
+        .limit(20);
 
-    if (error) {
-      console.error("Error load transactions:", error.message);
-      setLoadError(
-        "Gagal memuat transaksi dompet. Pastikan tabel 'wallet_transactions' sudah ada."
-      );
-      return;
+      if (error) {
+        console.error("Load transactions error:", error.message);
+        return;
+      }
+
+      setTransactions(data || []);
+    } catch (err) {
+      console.error("Unexpected load transactions error:", err);
+    } finally {
+      setTxLoading(false);
     }
-
-    setTransactions(data || []);
   };
 
-  // Inisialisasi: cek user, buat/ambil wallet, lalu load transaksi
+  // init: cek user + ambil/buat dompet
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-      setLoadError("");
+      setError("");
 
       try {
+        // 1) cek user login
         const {
           data: { user },
-          error,
+          error: userErr,
         } = await supabase.auth.getUser();
 
-        if (error) {
-          console.error("Error getUser:", error.message);
+        if (userErr) {
+          console.error("getUser error:", userErr.message);
         }
 
         if (!user) {
@@ -105,6 +111,7 @@ export default function WalletPage() {
 
         setUser(user);
 
+        // 2) cari dompet milik user
         const { data: existing, error: walletErr } = await supabase
           .from("wallets")
           .select("*")
@@ -113,37 +120,68 @@ export default function WalletPage() {
 
         if (walletErr) {
           console.error("Error get wallet:", walletErr.message);
-          setLoadError(
-            "Gagal memuat dompet. Pastikan tabel 'wallets' sudah dibuat di Supabase."
-          );
+          setError("Gagal memuat dompet.");
           return;
         }
 
-        let currentWallet = existing;
-
-        // Jika user belum punya dompet, buat baru + simpan email
+        // 3a) kalau BELUM ada dompet → buat baru
         if (!existing) {
-          const { data: created, error: createErr } = await supabase
+          const accountNumber = await generateUniqueAccountNumber();
+          const defaultName =
+            user.email?.split("@")[0] || "Pengguna Dompet Nadnad";
+
+          const { data: newWallet, error: insertErr } = await supabase
             .from("wallets")
-            .insert({ user_id: user.id, user_email: user.email })
+            .insert({
+              user_id: user.id,
+              balance: 0,
+              owner_name: defaultName,
+              account_number: accountNumber,
+            })
             .select("*")
             .single();
 
-          if (createErr) {
-            console.error("Error create wallet:", createErr.message);
-            setLoadError(
-              "Gagal membuat dompet baru. Cek konfigurasi database Supabase."
-            );
+          if (insertErr) {
+            console.error("Create wallet error:", insertErr.message);
+            setError("Gagal membuat dompet baru.");
             return;
           }
-          currentWallet = created;
-        }
 
-        setWallet(currentWallet);
-        await loadTransactions(currentWallet.id);
+          setWallet(newWallet);
+          await loadTransactions(newWallet.id);
+        } else {
+          // 3b) sudah ada dompet → pastikan punya nomor rekening
+          let updatedWallet = existing;
+
+          if (!existing.account_number) {
+            try {
+              const accountNumber = await generateUniqueAccountNumber();
+              const { data: updated, error: updErr } = await supabase
+                .from("wallets")
+                .update({ account_number: accountNumber })
+                .eq("id", existing.id)
+                .select("*")
+                .single();
+
+              if (updErr) {
+                console.error(
+                  "Update wallet account_number error:",
+                  updErr.message
+                );
+              } else {
+                updatedWallet = updated;
+              }
+            } catch (genErr) {
+              console.error("Generate account_number error:", genErr);
+            }
+          }
+
+          setWallet(updatedWallet);
+          await loadTransactions(updatedWallet.id);
+        }
       } catch (err) {
-        console.error("Unexpected wallet init error:", err);
-        setLoadError("Terjadi kesalahan saat memuat Dompet Nadnad.");
+        console.error("Wallet init error:", err);
+        setError("Terjadi kesalahan saat memuat dompet.");
       } finally {
         setLoading(false);
       }
@@ -152,183 +190,188 @@ export default function WalletPage() {
     init();
   }, [router]);
 
-  // ==== Pengajuan DEPOSIT (rekening + bukti + nama pengirim) ====
-  const handleCreateDeposit = async (e) => {
+  const isAdmin =
+    user && user.email && ADMIN_EMAILS.includes(user.email);
+
+  // logout kecil di header
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Gagal logout. Coba lagi.");
+    }
+  };
+
+  // 👉 simpan nama pengguna (owner_name) saat blur
+  const handleOwnerNameBlur = async (newName) => {
+    if (!wallet) return;
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === wallet.owner_name) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("wallets")
+        .update({ owner_name: trimmed })
+        .eq("id", wallet.id)
+        .select("*")
+        .single();
+
+      if (error) {
+        console.error("Update owner_name error:", error.message);
+        alert("Gagal menyimpan nama pengguna dompet.");
+        return;
+      }
+
+      setWallet(data);
+    } catch (err) {
+      console.error("Unexpected owner_name error:", err);
+      alert("Terjadi kesalahan saat menyimpan nama pengguna dompet.");
+    }
+  };
+
+  // 👉 pengajuan DEPOSIT (status PENDING, saldo BELUM berubah)
+  const handleSubmitDeposit = async (e) => {
     e.preventDefault();
     if (!wallet || !user) return;
 
-    const amount = Number(depositAmount);
+    const amount = Number(depAmount);
     if (!amount || amount <= 0) {
       alert("Nominal deposit harus lebih besar dari 0.");
       return;
     }
 
-    if (!depositTarget) {
-      alert("Pilih rekening tujuan deposit.");
-      return;
-    }
-
-    if (!depositSenderName.trim()) {
-      alert("Isi nama pengirim (atas nama di rekening pengirim).");
-      return;
-    }
-
-    const targetObj =
-      DEPOSIT_TARGETS.find((t) => t.id === depositTarget) || null;
-    const targetLabel = targetObj?.label || depositTarget;
-
     try {
-      setActionLoading(true);
+      setDepSubmitting(true);
 
-      // Upload bukti (jika ada)
-      let proofImageUrl = null;
-
-      if (depositProofFile) {
-        const ext =
-          depositProofFile.name.split(".").pop()?.toLowerCase() || "jpg";
-        const filePath = `${user.id}/${Date.now()}-deposit.${ext}`;
-
-        const { error: uploadErr } = await supabase.storage
-          .from("deposit_proofs")
-          .upload(filePath, depositProofFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (uploadErr) {
-          console.error("Upload proof error:", uploadErr.message);
-          alert(
-            "Gagal mengunggah bukti transfer. Coba lagi atau kirim tanpa bukti."
-          );
-        } else {
-          const { data: publicData } = supabase.storage
-            .from("deposit_proofs")
-            .getPublicUrl(filePath);
-          proofImageUrl = publicData?.publicUrl || null;
-        }
-      }
-
-      const before = wallet.balance ?? 0;
-      const after = before + amount;
-
-      const { error: txErr } = await supabase
+      const { data, error } = await supabase
         .from("wallet_transactions")
         .insert({
           wallet_id: wallet.id,
+          user_id: user.id,
+          user_email: user.email,
           type: "DEPOSIT",
-          amount,
-          balance_before: before,
-          balance_after: after,
           status: "PENDING",
-          note: "Pengajuan deposit menunggu persetujuan admin.",
-          deposit_target: targetLabel,
-          proof_image_url: proofImageUrl,
-          sender_name: depositSenderName.trim(),
-          user_email: user.email || null,
-          user_note: depositUserNote.trim() || null,
-        });
+          amount,
+          deposit_target: depTarget.trim() || null,
+          sender_name: depSenderName.trim() || null,
+          user_note: depNote.trim() || null,
+          note: "Pengajuan deposit via dashboard Dompet Nadnad.",
+        })
+        .select("*")
+        .single();
 
-      if (txErr) throw txErr;
+      if (error) {
+        console.error("Create deposit tx error:", error.message);
+        alert("Gagal mengirim pengajuan deposit. Coba lagi.");
+        return;
+      }
 
-      setDepositAmount("");
-      setDepositProofFile(null);
-      setDepositSenderName("");
-      setDepositUserNote("");
+      setDepAmount("");
+      setDepTarget("");
+      setDepSenderName("");
+      setDepNote("");
 
       await loadTransactions(wallet.id);
+
       alert(
-        "Pengajuan deposit terkirim dan menunggu persetujuan admin.\nAdmin akan mengecek mutasi & bukti transfer."
+        `Pengajuan deposit berhasil dikirim.\n\nNominal: ${formatCurrency(
+          amount
+        )}\nStatus: PENDING (menunggu review admin).`
       );
     } catch (err) {
-      console.error("Create deposit error:", err);
-      alert("Gagal mengajukan deposit.");
+      console.error("Unexpected deposit error:", err);
+      alert("Terjadi kesalahan saat mengirim pengajuan deposit.");
     } finally {
-      setActionLoading(false);
+      setDepSubmitting(false);
     }
   };
 
-  // ==== Pengajuan WITHDRAW (PENDING + data rekening) ====
-  const handleCreateWithdraw = async (e) => {
+  // 👉 pengajuan WITHDRAW (status PENDING, saldo BELUM berkurang)
+  const handleSubmitWithdraw = async (e) => {
     e.preventDefault();
     if (!wallet || !user) return;
 
-    const amount = Number(withdrawAmount);
+    const amount = Number(wdAmount);
     if (!amount || amount <= 0) {
       alert("Nominal penarikan harus lebih besar dari 0.");
       return;
     }
 
-    if (amount > (wallet.balance ?? 0)) {
-      alert(
-        `Saldo saat ini ${formatCurrency(
-          wallet.balance
-        )}. Nominal penarikan tidak boleh melebihi saldo.`
+    if (amount > (wallet.balance || 0)) {
+      const ok = confirm(
+        "Nominal penarikan melebihi saldo di Dompet Nadnad.\n\nTetap kirim pengajuan? (Admin akan mengecek manual sebelum menyetujui.)"
       );
-      return;
+      if (!ok) return;
     }
 
-    if (
-      !withdrawBankName.trim() ||
-      !withdrawBankAccount.trim() ||
-      !withdrawBankHolder.trim()
-    ) {
-      alert("Lengkapi data rekening tujuan penarikan.");
+    if (!wdBankName.trim() || !wdBankAccount.trim() || !wdBankHolder.trim()) {
+      alert("Nama bank/e-wallet, nomor, dan atas nama wajib diisi.");
       return;
     }
 
     try {
-      setActionLoading(true);
+      setWdSubmitting(true);
 
-      const before = wallet.balance ?? 0;
-      const after = before - amount;
-
-      const { error: txErr } = await supabase
+      const { data, error } = await supabase
         .from("wallet_transactions")
         .insert({
           wallet_id: wallet.id,
+          user_id: user.id,
+          user_email: user.email,
           type: "WITHDRAW",
-          amount,
-          balance_before: before,
-          balance_after: after,
           status: "PENDING",
-          note: "Pengajuan penarikan menunggu persetujuan admin.",
-          withdraw_bank_name: withdrawBankName,
-          withdraw_bank_account: withdrawBankAccount,
-          withdraw_bank_holder: withdrawBankHolder,
-          user_email: user.email || null,
-          user_note: withdrawUserNote.trim() || null,
-        });
+          amount,
+          withdraw_bank_name: wdBankName.trim(),
+          withdraw_bank_account: wdBankAccount.trim(),
+          withdraw_bank_holder: wdBankHolder.trim(),
+          user_note: wdNote.trim() || null,
+          note: "Pengajuan penarikan via dashboard Dompet Nadnad.",
+        })
+        .select("*")
+        .single();
 
-      if (txErr) throw txErr;
+      if (error) {
+        console.error("Create withdraw tx error:", error.message);
+        alert("Gagal mengirim pengajuan penarikan. Coba lagi.");
+        return;
+      }
 
-      setWithdrawAmount("");
-      setWithdrawBankName("");
-      setWithdrawBankAccount("");
-      setWithdrawBankHolder("");
-      setWithdrawUserNote("");
+      setWdAmount("");
+      setWdBankName("");
+      setWdBankAccount("");
+      setWdBankHolder("");
+      setWdNote("");
 
       await loadTransactions(wallet.id);
-      alert("Pengajuan penarikan terkirim dan menunggu persetujuan admin.");
+
+      alert(
+        `Pengajuan penarikan berhasil dikirim.\n\nNominal: ${formatCurrency(
+          amount
+        )}\nStatus: PENDING (menunggu review admin).`
+      );
     } catch (err) {
-      console.error("Create withdraw error:", err);
-      alert("Gagal mengajukan penarikan.");
+      console.error("Unexpected withdraw error:", err);
+      alert("Terjadi kesalahan saat mengirim pengajuan penarikan.");
     } finally {
-      setActionLoading(false);
+      setWdSubmitting(false);
     }
   };
 
-  // ==== RENDER: state loading / error ====
   if (loading) {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
-          <p className="nanad-dashboard-body">Memuat Dompet Nadnad...</p>
+          <p className="nanad-dashboard-body">
+            Memuat Dompet Nadnad kamu...
+          </p>
         </div>
       </main>
     );
   }
 
-  if (loadError) {
+  if (error || !wallet) {
     return (
       <main className="nanad-dashboard-page">
         <div className="nanad-dashboard-shell">
@@ -338,7 +381,7 @@ export default function WalletPage() {
               Gagal memuat Dompet Nadnad.
             </h1>
             <p className="nanad-dashboard-body" style={{ color: "#fecaca" }}>
-              {loadError}
+              {error || "Dompet tidak ditemukan."}
             </p>
             <button
               type="button"
@@ -354,26 +397,17 @@ export default function WalletPage() {
     );
   }
 
-  // Filter transaksi di client
-  const filteredTransactions = transactions.filter((tx) => {
-    const matchType = filterType === "ALL" ? true : tx.type === filterType;
-    const matchStatus =
-      filterStatus === "ALL" ? true : tx.status === filterStatus;
-    return matchType && matchStatus;
-  });
-
-  // ==== RENDER: halaman wallet utama ====
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
-        {/* Header */}
+        {/* HEADER */}
         <header className="nanad-dashboard-header">
           <div className="nanad-dashboard-brand">
-            <div className="nanad-dashboard-logo nanad-logo-n">N</div>
+            <div className="nanad-dashboard-logo">N</div>
             <div>
               <p className="nanad-dashboard-brand-title">Dompet Nadnad</p>
               <p className="nanad-dashboard-brand-sub">
-                Dompet pintar · Saldo &amp; transaksi
+                Pencatatan setoran &amp; penarikan saldo
               </p>
             </div>
           </div>
@@ -382,187 +416,240 @@ export default function WalletPage() {
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() => router.push("/profile")}
+              onClick={() => router.push("/dashboard")}
             >
-              Profil &amp; Keamanan
+              Dashboard
             </button>
             <button
               type="button"
               className="nanad-dashboard-logout"
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/promo/balance-boost")}
             >
-              Kembali ke dashboard
+              Promo &amp; Event
+            </button>
+            <button
+              type="button"
+              className="nanad-dashboard-logout"
+              onClick={handleLogout}
+            >
+              Keluar
             </button>
           </div>
         </header>
 
-        {/* Ringkasan saldo */}
+        {/* RINGKASAN & IDENTITAS DOMPET */}
         <section className="nanad-dashboard-welcome">
-          <p className="nanad-dashboard-eyebrow">Saldo dompet pintar</p>
+          <p className="nanad-dashboard-eyebrow">Dompet utama</p>
           <h1 className="nanad-dashboard-heading">
-            Saldo Dompet Nadnad kamu.
+            Kelola saldo &amp; pengajuan dari Dompet Nadnad kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Pengajuan deposit dan penarikan di halaman ini akan berstatus{" "}
-            <strong>PENDING</strong> dan menunggu persetujuan admin. Saldo baru
-            akan berubah setelah pengajuan disetujui secara manual.
+            Setiap setoran dan penarikan dicatat sebagai{" "}
+            <strong>pengajuan berstatus PENDING</strong> terlebih dahulu.
+            Admin akan meninjau secara manual sebelum saldo diperbarui.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-label">Saldo tersedia</p>
+              <p className="nanad-dashboard-stat-label">Saldo dompet</p>
               <p className="nanad-dashboard-stat-number">
-                {wallet ? formatCurrency(wallet.balance) : "Rp 0"}
+                {formatCurrency(wallet.balance || 0)}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem" }}
+              >
+                Saldo ini adalah hasil setoran &amp; penarikan{" "}
+                <strong>yang sudah disetujui admin.</strong>
               </p>
             </div>
+
             <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-label">Mata uang</p>
+              <p className="nanad-dashboard-stat-label">Akun terhubung</p>
               <p className="nanad-dashboard-stat-number">
-                {wallet?.currency || "IDR"}
+                {user?.email || "-"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem" }}
+              >
+                Gunakan email ini untuk login ke Dompet Nadnad.
+              </p>
+            </div>
+
+            <div className="nanad-dashboard-stat-card">
+              <p className="nanad-dashboard-stat-label">Peran</p>
+              <p className="nanad-dashboard-stat-number">
+                {isAdmin ? "Admin & Member" : "Member"}
+              </p>
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.35rem" }}
+              >
+                Admin dapat menyetujui pengajuan dan mengatur saldo dompet
+                anggota secara terkontrol.
               </p>
             </div>
           </div>
+
+          {/* Info pemilik & nomor rekening Dompet Nadnad */}
+          <section
+            style={{
+              marginTop: "1rem",
+              marginBottom: "1rem",
+              padding: "0.9rem 1.1rem",
+              borderRadius: "18px",
+              border: "1px solid rgba(148,163,184,0.5)",
+              background:
+                "radial-gradient(circle at top, rgba(148,163,184,0.10), rgba(15,23,42,1))",
+              fontSize: "0.85rem",
+            }}
+          >
+            <div style={{ marginBottom: "0.6rem" }}>
+              <div style={{ opacity: 0.8 }}>Nama pengguna Dompet Nadnad</div>
+              <input
+                type="text"
+                value={wallet.owner_name || ""}
+                onChange={(e) =>
+                  setWallet((prev) =>
+                    prev ? { ...prev, owner_name: e.target.value } : prev
+                  )
+                }
+                onBlur={(e) => handleOwnerNameBlur(e.target.value)}
+                placeholder="contoh: Nadnad Family, Dana Umum, dll."
+                style={{
+                  marginTop: "0.25rem",
+                  width: "100%",
+                  borderRadius: "999px",
+                  border: "1px solid rgba(148,163,184,0.8)",
+                  background:
+                    "radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,1))",
+                  padding: "0.4rem 0.8rem",
+                  color: "#e5e7eb",
+                  fontSize: "0.85rem",
+                  outline: "none",
+                }}
+              />
+            </div>
+
+            <div>
+              <div style={{ opacity: 0.8 }}>
+                Nomor Dompet Nadnad (seperti no. rekening)
+              </div>
+              <div
+                style={{
+                  marginTop: "0.25rem",
+                  fontFamily: "monospace",
+                  fontSize: "0.95rem",
+                  letterSpacing: "0.12em",
+                }}
+              >
+                {wallet.account_number || "— belum tersedia —"}
+              </div>
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}
+              >
+                Nomor ini nanti bisa digunakan untuk kirim saldo sesama pengguna
+                Dompet Nadnad (fitur kirim internal bisa ditambahkan di tahap
+                berikutnya).
+              </p>
+            </div>
+          </section>
         </section>
 
-        {/* DEPOSIT & WITHDRAW */}
+        {/* FORM DEPOSIT & WITHDRAW + RIWAYAT */}
         <section className="nanad-dashboard-table-section">
-          {/* Form DEPOSIT */}
+          {/* Form deposit */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Ajukan deposit</h3>
+              <h3>Ajukan deposit ke Dompet Nadnad</h3>
               <p>
-                Lakukan transfer ke salah satu rekening Dompet Nadnad di bawah
-                ini, lalu isi nominal, nama pengirim, dan (opsional) unggah
-                bukti transfer. Admin akan mengecek dan menyetujui secara
-                manual.
+                Isi nominal yang ingin kamu setorkan. Setelah transfer nyata di
+                rekening / e-wallet, kirim pengajuan agar admin bisa
+                mencocokkan dan memperbarui saldo.
               </p>
             </div>
 
             <form
-              onSubmit={handleCreateDeposit}
+              onSubmit={handleSubmitDeposit}
               className="nanad-dashboard-deposit-form"
             >
-              {/* Nominal */}
               <label className="nanad-dashboard-deposit-amount">
                 Nominal deposit
                 <input
                   type="number"
                   min="0"
-                  step="1000"
-                  placeholder="contoh: 100000"
-                  value={depositAmount}
-                  onChange={(e) => setDepositAmount(e.target.value)}
+                  step="50000"
+                  placeholder="contoh: 250000"
+                  value={depAmount}
+                  onChange={(e) => setDepAmount(e.target.value)}
                 />
               </label>
 
-              {/* Atas nama pengirim */}
-              <label className="nanad-dashboard-deposit-amount">
-                Atas nama pengirim
-                <input
-                  type="text"
-                  placeholder="nama pemilik rekening pengirim"
-                  value={depositSenderName}
-                  onChange={(e) => setDepositSenderName(e.target.value)}
-                />
-              </label>
-
-              {/* Catatan pengguna */}
-              <label className="nanad-dashboard-deposit-amount">
-                Catatan tambahan (opsional)
-                <textarea
-                  placeholder="contoh: setor untuk tabungan pendidikan / setor pertama, mohon dibantu."
-                  value={depositUserNote}
-                  onChange={(e) => setDepositUserNote(e.target.value)}
-                  style={{
-                    minHeight: "70px",
-                    resize: "vertical",
-                  }}
-                />
-              </label>
-
-              {/* Rekening tujuan + bukti transfer */}
               <div className="nanad-dashboard-deposit-row">
                 <label>
-                  Rekening tujuan deposit
-                  <select
-                    value={depositTarget}
-                    onChange={(e) => setDepositTarget(e.target.value)}
-                    style={{
-                      width: "100%",
-                      borderRadius: "999px",
-                      border: "1px solid rgba(248, 250, 252, 0.08)",
-                      background:
-                        "radial-gradient(circle at top, rgba(255,255,255,0.06), rgba(15,23,42,1))",
-                      padding: "0.4rem 0.8rem",
-                      color: "white",
-                      fontSize: "0.8rem",
-                    }}
-                  >
-                    {DEPOSIT_TARGETS.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label>
-                  Bukti transfer (opsional)
+                  Rekening / e-wallet tujuan (Nanad)
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                      setDepositProofFile(e.target.files?.[0] || null)
-                    }
-                    style={{
-                      width: "100%",
-                      borderRadius: "999px",
-                      border: "1px solid rgba(248, 250, 252, 0.08)",
-                      background:
-                        "radial-gradient(circle at top, rgba(255,255,255,0.06), rgba(15,23,42,1))",
-                      padding: "0.3rem 0.8rem",
-                      color: "white",
-                      fontSize: "0.8rem",
-                    }}
+                    type="text"
+                    placeholder="contoh: BCA 1234xxxx a.n. Nadnad"
+                    value={depTarget}
+                    onChange={(e) => setDepTarget(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Atas nama pengirim
+                  <input
+                    type="text"
+                    placeholder="Nama di rekening kamu"
+                    value={depSenderName}
+                    onChange={(e) => setDepSenderName(e.target.value)}
                   />
                 </label>
               </div>
 
-              {/* ⚠️ Teks peringatan di bawah dropdown rekening */}
-              <p
-                className="nanad-dashboard-body"
-                style={{ fontSize: "0.75rem", marginTop: "0.75rem" }}
-              >
-                Jika nomor rekening tujuan terlihat berbeda dari informasi
-                resmi, tidak aktif, atau kamu ragu,{" "}
-                <strong>jangan melakukan transfer</strong>. Segera hubungi admin
-                melalui tombol <strong>Pengaduan WhatsApp</strong> di pojok
-                kanan bawah untuk konfirmasi nomor rekening.
-              </p>
+              <label className="nanad-dashboard-deposit-amount">
+                Catatan tambahan (opsional)
+                <input
+                  type="text"
+                  placeholder="contoh: setor via m-banking, paket event, dsb."
+                  value={depNote}
+                  onChange={(e) => setDepNote(e.target.value)}
+                />
+              </label>
 
-              {/* Tombol submit */}
               <button
                 type="submit"
-                disabled={actionLoading}
+                disabled={depSubmitting}
                 className="nanad-dashboard-deposit-submit"
               >
-                {actionLoading ? "Memproses..." : "Ajukan deposit"}
+                {depSubmitting ? "Mengirim pengajuan..." : "Kirim pengajuan deposit"}
               </button>
+
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.76rem", marginTop: "0.4rem" }}
+              >
+                Saldo <strong>belum</strong> bertambah sampai admin
+                menyetujui pengajuanmu dan mencocokkan dengan bukti transfer
+                nyata.
+              </p>
             </form>
           </div>
 
-          {/* Form WITHDRAW */}
+          {/* Form withdraw */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Ajukan penarikan</h3>
+              <h3>Ajukan penarikan dari Dompet Nadnad</h3>
               <p>
-                Admin akan memproses penarikan ke rekening yang kamu isi di
-                bawah. Saldo hanya akan berkurang setelah pengajuan disetujui.
+                Ajukan penarikan ke rekening / e-wallet kamu. Admin akan
+                mengecek saldo dan mengirim dana manual sebelum menandai
+                pengajuan sebagai selesai.
               </p>
             </div>
 
             <form
-              onSubmit={handleCreateWithdraw}
+              onSubmit={handleSubmitWithdraw}
               className="nanad-dashboard-deposit-form"
             >
               <label className="nanad-dashboard-deposit-amount">
@@ -570,330 +657,178 @@ export default function WalletPage() {
                 <input
                   type="number"
                   min="0"
-                  step="1000"
-                  placeholder="contoh: 50000"
-                  value={withdrawAmount}
-                  onChange={(e) => setWithdrawAmount(e.target.value)}
+                  step="50000"
+                  placeholder="contoh: 200000"
+                  value={wdAmount}
+                  onChange={(e) => setWdAmount(e.target.value)}
                 />
               </label>
 
               <div className="nanad-dashboard-deposit-row">
                 <label>
-                  Nama bank / e-wallet
+                  Bank / e-wallet tujuan
                   <input
                     type="text"
-                    placeholder="contoh: BCA / BRI / Dana"
-                    value={withdrawBankName}
-                    onChange={(e) => setWithdrawBankName(e.target.value)}
+                    placeholder="contoh: BCA, BRI, DANA, OVO"
+                    value={wdBankName}
+                    onChange={(e) => setWdBankName(e.target.value)}
                   />
                 </label>
                 <label>
-                  Nomor rekening / akun
+                  Nomor rekening / e-wallet
                   <input
                     type="text"
-                    placeholder="contoh: 1234567890"
-                    value={withdrawBankAccount}
-                    onChange={(e) => setWithdrawBankAccount(e.target.value)}
+                    placeholder="nomor tujuan penarikan"
+                    value={wdBankAccount}
+                    onChange={(e) => setWdBankAccount(e.target.value)}
                   />
                 </label>
               </div>
 
               <label className="nanad-dashboard-deposit-amount">
-                Nama pemilik rekening
+                Atas nama penerima
                 <input
                   type="text"
-                  placeholder="contoh: Nama lengkap kamu"
-                  value={withdrawBankHolder}
-                  onChange={(e) => setWithdrawBankHolder(e.target.value)}
+                  placeholder="Nama di rekening / e-wallet"
+                  value={wdBankHolder}
+                  onChange={(e) => setWdBankHolder(e.target.value)}
                 />
               </label>
 
               <label className="nanad-dashboard-deposit-amount">
                 Catatan tambahan (opsional)
-                <textarea
-                  placeholder="contoh: tarik untuk kebutuhan darurat / pembayaran tertentu."
-                  value={withdrawUserNote}
-                  onChange={(e) => setWithdrawUserNote(e.target.value)}
-                  style={{
-                    minHeight: "70px",
-                    resize: "vertical",
-                  }}
+                <input
+                  type="text"
+                  placeholder="contoh: tarik untuk kebutuhan A, event B, dll."
+                  value={wdNote}
+                  onChange={(e) => setWdNote(e.target.value)}
                 />
               </label>
 
               <button
                 type="submit"
-                disabled={actionLoading}
-                className="nanad-dashboard-deposit-submit"
+                disabled={wdSubmitting}
+                className="nanad-dashboard-logout"
               >
-                {actionLoading ? "Memproses..." : "Ajukan penarikan"}
+                {wdSubmitting ? "Mengirim pengajuan..." : "Kirim pengajuan penarikan"}
               </button>
+
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.76rem", marginTop: "0.4rem" }}
+              >
+                Saldo <strong>belum</strong> berkurang sampai admin
+                memproses pengiriman dana dan menyetujui pengajuan ini.
+              </p>
             </form>
           </div>
         </section>
 
-        {/* Riwayat transaksi dompet */}
+        {/* RIWAYAT TRANSAKSI */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Riwayat transaksi dompet</h3>
+              <h3>Riwayat pengajuan &amp; transaksi dompet</h3>
               <p>
-                Termasuk pengajuan yang masih{" "}
-                <strong>menunggu persetujuan admin</strong>.
+                Menampilkan pengajuan deposit, penarikan, dan penyesuaian saldo
+                (ADJUST) yang tercatat di Dompet Nadnad kamu.
               </p>
             </div>
 
-            {/* Filter bar */}
-            <div
-              style={{
-                marginTop: "0.8rem",
-                marginBottom: "0.4rem",
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "0.5rem",
-                fontSize: "0.78rem",
-              }}
-            >
-              <div style={{ display: "flex", gap: "0.4rem" }}>
-                <span style={{ opacity: 0.7 }}>Jenis:</span>
-                {["ALL", "DEPOSIT", "WITHDRAW"].map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setFilterType(t)}
-                    style={{
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "999px",
-                      border:
-                        filterType === t
-                          ? "1px solid rgba(250,204,21,0.9)"
-                          : "1px solid rgba(148,163,184,0.4)",
-                      background:
-                        filterType === t
-                          ? "radial-gradient(circle at top, rgba(250,204,21,0.35), rgba(15,23,42,1))"
-                          : "rgba(15,23,42,0.6)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {t === "ALL"
-                      ? "Semua"
-                      : t === "DEPOSIT"
-                      ? "Deposit"
-                      : "Penarikan"}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ display: "flex", gap: "0.4rem" }}>
-                <span style={{ opacity: 0.7 }}>Status:</span>
-                {["ALL", "PENDING", "APPROVED", "REJECTED"].map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => setFilterStatus(s)}
-                    style={{
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "999px",
-                      border:
-                        filterStatus === s
-                          ? "1px solid rgba(56,189,248,0.9)"
-                          : "1px solid rgba(148,163,184,0.4)",
-                      background:
-                        filterStatus === s
-                          ? "radial-gradient(circle at top, rgba(56,189,248,0.35), rgba(15,23,42,1))"
-                          : "rgba(15,23,42,0.6)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {s === "ALL"
-                      ? "Semua"
-                      : s === "PENDING"
-                      ? "Pending"
-                      : s === "APPROVED"
-                      ? "Disetujui"
-                      : "Ditolak"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {filteredTransactions.length === 0 ? (
+            {txLoading ? (
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.75rem" }}
               >
-                Tidak ada transaksi sesuai filter.
+                Memuat riwayat transaksi...
+              </p>
+            ) : transactions.length === 0 ? (
+              <p
+                className="nanad-dashboard-body"
+                style={{ marginTop: "0.75rem" }}
+              >
+                Belum ada transaksi tercatat di Dompet Nadnad ini.
               </p>
             ) : (
               <div
                 className="nanad-dashboard-deposits-rows"
                 style={{ marginTop: "0.75rem" }}
               >
-                {filteredTransactions.map((tx) => {
-                  const created = tx.created_at
-                    ? new Date(tx.created_at).toLocaleString("id-ID")
-                    : "-";
+                {transactions.map((tx) => {
+                  const typeLabel =
+                    tx.type === "DEPOSIT"
+                      ? "Deposit"
+                      : tx.type === "WITHDRAW"
+                      ? "Penarikan"
+                      : tx.type === "ADJUST"
+                      ? "Penyesuaian"
+                      : tx.type || "-";
 
-                  let statusLabel = tx.status;
                   let statusColor = "#e5e7eb";
+                  let statusLabel = tx.status || "-";
 
                   if (tx.status === "PENDING") {
-                    statusLabel = "Menunggu persetujuan";
                     statusColor = "#facc15";
+                    statusLabel = "PENDING";
                   } else if (
                     tx.status === "APPROVED" ||
                     tx.status === "COMPLETED"
                   ) {
-                    statusLabel = "Disetujui / selesai";
                     statusColor = "#4ade80";
+                    statusLabel = "SELESAI";
                   } else if (tx.status === "REJECTED") {
-                    statusLabel = "Ditolak";
                     statusColor = "#f87171";
+                    statusLabel = "DITOLAK";
                   }
 
-                  const typeColor =
-                    tx.type === "DEPOSIT"
-                      ? "#4ade80"
-                      : tx.type === "WITHDRAW"
-                      ? "#fb923c"
-                      : "#38bdf8";
+                  const dateLabel = tx.created_at
+                    ? new Date(tx.created_at).toLocaleString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "-";
 
                   return (
                     <div key={tx.id} className="nanad-dashboard-deposits-row">
-                      {/* Kolom kiri: waktu + status */}
                       <div>
-                        {created}
+                        <strong>{typeLabel}</strong>
                         <br />
-                        <span
+                        <span style={{ fontSize: "0.78rem", opacity: 0.8 }}>
+                          {dateLabel}
+                        </span>
+                      </div>
+                      <div>
+                        <div>{formatCurrency(tx.amount)}</div>
+                        <div
                           style={{
-                            fontSize: "0.7rem",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
+                            fontSize: "0.78rem",
                             color: statusColor,
+                            marginTop: "0.15rem",
                           }}
                         >
                           {statusLabel}
-                        </span>
+                        </div>
                       </div>
-
-                      {/* Kolom tengah: detail */}
                       <div>
-                        <span
+                        <div style={{ fontSize: "0.8rem" }}>
+                          {tx.user_note ||
+                            tx.note ||
+                            "— tidak ada catatan khusus —"}
+                        </div>
+                        <Link
+                          href={`/wallet/receipt/${tx.id}`}
                           style={{
-                            fontWeight: 600,
-                            color: typeColor,
+                            fontSize: "0.78rem",
+                            textDecoration: "underline",
+                            marginTop: "0.3rem",
+                            display: "inline-block",
                           }}
                         >
-                          {tx.type === "DEPOSIT" ? "Deposit" : "Penarikan"}{" "}
-                          {formatCurrency(tx.amount)}
-                        </span>
-
-                        {tx.user_email && (
-                          <>
-                            <br />
-                            <small>Akun: {tx.user_email}</small>
-                          </>
-                        )}
-
-                        {tx.sender_name && (
-                          <>
-                            <br />
-                            <small>
-                              Atas nama pengirim: {tx.sender_name}
-                            </small>
-                          </>
-                        )}
-
-                        {tx.type === "DEPOSIT" && tx.deposit_target && (
-                          <>
-                            <br />
-                            <small>
-                              Rekening tujuan: {tx.deposit_target}
-                            </small>
-                          </>
-                        )}
-
-                        {tx.type === "WITHDRAW" && tx.withdraw_bank_name && (
-                          <>
-                            <br />
-                            <small>
-                              ke {tx.withdraw_bank_name} ·{" "}
-                              {tx.withdraw_bank_account} (
-                              {tx.withdraw_bank_holder})
-                            </small>
-                          </>
-                        )}
-
-                        {tx.user_note && (
-                          <>
-                            <br />
-                            <small>
-                              <strong>Catatan kamu:</strong> {tx.user_note}
-                            </small>
-                          </>
-                        )}
-
-                        {tx.admin_note && (
-                          <>
-                            <br />
-                            <small>
-                              <strong>Catatan admin:</strong> {tx.admin_note}
-                            </small>
-                          </>
-                        )}
-
-                        {tx.note && (
-                          <>
-                            <br />
-                            <small>
-                              <strong>Catatan sistem:</strong> {tx.note}
-                            </small>
-                          </>
-                        )}
-
-                        {tx.proof_image_url && (
-                          <div style={{ marginTop: "0.2rem" }}>
-                            <a
-                              href={tx.proof_image_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{
-                                fontSize: "0.75rem",
-                                textDecoration: "underline",
-                                opacity: 0.95,
-                              }}
-                            >
-                              Lihat bukti transfer
-                            </a>
-                          </div>
-                        )}
-
-                        <div style={{ marginTop: "0.2rem" }}>
-                          <Link
-                            href={`/wallet/receipt/${tx.id}`}
-                            style={{
-                              fontSize: "0.75rem",
-                              textDecoration: "underline",
-                              opacity: 0.95,
-                              display: "inline-block",
-                              marginTop: "0.1rem",
-                            }}
-                          >
-                            Lihat bukti transaksi (struk)
-                          </Link>
-                        </div>
-                      </div>
-
-                      {/* Kolom kanan: nominal singkat */}
-                      <div style={{ textAlign: "right" }}>
-                        <div
-                          style={{
-                            fontWeight: 600,
-                            fontSize: "0.9rem",
-                          }}
-                        >
-                          {formatCurrency(tx.amount)}
-                        </div>
+                          Lihat bukti transaksi
+                        </Link>
                       </div>
                     </div>
                   );
@@ -903,15 +838,15 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <footer className="nanad-dashboard-footer">
           <span>
             © {new Date().getFullYear()} Dompet Nadnad. All rights reserved.
           </span>
           <span>
-            Fitur dompet dan approval ini beroperasi secara penuh
-            untuk mendukung transaksi keuangan. Seluruh proses akan
-            disesuaikan dengan integrasi resmi dan ketentuan regulasi yang berlaku.
+            Dompet Nadnad berfungsi sebagai ruang pencatatan &amp; perencanaan
+            dana. Saldo resmi tetap mengacu pada mutasi rekening bank / e-wallet
+            masing-masing pengguna.
           </span>
         </footer>
       </div>
