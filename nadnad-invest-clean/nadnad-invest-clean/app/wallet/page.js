@@ -71,11 +71,14 @@ export default function WalletPage() {
   const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW | ADJUST | PROMO
   const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
 
-  // Form deposit
+ // ==== Form DEPOSIT ====
   const [depositAmount, setDepositAmount] = useState("");
-  const [depositTarget, setDepositTarget] = useState("");
-  const [depositNote, setDepositNote] = useState("");
-  const [depositLoading, setDepositLoading] = useState(false);
+  const [depositTarget, setDepositTarget] = useState(
+    DEPOSIT_TARGETS[0]?.id || ""
+  );
+  const [depositProofFile, setDepositProofFile] = useState(null);
+  const [depositSenderName, setDepositSenderName] = useState("");
+  const [depositUserNote, setDepositUserNote] = useState("");
 
   // Form withdraw
   const [withdrawAmount, setWithdrawAmount] = useState("");
