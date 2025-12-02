@@ -2,13 +2,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const searchParams = useSearchParams();
+  const refFromUrl = searchParams.get("ref"); // ?ref=NAD123456
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -19,16 +21,8 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg("");
 
-    const cleanUsername = username.trim();
-    const cleanEmail = email.trim();
-
-    if (!cleanUsername || !cleanEmail || !password || !confirm) {
+    if (!email || !password || !confirm) {
       setErrorMsg("Semua kolom wajib diisi.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setErrorMsg("Kata sandi minimal 6 karakter.");
       return;
     }
 
@@ -41,12 +35,12 @@ export default function RegisterPage() {
       setLoading(true);
 
       const { error } = await supabase.auth.signUp({
-        email: cleanEmail,
+        email,
         password,
         options: {
-          // simpan username di user_metadata
+          // simpan kode referral yang dipakai (kalau ada)
           data: {
-            username: cleanUsername,
+            ref_code_used: refFromUrl || null,
           },
         },
       });
@@ -56,9 +50,7 @@ export default function RegisterPage() {
         return;
       }
 
-      alert(
-        "Pendaftaran berhasil. Silakan masuk menggunakan email & password yang baru kamu buat."
-      );
+      alert("Pendaftaran berhasil. Silakan masuk menggunakan akun baru.");
       router.push("/login");
     } catch (err) {
       console.error("Register error:", err);
@@ -87,19 +79,24 @@ export default function RegisterPage() {
             Buat akun untuk mulai mencatat setoran, penarikan, dan rencana
             simpanan di satu ruang yang rapi dan mewah.
           </p>
+
+          {refFromUrl && (
+            <p
+              className="nanad-dashboard-body"
+              style={{
+                marginTop: "0.4rem",
+                fontSize: "0.8rem",
+                color: "#bbf7d0",
+              }}
+            >
+              Kamu mendaftar dengan kode undangan:{" "}
+              <strong>{refFromUrl}</strong>. Kode ini akan tercatat sebagai
+              referral saat dompet pertamamu aktif.
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleRegister} className="nanad-auth-form">
-          <div className="nanad-auth-field">
-            Nama pengguna (username)
-            <input
-              type="text"
-              placeholder="contoh: nadnad.family"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-
           <div className="nanad-auth-field">
             Email
             <input
