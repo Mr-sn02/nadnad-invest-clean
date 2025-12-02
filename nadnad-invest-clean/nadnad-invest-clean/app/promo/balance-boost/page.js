@@ -15,7 +15,7 @@ const TIERS = [
     min: 100_000,
     max: 999_999,
     bonusPercent: 1,
-    winnersPerMonth: 10000000,
+    winnersPerMonth: 100_000,
     bonusCap: 100_000_000,
   },
   {
@@ -25,7 +25,7 @@ const TIERS = [
     min: 1_000_000,
     max: 9_999_999,
     bonusPercent: 2,
-    winnersPerMonth: 10000000,
+    winnersPerMonth: 100_000,
     bonusCap: 100_000_000,
   },
   {
@@ -35,7 +35,7 @@ const TIERS = [
     min: 10_000_000,
     max: 49_999_999,
     bonusPercent: 3,
-    winnersPerMonth: 10000000,
+    winnersPerMonth: 100_000,
     bonusCap: 100_000_000,
   },
   {
@@ -45,7 +45,7 @@ const TIERS = [
     min: 50_000_000,
     max: 999_999_999_999, // batas atas besar saja
     bonusPercent: 5,
-    winnersPerMonth: 10000000,
+    winnersPerMonth: 100_000,
     bonusCap: 10_000_000_000,
   },
 ];
