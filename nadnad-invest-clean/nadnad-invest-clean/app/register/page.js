@@ -9,11 +9,15 @@ import supabase from "../../lib/supabaseClient";
 export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const refFromUrl = searchParams.get("ref"); // ?ref=NAD123456
 
+  // ambil ref dari URL kalau ada: /register?ref=XXXX
+  const initialRefCode = searchParams.get("ref") || "";
+
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [refCode, setRefCode] = useState(initialRefCode); // kode referral (opsional)
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -21,8 +25,17 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg("");
 
-    if (!email || !password || !confirm) {
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim();
+    const cleanRefCode = refCode.trim();
+
+    if (!cleanUsername || !cleanEmail || !password || !confirm) {
       setErrorMsg("Semua kolom wajib diisi.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMsg("Kata sandi minimal 6 karakter.");
       return;
     }
 
@@ -35,12 +48,13 @@ export default function RegisterPage() {
       setLoading(true);
 
       const { error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
-          // simpan kode referral yang dipakai (kalau ada)
+          // simpan username & kode referral di user_metadata
           data: {
-            ref_code_used: refFromUrl || null,
+            username: cleanUsername,
+            referred_by_code: cleanRefCode || null, // nanti bisa dipakai saat buat dompet
           },
         },
       });
@@ -50,7 +64,9 @@ export default function RegisterPage() {
         return;
       }
 
-      alert("Pendaftaran berhasil. Silakan masuk menggunakan akun baru.");
+      alert(
+        "Pendaftaran berhasil. Silakan masuk menggunakan email & password yang baru kamu buat."
+      );
       router.push("/login");
     } catch (err) {
       console.error("Register error:", err);
@@ -79,24 +95,19 @@ export default function RegisterPage() {
             Buat akun untuk mulai mencatat setoran, penarikan, dan rencana
             simpanan di satu ruang yang rapi dan mewah.
           </p>
-
-          {refFromUrl && (
-            <p
-              className="nanad-dashboard-body"
-              style={{
-                marginTop: "0.4rem",
-                fontSize: "0.8rem",
-                color: "#bbf7d0",
-              }}
-            >
-              Kamu mendaftar dengan kode undangan:{" "}
-              <strong>{refFromUrl}</strong>. Kode ini akan tercatat sebagai
-              referral saat dompet pertamamu aktif.
-            </p>
-          )}
         </div>
 
         <form onSubmit={handleRegister} className="nanad-auth-form">
+          <div className="nanad-auth-field">
+            Nama pengguna (username)
+            <input
+              type="text"
+              placeholder="contoh: nadnad.family"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
           <div className="nanad-auth-field">
             Email
             <input
@@ -125,6 +136,26 @@ export default function RegisterPage() {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />
+          </div>
+
+          {/* Kode referral (opsional) */}
+          <div className="nanad-auth-field">
+            Kode referral (opsional)
+            <input
+              type="text"
+              placeholder="contoh: NAD603A1"
+              value={refCode}
+              onChange={(e) => setRefCode(e.target.value)}
+              // kalau datang dari URL, boleh kamu jadikan readOnly kalau mau:
+              // readOnly={!!initialRefCode}
+            />
+            <p
+              className="nanad-dashboard-body"
+              style={{ fontSize: "0.75rem", marginTop: "0.25rem" }}
+            >
+              Jika temanmu mengirim link berisi kode referral, kolom ini akan
+              terisi otomatis. Kamu tetap bisa mendaftar tanpa kode.
+            </p>
           </div>
 
           {errorMsg && (
