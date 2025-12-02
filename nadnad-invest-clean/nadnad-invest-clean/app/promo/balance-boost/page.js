@@ -14,8 +14,8 @@ const TIERS = [
     rangeLabel: "Rp 100.000 – < Rp 1.000.000",
     min: 100_000,
     max: 999_999,
-    bonusPercent: 1,
-    winnersPerMonth: 100_000,
+    bonusPercent: 10,
+    winnersPerMonth: 100000,
     bonusCap: 100_000_000,
   },
   {
@@ -24,8 +24,8 @@ const TIERS = [
     rangeLabel: "Rp 1.000.000 – < Rp 10.000.000",
     min: 1_000_000,
     max: 9_999_999,
-    bonusPercent: 2,
-    winnersPerMonth: 100_000,
+    bonusPercent: 20,
+    winnersPerMonth: 100000,
     bonusCap: 100_000_000,
   },
   {
@@ -34,8 +34,8 @@ const TIERS = [
     rangeLabel: "Rp 10.000.000 – < Rp 50.000.000",
     min: 10_000_000,
     max: 49_999_999,
-    bonusPercent: 3,
-    winnersPerMonth: 100_000,
+    bonusPercent: 25,
+    winnersPerMonth: 100000,
     bonusCap: 100_000_000,
   },
   {
@@ -44,8 +44,8 @@ const TIERS = [
     rangeLabel: "≥ Rp 50.000.000",
     min: 50_000_000,
     max: 999_999_999_999, // batas atas besar saja
-    bonusPercent: 5,
-    winnersPerMonth: 100_000,
+    bonusPercent: 30,
+    winnersPerMonth: 100000,
     bonusCap: 10_000_000_000,
   },
 ];
@@ -481,7 +481,7 @@ export default function BalanceBoostPromoPage() {
                   </div>
                   <div style={{ fontSize: "0.8rem" }}>
                     <p style={{ margin: 0 }}>
-                      👤 Kuota:Tanpa Batas
+                      👤 Kuota:{" "}
                       <strong>{t.winnersPerMonth} pemenang / bulan</strong>
                     </p>
                     <p style={{ margin: 0 }}>
