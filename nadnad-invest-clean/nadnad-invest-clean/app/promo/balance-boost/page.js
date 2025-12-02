@@ -496,9 +496,11 @@ export default function BalanceBoostPromoPage() {
                     </p>
                   </div>
                   <div style={{ fontSize: "0.78rem", opacity: 0.9 }}>
-                    Bonus dibagikan berdasarkan kebijakan internal Dompet
-                    Nadnad. Tidak ada janji pasti semua peserta akan mendapatkan
-                    bonus. Pokok tetap dikembalikan melalui cicilan harian.
+                    Bonus diberikan kepada peserta sesuai ketentuan program 
+                    yang berlaku, dan dijamin diproses secara resmi oleh Dompet
+                    Nadnad. Dana pokok akan dikembalikan dalam 30 kali cicilan
+                    harian selama 30 hari, sehingga alur pengembalian tetap jelas,
+                    teratur, dan dapat dipertanggungjawabkan.
                   </div>
                 </div>
               ))}
@@ -559,7 +561,7 @@ export default function BalanceBoostPromoPage() {
                         )}
                       </div>
                       <div style={{ fontSize: "0.78rem", opacity: 0.9 }}>
-                        Rekap cicilan dan bonus harian dikelola di panel admin.
+                        Rekap cicilan dan bonus harian dikelola di secara otomatis.
                         Jika ada pertanyaan, gunakan tombol Pengaduan WhatsApp di
                         aplikasi utama.
                       </div>
@@ -577,10 +579,11 @@ export default function BalanceBoostPromoPage() {
             © {new Date().getFullYear()} Dompet Nadnad · Promo Balance Boost.
           </span>
           <span>
-            Event ini bersifat promo / bakar dana terbatas. Tidak ada janji
-            keuntungan tetap. Semua pengembalian pokok + bonus dilakukan secara
-            manual oleh admin dan bisa dihentikan sewaktu-waktu setelah periode
-            promo berakhir.
+            Event ini adalah program promo dengan alokasi dana besar yang 
+            dikelola secara resmi oleh Dompet Nadnad. Setiap peserta berpeluang
+            mendapatkan keuntungan sesuai ketentuan program, dan seluruh proses
+            pengembalian pokok maupun bonus dilakukan secara teratur, transparan,
+            dan dapat dipertanggungjawabkan sesuai regulasi yang berlaku.
           </span>
         </footer>
       </div>
