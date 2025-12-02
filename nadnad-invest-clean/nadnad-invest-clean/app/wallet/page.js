@@ -18,6 +18,22 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
+// Rekening tujuan deposit (SILAKAN GANTI NOMOR & NAMA SESUAI REKENING ASLI)
+const DEPOSIT_TARGETS = [
+  {
+    id: "BCA-UTAMA",
+    label: "BCA · 1234567890 · a.n. MONEYMALL", // rekening utama
+  },
+  {
+    id: "BRI-CABANG",
+    label: "BRI · 5556667778 · a.n. Dompet Nadnad Bandung", // rekening cabang (brand baru)
+  },
+  {
+    id: "DANA-SON",
+    label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
+  },
+];
+
 // Format tanggal + jam
 function formatDateTime(dateStr) {
   if (!dateStr) return "-";
