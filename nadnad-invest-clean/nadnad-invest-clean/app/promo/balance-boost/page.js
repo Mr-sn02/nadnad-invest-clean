@@ -461,8 +461,10 @@ export default function BalanceBoostPromoPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Struktur tier &amp; peluang bonus</h3>
               <p>
-                Bonus tidak dijanjikan ke semua peserta. Hanya sebagian pengguna
-                yang dipilih setiap bulan, sesuai kapasitas bakar dana promo.
+                Bonus diberikan kepada seluruh peserta yang bergabung, sesuai 
+                aturan program dan regulasi yang berlaku. Nadnad memastikan 
+                setiap bonus diproses secara transparan, teratur, dan dapat 
+                dipertanggungjawabkan.
               </p>
             </div>
 
