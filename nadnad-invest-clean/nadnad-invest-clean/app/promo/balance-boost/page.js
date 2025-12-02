@@ -15,7 +15,7 @@ const TIERS = [
     min: 100_000,
     max: 999_999,
     bonusPercent: 1,
-    winnersPerMonth: 30,
+    winnersPerMonth: 9999,
     bonusCap: 25_000,
   },
   {
