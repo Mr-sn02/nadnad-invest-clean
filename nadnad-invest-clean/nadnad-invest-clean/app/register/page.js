@@ -1,25 +1,31 @@
 // app/register/page.js
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // ambil ref dari URL kalau ada: /register?ref=XXXX
-  const initialRefCode = searchParams.get("ref") || "";
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [refCode, setRefCode] = useState(initialRefCode); // kode referral (opsional)
+  const [refCode, setRefCode] = useState(""); // kode referral (opsional)
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Ambil ?ref= dari URL di sisi client
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref") || "";
+    if (ref) {
+      setRefCode(ref);
+    }
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -51,10 +57,9 @@ export default function RegisterPage() {
         email: cleanEmail,
         password,
         options: {
-          // simpan username & kode referral di user_metadata
           data: {
             username: cleanUsername,
-            referred_by_code: cleanRefCode || null, // nanti bisa dipakai saat buat dompet
+            referred_by_code: cleanRefCode || null, // dipakai nanti saat buat dompet / tiket referral
           },
         },
       });
@@ -146,8 +151,6 @@ export default function RegisterPage() {
               placeholder="contoh: NAD603A1"
               value={refCode}
               onChange={(e) => setRefCode(e.target.value)}
-              // kalau datang dari URL, boleh kamu jadikan readOnly kalau mau:
-              // readOnly={!!initialRefCode}
             />
             <p
               className="nanad-dashboard-body"
