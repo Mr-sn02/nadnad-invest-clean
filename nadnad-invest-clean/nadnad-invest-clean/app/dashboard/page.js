@@ -422,12 +422,13 @@ export default function DashboardPage() {
               <div className="nanad-dashboard-deposits-row">
                 <div>Event promo Balance Boost</div>
                 <div>
-                  Ikuti event promo 30 hari. Banjir cuan unlimited, anda bisa 
-                  Selama 3 bulan anda bisa mendapatkan keuntungan dengan 
-                  mengikuti Event dengan keuntungan tak terbatas sesuai tier
-                  yang anda pilih dan setiap harinya dana anda akan terus 
-                  berkembang sesuai aturan promo yang berlaku hingga total 
-                  keuntungan 10% hingga 30%.
+                  Ikuti Event Promo 30 Hari dan rasakan peluang cuan yang 
+                  terus bertumbuh! Selama hingga 3 bulan, Anda berhak 
+                  menikmati perkembangan dana sesuai tier event yang Anda pilih.
+                  Setiap hari, nilai dana Anda berpotensi meningkat mengikuti 
+                  aturan promo yang berlaku, dengan total peluang keuntungan 
+                  10% hingga 30%.
+                 
                 </div>
                 <div>
                   <Link
