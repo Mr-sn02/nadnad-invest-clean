@@ -15,15 +15,6 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-// Generate nomor rekening dompet pribadi 8 digit
-function generateAccountNumber() {
-  let s = "";
-  for (let i = 0; i < 8; i += 1) {
-    s += Math.floor(Math.random() * 10).toString();
-  }
-  return s;
-}
-
 // Rekening tujuan deposit (SILAKAN GANTI NOMOR & NAMA SESUAI REKENING ASLI)
 const DEPOSIT_TARGETS = [
   {
@@ -39,6 +30,24 @@ const DEPOSIT_TARGETS = [
     label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
   },
 ];
+
+// helper: generate 8 digit random
+async function generateUniqueAccountNumber() {
+  for (let i = 0; i < 5; i++) {
+    const candidate = String(
+      Math.floor(10000000 + Math.random() * 90000000)
+    ); // 8 digit
+
+    const { data, error } = await supabase
+      .from("wallets")
+      .select("id")
+      .eq("account_number", candidate)
+      .maybeSingle();
+
+    if (!error && !data) return candidate;
+  }
+  throw new Error("Gagal menghasilkan nomor Dompet Nadnad unik.");
+}
 
 export default function WalletPage() {
   const router = useRouter();
@@ -65,17 +74,17 @@ export default function WalletPage() {
   const [withdrawBankHolder, setWithdrawBankHolder] = useState("");
   const [withdrawUserNote, setWithdrawUserNote] = useState("");
 
-  const [actionLoading, setActionLoading] = useState(false);
-
-  // ==== Form TRANSFER ANTAR DOMPET NADNAD ====
+  // ==== Form TRANSFER INTERNAL ====
   const [transferAmount, setTransferAmount] = useState("");
   const [transferTargetAccount, setTransferTargetAccount] = useState("");
   const [transferNote, setTransferNote] = useState("");
   const [transferLoading, setTransferLoading] = useState(false);
 
+  const [actionLoading, setActionLoading] = useState(false);
+
   // ==== Filter riwayat ====
-  const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW | TRANSFER
-  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED | COMPLETED
+  const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW | INTERNAL_TRANSFER_IN | INTERNAL_TRANSFER_OUT
+  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
 
   // Ambil riwayat transaksi wallet
   const loadTransactions = async (walletId) => {
@@ -97,7 +106,7 @@ export default function WalletPage() {
     setTransactions(data || []);
   };
 
-  // Inisialisasi: cek user, buat/ambil wallet, lalu load transaksi
+  // Inisialisasi: cek user, buat/ambil wallet, generate nomor dompet, lalu load transaksi
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -136,16 +145,11 @@ export default function WalletPage() {
 
         let currentWallet = existing;
 
-        // Jika user belum punya dompet, buat baru + simpan email + nomor rekening dompet pribadi
+        // Jika user belum punya dompet, buat baru + simpan email
         if (!existing) {
-          const newAcc = generateAccountNumber();
           const { data: created, error: createErr } = await supabase
             .from("wallets")
-            .insert({
-              user_id: user.id,
-              user_email: user.email,
-              account_number: newAcc,
-            })
+            .insert({ user_id: user.id, user_email: user.email })
             .select("*")
             .single();
 
@@ -157,25 +161,26 @@ export default function WalletPage() {
             return;
           }
           currentWallet = created;
-        } else {
-          // Jika dompet sudah ada tapi belum punya nomor rekening pribadi → generate
-          if (!currentWallet.account_number) {
-            const newAcc = generateAccountNumber();
-            const { data: updated, error: updateErr } = await supabase
+        }
+
+        // pastikan punya nomor Dompet Nadnad (account_number)
+        if (!currentWallet.account_number) {
+          try {
+            const newAcc = await generateUniqueAccountNumber();
+            const { data: updated, error: updErr } = await supabase
               .from("wallets")
               .update({ account_number: newAcc })
               .eq("id", currentWallet.id)
               .select("*")
               .single();
 
-            if (updateErr) {
-              console.error(
-                "Error set account_number:",
-                updateErr.message
-              );
+            if (updErr) {
+              console.error("Update account_number error:", updErr.message);
             } else if (updated) {
               currentWallet = updated;
             }
+          } catch (genErr) {
+            console.error("Gagal generate nomor dompet:", genErr);
           }
         }
 
@@ -281,7 +286,9 @@ export default function WalletPage() {
       );
     } catch (err) {
       console.error("Create deposit error:", err);
-      alert("Gagal mengajukan deposit.");
+      alert(
+        "Gagal mengajukan deposit.\n\n" + (err?.message || "Unknown error")
+      );
     } finally {
       setActionLoading(false);
     }
@@ -351,14 +358,16 @@ export default function WalletPage() {
       alert("Pengajuan penarikan terkirim dan menunggu persetujuan admin.");
     } catch (err) {
       console.error("Create withdraw error:", err);
-      alert("Gagal mengajukan penarikan.");
+      alert(
+        "Gagal mengajukan penarikan.\n\n" + (err?.message || "Unknown error")
+      );
     } finally {
       setActionLoading(false);
     }
   };
 
-  // ==== Pengajuan TRANSFER ANTAR DOMPET NADNAD ====
-  const handleTransferToWallet = async (e) => {
+  // ==== Pengajuan TRANSFER INTERNAL ====
+  const handleInternalTransfer = async (e) => {
     e.preventDefault();
     if (!wallet || !user) return;
 
@@ -379,23 +388,31 @@ export default function WalletPage() {
 
     const targetAcc = transferTargetAccount.trim();
     if (!targetAcc) {
-      alert("Isi nomor Dompet Nadnad tujuan.");
+      alert("Masukkan nomor Dompet Nadnad tujuan.");
+      return;
+    }
+
+    if (wallet.account_number && targetAcc === wallet.account_number) {
+      alert("Tidak bisa transfer ke Dompet Nadnad sendiri.");
       return;
     }
 
     try {
       setTransferLoading(true);
 
-      // Cari dompet tujuan berdasarkan nomor rekening dompet pribadi
+      // cari dompet tujuan berdasarkan nomor dompet
       const { data: targetWallet, error: targetErr } = await supabase
         .from("wallets")
-        .select("id, user_id, user_email, account_number, balance")
+        .select("*")
         .eq("account_number", targetAcc)
         .maybeSingle();
 
       if (targetErr) {
-        console.error("Error cari dompet tujuan:", targetErr.message);
-        alert("Gagal mencari Dompet Nadnad tujuan.");
+        console.error("Cari wallet tujuan error:", targetErr);
+        alert(
+          "Gagal mencari Dompet Nadnad tujuan.\n\n" +
+            (targetErr.message || "")
+        );
         return;
       }
 
@@ -404,49 +421,71 @@ export default function WalletPage() {
         return;
       }
 
-      if (targetWallet.id === wallet.id) {
-        alert("Tidak bisa transfer ke dompet sendiri.");
+      // 1) catat di tabel wallet_internal_transfers (PENDING)
+      const { error: transferErr } = await supabase
+        .from("wallet_internal_transfers")
+        .insert({
+          from_wallet_id: wallet.id,
+          to_wallet_id: targetWallet.id,
+          from_user_id: user.id,
+          to_user_id: targetWallet.user_id ?? null,
+          from_account_number: wallet.account_number,
+          to_account_number: targetWallet.account_number,
+          amount,
+          status: "PENDING",
+          user_note: transferNote.trim() || null,
+          created_by_email: user.email || null,
+        });
+
+      if (transferErr) {
+        console.error(
+          "Insert wallet_internal_transfers error:",
+          transferErr
+        );
+        alert(
+          "Gagal membuat pengajuan transfer.\n\n" +
+            (transferErr.message || "")
+        );
         return;
       }
 
-      const senderBefore = wallet.balance ?? 0;
-      const senderAfter = senderBefore - amount;
-      const receiverBefore = targetWallet.balance ?? 0;
-      const receiverAfter = receiverBefore + amount;
-
-      // Catat 2 transaksi: 1 di dompet pengirim, 1 di dompet penerima
-      // Status tetap PENDING, admin yang nanti setujui & menyesuaikan saldo.
+      // 2) catat 2 baris di wallet_transactions (OUT & IN) sebagai PENDING
       const { error: txErr } = await supabase
         .from("wallet_transactions")
         .insert([
           {
             wallet_id: wallet.id,
-            type: "TRANSFER",
+            type: "INTERNAL_TRANSFER_OUT",
             amount,
-            balance_before: senderBefore,
-            balance_after: senderAfter,
+            balance_before: wallet.balance ?? 0,
+            balance_after: wallet.balance ?? 0,
             status: "PENDING",
-            note: `Transfer keluar ke Dompet Nadnad ${targetWallet.account_number}`,
+            note: `Pengajuan transfer ke Dompet Nadnad ${targetWallet.account_number}`,
             user_email: user.email || null,
             user_note: transferNote.trim() || null,
           },
           {
             wallet_id: targetWallet.id,
-            type: "TRANSFER",
+            type: "INTERNAL_TRANSFER_IN",
             amount,
-            balance_before: receiverBefore,
-            balance_after: receiverAfter,
+            balance_before: targetWallet.balance ?? 0,
+            balance_after: targetWallet.balance ?? 0,
             status: "PENDING",
-            note: `Transfer masuk dari Dompet Nadnad ${wallet.account_number}`,
+            note: `Pengajuan transfer dari Dompet Nadnad ${wallet.account_number}`,
             user_email: targetWallet.user_email || null,
             user_note: transferNote.trim() || null,
           },
         ]);
 
       if (txErr) {
-        console.error("Transfer insert error:", txErr.message);
-        alert("Gagal membuat pengajuan transfer.");
-        return;
+        console.error(
+          "Insert wallet_transactions (internal) error:",
+          txErr
+        );
+        alert(
+          "Pengajuan transfer tersimpan, tetapi gagal mencatat riwayat transaksi.\n\n" +
+            (txErr.message || "")
+        );
       }
 
       setTransferAmount("");
@@ -456,11 +495,18 @@ export default function WalletPage() {
       await loadTransactions(wallet.id);
 
       alert(
-        "Pengajuan transfer antar Dompet Nadnad berhasil dibuat dan menunggu persetujuan admin."
+        `Pengajuan transfer antar Dompet Nadnad berhasil dibuat.\n\n` +
+          `Dari: ${wallet.account_number}\n` +
+          `Ke: ${targetWallet.account_number}\n` +
+          `Nominal: ${formatCurrency(amount)}\n\n` +
+          `Status masih PENDING dan menunggu persetujuan admin.`
       );
     } catch (err) {
-      console.error("Transfer error:", err);
-      alert("Terjadi kesalahan saat membuat pengajuan transfer.");
+      console.error("Unexpected internal transfer error:", err);
+      alert(
+        "Terjadi kesalahan saat pengajuan transfer.\n\n" +
+          (err?.message || "")
+      );
     } finally {
       setTransferLoading(false);
     }
@@ -506,16 +552,15 @@ export default function WalletPage() {
   // Filter transaksi di client
   const filteredTransactions = transactions.filter((tx) => {
     const matchType =
-      filterType === "ALL" ? true : tx.type === filterType;
+      filterType === "ALL"
+        ? true
+        : tx.type === filterType ||
+          (filterType === "DEPOSIT" && tx.type === "DEPOSIT") ||
+          (filterType === "WITHDRAW" && tx.type === "WITHDRAW");
     const matchStatus =
       filterStatus === "ALL" ? true : tx.status === filterStatus;
     return matchType && matchStatus;
   });
-
-  const username =
-    user?.user_metadata?.username ||
-    user?.user_metadata?.Username ||
-    (user?.email ? user.email.split("@")[0] : "-");
 
   // ==== RENDER: halaman wallet utama ====
   return (
@@ -559,9 +604,8 @@ export default function WalletPage() {
           </h1>
           <p className="nanad-dashboard-body">
             Pengajuan deposit, penarikan, dan transfer di halaman ini akan
-            berstatus <strong>PENDING</strong> dan menunggu persetujuan
-            admin. Saldo baru akan berubah setelah pengajuan disetujui secara
-            manual.
+            berstatus <strong>PENDING</strong> dan menunggu persetujuan admin.
+            Saldo baru akan berubah setelah pengajuan disetujui secara manual.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -577,33 +621,99 @@ export default function WalletPage() {
                 {wallet?.currency || "IDR"}
               </p>
             </div>
-            <div className="nanad-dashboard-stat-card">
-              <p className="nanad-dashboard-stat-label">
-                Nomor Dompet Nadnad
-              </p>
-              <p className="nanad-dashboard-stat-number">
-                {wallet?.account_number || "Belum tersedia"}
-              </p>
-              <p
-                className="nanad-dashboard-body"
-                style={{ marginTop: "0.35rem", fontSize: "0.78rem" }}
-              >
-                Nomor ini berfungsi seperti nomor rekening. Bagikan ke
-                pengguna lain Dompet Nadnad jika ingin menerima transfer
-                internal.
-              </p>
-            </div>
           </div>
 
-          <p
-            className="nanad-dashboard-body"
-            style={{ marginTop: "0.4rem", fontSize: "0.8rem" }}
+          {/* Info pemilik Dompet Nadnad */}
+          <section
+            style={{
+              marginTop: "1rem",
+              marginBottom: "1rem",
+              padding: "0.9rem 1.1rem",
+              borderRadius: "18px",
+              border: "1px solid rgba(148,163,184,0.5)",
+              background:
+                "radial-gradient(circle at top, rgba(148,163,184,0.10), rgba(15,23,42,1))",
+              fontSize: "0.85rem",
+            }}
           >
-            Username kamu: <strong>{username}</strong>
-          </p>
+            {/* Nama pengguna / label dompet */}
+            <div style={{ marginBottom: "0.6rem" }}>
+              <div style={{ opacity: 0.8 }}>Nama pengguna Dompet Nadnad</div>
+              <input
+                type="text"
+                value={wallet?.owner_name || ""}
+                onChange={(e) =>
+                  setWallet((prev) =>
+                    prev ? { ...prev, owner_name: e.target.value } : prev
+                  )
+                }
+                onBlur={async (e) => {
+                  const newName = e.target.value.trim();
+                  if (!wallet || !newName || newName === wallet.owner_name)
+                    return;
+
+                  try {
+                    const { error } = await supabase
+                      .from("wallets")
+                      .update({ owner_name: newName })
+                      .eq("id", wallet.id);
+
+                    if (error) {
+                      console.error(
+                        "Update owner_name error:",
+                        error.message
+                      );
+                      alert("Gagal menyimpan nama pengguna.");
+                    }
+                  } catch (err) {
+                    console.error("Unexpected owner_name error:", err);
+                    alert("Terjadi kesalahan saat menyimpan nama pengguna.");
+                  }
+                }}
+                placeholder="contoh: Nadnad Family, Dana Umum, dll."
+                style={{
+                  marginTop: "0.25rem",
+                  width: "100%",
+                  borderRadius: "999px",
+                  border: "1px solid rgba(148,163,184,0.8)",
+                  background:
+                    "radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,1))",
+                  padding: "0.4rem 0.8rem",
+                  color: "#e5e7eb",
+                  fontSize: "0.85rem",
+                  outline: "none",
+                }}
+              />
+            </div>
+
+            {/* Nomor rekening Dompet Nadnad */}
+            <div>
+              <div style={{ opacity: 0.8 }}>
+                Nomor Dompet Nadnad (seperti no. rekening)
+              </div>
+              <div
+                style={{
+                  marginTop: "0.25rem",
+                  fontFamily: "monospace",
+                  fontSize: "0.95rem",
+                  letterSpacing: "0.12em",
+                }}
+              >
+                {wallet?.account_number || "— belum tersedia —"}
+              </div>
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}
+              >
+                Nomor ini bisa kamu bagikan ke pengguna lain Dompet Nadnad
+                untuk kirim saldo internal. Admin akan menyetujui sebelum saldo
+                benar-benar berpindah.
+              </p>
+            </div>
+          </section>
         </section>
 
-        {/* DEPOSIT & WITHDRAW (tetap seperti sebelumnya) */}
+        {/* DEPOSIT, WITHDRAW, TRANSFER INTERNAL */}
         <section className="nanad-dashboard-table-section">
           {/* Form DEPOSIT */}
           <div className="nanad-dashboard-deposits">
@@ -811,21 +921,21 @@ export default function WalletPage() {
           </div>
         </section>
 
-        {/* TRANSFER ANTAR DOMPET NADNAD */}
+        {/* TRANSFER INTERNAL */}
         <section className="nanad-dashboard-table-section">
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Transfer antar Dompet Nadnad</h3>
               <p>
-                Transfer saldo <strong>internal</strong> ke dompet pengguna
-                lain menggunakan <strong>Nomor Dompet Nadnad</strong> mereka.
-                Pengajuan akan berstatus PENDING dan admin yang menyelesaikan
-                pencatatannya.
+                Gunakan fitur ini untuk mengirim saldo internal ke Dompet
+                Nadnad lain menggunakan nomor Dompet Nadnad (seperti nomor
+                rekening). Sama seperti fitur lain, pengajuan ini{" "}
+                <strong>akan dicek dan disetujui admin terlebih dahulu</strong>.
               </p>
             </div>
 
             <form
-              onSubmit={handleTransferToWallet}
+              onSubmit={handleInternalTransfer}
               className="nanad-dashboard-deposit-form"
             >
               <label className="nanad-dashboard-deposit-amount">
@@ -834,7 +944,7 @@ export default function WalletPage() {
                   type="number"
                   min="0"
                   step="1000"
-                  placeholder="contoh: 50000"
+                  placeholder="contoh: 100000"
                   value={transferAmount}
                   onChange={(e) => setTransferAmount(e.target.value)}
                 />
@@ -844,11 +954,9 @@ export default function WalletPage() {
                 Nomor Dompet Nadnad tujuan
                 <input
                   type="text"
-                  placeholder="contoh: 12345678 (8 digit)"
+                  placeholder="contoh: 12345678"
                   value={transferTargetAccount}
-                  onChange={(e) =>
-                    setTransferTargetAccount(e.target.value)
-                  }
+                  onChange={(e) => setTransferTargetAccount(e.target.value)}
                 />
               </label>
 
@@ -858,12 +966,18 @@ export default function WalletPage() {
                   placeholder="contoh: transfer untuk iuran arisan / bayar tagihan."
                   value={transferNote}
                   onChange={(e) => setTransferNote(e.target.value)}
-                  style={{
-                    minHeight: "70px",
-                    resize: "vertical",
-                  }}
+                  style={{ minHeight: "70px", resize: "vertical" }}
                 />
               </label>
+
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.75rem", marginTop: "0.75rem" }}
+              >
+                Pastikan nomor Dompet Nadnad tujuan benar sebelum mengajukan.
+                Seperti fitur lain, admin akan melihat pengajuan ini sebelum
+                saldo antardompet benar-benar disesuaikan.
+              </p>
 
               <button
                 type="submit"
@@ -871,18 +985,9 @@ export default function WalletPage() {
                 className="nanad-dashboard-deposit-submit"
               >
                 {transferLoading
-                  ? "Mengajukan transfer..."
-                  : "Ajukan transfer"}
+                  ? "Mengirim pengajuan transfer..."
+                  : "Mengajukan transfer..."}
               </button>
-
-              <p
-                className="nanad-dashboard-body"
-                style={{ fontSize: "0.75rem", marginTop: "0.6rem" }}
-              >
-                Pastikan nomor Dompet Nadnad tujuan benar sebelum mengajukan.
-                Seperti fitur lain, admin akan melihat pengajuan ini sebelum
-                saldo antardompet benar-benar disesuaikan.
-              </p>
             </form>
           </div>
         </section>
@@ -911,7 +1016,7 @@ export default function WalletPage() {
             >
               <div style={{ display: "flex", gap: "0.4rem" }}>
                 <span style={{ opacity: 0.7 }}>Jenis:</span>
-                {["ALL", "DEPOSIT", "WITHDRAW", "TRANSFER"].map((t) => (
+                {["ALL", "DEPOSIT", "WITHDRAW"].map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -934,47 +1039,41 @@ export default function WalletPage() {
                       ? "Semua"
                       : t === "DEPOSIT"
                       ? "Deposit"
-                      : t === "WITHDRAW"
-                      ? "Penarikan"
-                      : "Transfer"}
+                      : "Penarikan"}
                   </button>
                 ))}
               </div>
 
               <div style={{ display: "flex", gap: "0.4rem" }}>
                 <span style={{ opacity: 0.7 }}>Status:</span>
-                {["ALL", "PENDING", "APPROVED", "COMPLETED", "REJECTED"].map(
-                  (s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setFilterStatus(s)}
-                      style={{
-                        padding: "0.25rem 0.7rem",
-                        borderRadius: "999px",
-                        border:
-                          filterStatus === s
-                            ? "1px solid rgba(56,189,248,0.9)"
-                            : "1px solid rgba(148,163,184,0.4)",
-                        background:
-                          filterStatus === s
-                            ? "radial-gradient(circle at top, rgba(56,189,248,0.35), rgba(15,23,42,1))"
-                            : "rgba(15,23,42,0.6)",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {s === "ALL"
-                        ? "Semua"
-                        : s === "PENDING"
-                        ? "Pending"
-                        : s === "APPROVED"
-                        ? "Disetujui"
-                        : s === "COMPLETED"
-                        ? "Selesai"
-                        : "Ditolak"}
-                    </button>
-                  )
-                )}
+                {["ALL", "PENDING", "APPROVED", "REJECTED"].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setFilterStatus(s)}
+                    style={{
+                      padding: "0.25rem 0.7rem",
+                      borderRadius: "999px",
+                      border:
+                        filterStatus === s
+                          ? "1px solid rgba(56,189,248,0.9)"
+                          : "1px solid rgba(148,163,184,0.4)",
+                      background:
+                        filterStatus === s
+                          ? "radial-gradient(circle at top, rgba(56,189,248,0.35), rgba(15,23,42,1))"
+                          : "rgba(15,23,42,0.6)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {s === "ALL"
+                      ? "Semua"
+                      : s === "PENDING"
+                      ? "Pending"
+                      : s === "APPROVED"
+                      ? "Disetujui"
+                      : "Ditolak"}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -1012,7 +1111,7 @@ export default function WalletPage() {
                     statusColor = "#f87171";
                   }
 
-                  let typeLabel = "";
+                  let typeLabel = "Transaksi";
                   let typeColor = "#38bdf8";
 
                   if (tx.type === "DEPOSIT") {
@@ -1021,21 +1120,12 @@ export default function WalletPage() {
                   } else if (tx.type === "WITHDRAW") {
                     typeLabel = "Penarikan";
                     typeColor = "#fb923c";
-                  } else if (tx.type === "TRANSFER") {
-                    // Bedakan masuk / keluar dari balance_before vs balance_after
-                    if (
-                      typeof tx.balance_before === "number" &&
-                      typeof tx.balance_after === "number" &&
-                      tx.balance_after > tx.balance_before
-                    ) {
-                      typeLabel = "Transfer masuk";
-                      typeColor = "#22c55e";
-                    } else {
-                      typeLabel = "Transfer keluar";
-                      typeColor = "#f97316";
-                    }
-                  } else {
-                    typeLabel = tx.type || "-";
+                  } else if (tx.type === "INTERNAL_TRANSFER_OUT") {
+                    typeLabel = "Transfer keluar";
+                    typeColor = "#f97316";
+                  } else if (tx.type === "INTERNAL_TRANSFER_IN") {
+                    typeLabel = "Transfer masuk";
+                    typeColor = "#22c55e";
                   }
 
                   return (
@@ -1092,17 +1182,16 @@ export default function WalletPage() {
                           </>
                         )}
 
-                        {tx.type === "WITHDRAW" &&
-                          tx.withdraw_bank_name && (
-                            <>
-                              <br />
-                              <small>
-                                ke {tx.withdraw_bank_name} ·{" "}
-                                {tx.withdraw_bank_account} (
-                                {tx.withdraw_bank_holder})
-                              </small>
-                            </>
-                          )}
+                        {tx.type === "WITHDRAW" && tx.withdraw_bank_name && (
+                          <>
+                            <br />
+                            <small>
+                              ke {tx.withdraw_bank_name} ·{" "}
+                              {tx.withdraw_bank_account} (
+                              {tx.withdraw_bank_holder})
+                            </small>
+                          </>
+                        )}
 
                         {tx.user_note && (
                           <>
@@ -1117,8 +1206,7 @@ export default function WalletPage() {
                           <>
                             <br />
                             <small>
-                              <strong>Catatan admin:</strong>{" "}
-                              {tx.admin_note}
+                              <strong>Catatan admin:</strong> {tx.admin_note}
                             </small>
                           </>
                         )}
