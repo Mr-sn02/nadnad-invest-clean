@@ -337,11 +337,11 @@ export default function BalanceBoostPromoPage() {
             Balance Boost – event pengembalian bertahap dengan peluang bonus.
           </h1>
           <p className="nanad-dashboard-body">
-            Selama periode promo, kamu bisa &quot;menitipkan&quot; sebagian
-            saldo ke event ini. Pokok akan dikembalikan ke Dompet Nadnad dalam
-            beberapa kali cicilan harian, dan sebagian pengguna yang beruntung
-            berpeluang mendapat bonus ekstra. Semua proses pengembalian dilakukan{" "}
-            <strong>manual oleh admin</strong> untuk menghindari kecurangan sistem.
+            Selama periode promo, dana yang kamu &quot;titipkan&quot; akan
+            dikembalikan setiap hari selama 30 hari, lengkap dengan keuntungan
+            event sebesar 10% hingga 30% sesuai tier yang kamu pilih. Seluruh 
+            proses pengembalian dilakukan secara teratur dan transparan untuk
+            menjamin keamanan serta kenyamanan pengguna.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
