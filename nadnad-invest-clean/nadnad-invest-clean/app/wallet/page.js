@@ -18,22 +18,6 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-// Rekening tujuan deposit (SILAKAN GANTI NOMOR & NAMA SESUAI REKENING ASLI)
-const DEPOSIT_TARGETS = [
-  {
-    id: "BCA-UTAMA",
-    label: "BCA · 1234567890 · a.n. MONEYMALL", // rekening utama
-  },
-  {
-    id: "BRI-CABANG",
-    label: "BRI · 5556667778 · a.n. Dompet Nadnad Bandung", // rekening cabang (brand baru)
-  },
-  {
-    id: "DANA-SON",
-    label: "DANA · 0812-0000-0000 · a.n. Bang Son", // e-wallet contoh
-  },
-];
-
 // Format tanggal + jam
 function formatDateTime(dateStr) {
   if (!dateStr) return "-";
@@ -69,16 +53,13 @@ export default function WalletPage() {
 
   // Filter transaksi
   const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW | ADJUST | PROMO
-  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
+  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED | COMPLETED
 
- // ==== Form DEPOSIT ====
+  // Form deposit
   const [depositAmount, setDepositAmount] = useState("");
-  const [depositTarget, setDepositTarget] = useState(
-    DEPOSIT_TARGETS[0]?.id || ""
-  );
-  const [depositProofFile, setDepositProofFile] = useState(null);
-  const [depositSenderName, setDepositSenderName] = useState("");
-  const [depositUserNote, setDepositUserNote] = useState("");
+  const [depositTarget, setDepositTarget] = useState("");
+  const [depositNote, setDepositNote] = useState("");
+  const [depositLoading, setDepositLoading] = useState(false);
 
   // Form withdraw
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -167,6 +148,8 @@ export default function WalletPage() {
               owner_name:
                 metaUsername || user.email?.split("@")[0] || null,
               account_number: accountNumber,
+              // opsional: admin bisa isi nanti di panel admin
+              // deposit_destination_admin: null
             })
             .select("*")
             .single();
@@ -436,6 +419,11 @@ export default function WalletPage() {
     return matchType && matchStatus;
   });
 
+  // Rekening tujuan isi saldo (diatur admin lewat kolom wallets.deposit_destination_admin)
+  const depositDestination =
+    wallet?.deposit_destination_admin ||
+    "Belum diatur. Silakan hubungi admin Dompet Nadnad untuk mengetahui rekening/akun tujuan setoran.";
+
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
@@ -585,7 +573,7 @@ export default function WalletPage() {
             </div>
 
             {/* Nomor rekening Dompet Nadnad */}
-            <div>
+            <div style={{ marginBottom: "0.6rem" }}>
               <div style={{ opacity: 0.8 }}>
                 Nomor Dompet Nadnad (seperti no. rekening)
               </div>
@@ -608,6 +596,30 @@ export default function WalletPage() {
                 menggunakan nomor ini).
               </p>
             </div>
+
+            {/* Rekening tujuan isi saldo dompet (diatur admin) */}
+            <div>
+              <div style={{ opacity: 0.8 }}>
+                Rekening / akun tujuan untuk isi saldo Dompet Nadnad
+              </div>
+              <div
+                style={{
+                  marginTop: "0.25rem",
+                  fontSize: "0.85rem",
+                  whiteSpace: "pre-line",
+                }}
+              >
+                {depositDestination}
+              </div>
+              <p
+                className="nanad-dashboard-body"
+                style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}
+              >
+                Informasi ini dapat diubah oleh admin (misalnya di panel
+                admin dompet) tanpa mengubah riwayat transaksi yang sudah
+                tercatat.
+              </p>
+            </div>
           </section>
         </section>
 
@@ -618,8 +630,9 @@ export default function WalletPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Pengajuan setoran &amp; penarikan</h3>
               <p>
-                Ajukan deposit ke Dompet Nadnad atau penarikan ke rekening
-                tujuan. Admin akan memproses secara manual.
+                Setelah transfer ke rekening tujuan, kamu bisa isi form di
+                bawah untuk mengajukan <strong>deposit isi saldo</strong> ke
+                Dompet Nadnad, atau ajukan penarikan.
               </p>
             </div>
 
@@ -633,7 +646,7 @@ export default function WalletPage() {
                 className="nanad-dashboard-stat-label"
                 style={{ marginBottom: "0.35rem" }}
               >
-                Pengajuan deposit ke Dompet Nadnad
+                Pengajuan deposit isi saldo Dompet Nadnad
               </h4>
 
               <label className="nanad-dashboard-deposit-amount">
@@ -649,10 +662,10 @@ export default function WalletPage() {
               </label>
 
               <label className="nanad-dashboard-deposit-amount">
-                Rekening tujuan Dompet Nadnad / catatan transfer
+                Catatan transfer (opsional)
                 <input
                   type="text"
-                  placeholder="contoh: BCA 123456 a.n. Nadnad, atau e-wallet, dll."
+                  placeholder="contoh: sudah transfer dari BCA 123456 a.n. Nadnad"
                   value={depositTarget}
                   onChange={(e) => setDepositTarget(e.target.value)}
                 />
