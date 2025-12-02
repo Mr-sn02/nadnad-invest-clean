@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import supabase from "../../lib/supabaseClient";
 
-// Email admin sementara (bisa diganti pakai role di DB nanti)
+// Email admin sementara
 const ADMIN_EMAILS = ["sonnnn603@gmail.com"];
 
 // Format rupiah
@@ -51,6 +51,10 @@ export default function WalletPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
+  // Filter transaksi
+  const [filterType, setFilterType] = useState("ALL"); // ALL | DEPOSIT | WITHDRAW | ADJUST | PROMO
+  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL | PENDING | APPROVED | REJECTED
+
   // Form deposit
   const [depositAmount, setDepositAmount] = useState("");
   const [depositTarget, setDepositTarget] = useState("");
@@ -75,7 +79,7 @@ export default function WalletPage() {
       .select("*")
       .eq("wallet_id", walletId)
       .order("created_at", { ascending: false })
-      .limit(30);
+      .limit(50);
 
     if (error) {
       console.error("Load transactions error:", error.message);
@@ -180,12 +184,13 @@ export default function WalletPage() {
 
           // Kalau owner_name masih kosong dan ada username → isi otomatis
           if (!currentWallet.owner_name && metaUsername) {
-            const { data: updatedOwner, error: ownerErr } = await supabase
-              .from("wallets")
-              .update({ owner_name: metaUsername })
-              .eq("id", currentWallet.id)
-              .select("*")
-              .single();
+            const { data: updatedOwner, error: ownerErr } =
+              await supabase
+                .from("wallets")
+                .update({ owner_name: metaUsername })
+                .eq("id", currentWallet.id)
+                .select("*")
+                .single();
 
             if (ownerErr) {
               console.error(
@@ -256,18 +261,16 @@ export default function WalletPage() {
     try {
       setDepositLoading(true);
 
-      const { error } = await supabase
-        .from("wallet_transactions")
-        .insert({
-          wallet_id: wallet.id,
-          user_id: user.id,
-          user_email: user.email,
-          type: "DEPOSIT",
-          amount,
-          status: "PENDING",
-          user_note: depositNote || null,
-          deposit_target: depositTarget || null,
-        });
+      const { error } = await supabase.from("wallet_transactions").insert({
+        wallet_id: wallet.id,
+        user_id: user.id,
+        user_email: user.email,
+        type: "DEPOSIT",
+        amount,
+        status: "PENDING",
+        user_note: depositNote || null,
+        deposit_target: depositTarget || null,
+      });
 
       if (error) {
         console.error("Create deposit error:", error.message);
@@ -321,20 +324,18 @@ export default function WalletPage() {
     try {
       setWithdrawLoading(true);
 
-      const { error } = await supabase
-        .from("wallet_transactions")
-        .insert({
-          wallet_id: wallet.id,
-          user_id: user.id,
-          user_email: user.email,
-          type: "WITHDRAW",
-          amount,
-          status: "PENDING",
-          user_note: withdrawNote || null,
-          withdraw_bank_name: withdrawBankName.trim(),
-          withdraw_bank_account: withdrawBankAccount.trim(),
-          withdraw_bank_holder: withdrawBankHolder.trim() || null,
-        });
+      const { error } = await supabase.from("wallet_transactions").insert({
+        wallet_id: wallet.id,
+        user_id: user.id,
+        user_email: user.email,
+        type: "WITHDRAW",
+        amount,
+        status: "PENDING",
+        user_note: withdrawNote || null,
+        withdraw_bank_name: withdrawBankName.trim(),
+        withdraw_bank_account: withdrawBankAccount.trim(),
+        withdraw_bank_holder: withdrawBankHolder.trim() || null,
+      });
 
       if (error) {
         console.error("Create withdraw error:", error.message);
@@ -407,6 +408,15 @@ export default function WalletPage() {
     user?.user_metadata?.Username ||
     "-";
 
+  // Terapkan filter transaksi
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchType =
+      filterType === "ALL" ? true : tx.type === filterType;
+    const matchStatus =
+      filterStatus === "ALL" ? true : tx.status === filterStatus;
+    return matchType && matchStatus;
+  });
+
   return (
     <main className="nanad-dashboard-page">
       <div className="nanad-dashboard-shell">
@@ -423,6 +433,15 @@ export default function WalletPage() {
           </div>
 
           <div style={{ display: "flex", gap: "0.6rem" }}>
+            {isAdmin && (
+              <button
+                type="button"
+                className="nanad-dashboard-logout"
+                onClick={() => router.push("/admin/wallets")}
+              >
+                Panel admin dompet
+              </button>
+            )}
             <button
               type="button"
               className="nanad-dashboard-logout"
@@ -734,22 +753,80 @@ export default function WalletPage() {
             </form>
           </div>
 
-          {/* Kolom kanan: riwayat transaksi */}
+          {/* Kolom kanan: riwayat transaksi + filter */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
               <h3>Riwayat transaksi Dompet Nadnad</h3>
               <p>
-                Ringkasan pengajuan deposit, penarikan, atau penyesuaian
-                (ADJUST) yang terkait dengan dompet ini.
+                Ringkasan pengajuan deposit, penarikan, promo, atau
+                penyesuaian (ADJUST) yang terkait dengan dompet ini.
               </p>
             </div>
 
-            {transactions.length === 0 ? (
+            {/* Filter */}
+            <div
+              style={{
+                marginTop: "0.75rem",
+                marginBottom: "0.5rem",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+                fontSize: "0.8rem",
+              }}
+            >
+              <div>
+                Tipe:
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  style={{
+                    marginLeft: "0.35rem",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(148,163,184,0.8)",
+                    background:
+                      "radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,1))",
+                    padding: "0.2rem 0.6rem",
+                    color: "#e5e7eb",
+                  }}
+                >
+                  <option value="ALL">Semua</option>
+                  <option value="DEPOSIT">Deposit</option>
+                  <option value="WITHDRAW">Penarikan</option>
+                  <option value="ADJUST">Adjust</option>
+                  <option value="PROMO">Promo/Event</option>
+                </select>
+              </div>
+
+              <div>
+                Status:
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  style={{
+                    marginLeft: "0.35rem",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(148,163,184,0.8)",
+                    background:
+                      "radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,1))",
+                    padding: "0.2rem 0.6rem",
+                    color: "#e5e7eb",
+                  }}
+                >
+                  <option value="ALL">Semua</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            {filteredTransactions.length === 0 ? (
               <p
                 className="nanad-dashboard-body"
                 style={{ marginTop: "0.8rem" }}
               >
-                Belum ada transaksi tercatat untuk Dompet Nadnad ini.
+                Belum ada transaksi yang cocok dengan filter ini.
               </p>
             ) : (
               <div
@@ -774,12 +851,16 @@ export default function WalletPage() {
                   </div>
                 </div>
 
-                {transactions.map((tx) => {
+                {filteredTransactions.map((tx) => {
                   const typeLabel =
                     tx.type === "DEPOSIT"
                       ? "Deposit"
                       : tx.type === "WITHDRAW"
                       ? "Penarikan"
+                      : tx.type === "ADJUST"
+                      ? "Adjust"
+                      : tx.type === "PROMO"
+                      ? "Promo"
                       : tx.type || "-";
 
                   let statusLabel = tx.status || "-";
