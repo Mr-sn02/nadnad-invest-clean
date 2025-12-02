@@ -65,9 +65,9 @@ export default function LandingPage() {
               style={{ fontSize: "0.78rem", marginTop: "0.9rem" }}
             >
               Catatan: Dompet Nadnad berfungsi sebagai{" "}
-              <strong>alat bantu pencatatan &amp; perencanaan</strong>. Dana
-              nyata tetap dikelola di rekening resmi masing-masing pengguna
-              sesuai ketentuan dan regulasi yang berlaku.
+              <strong>dompet tabungan digital &amp; pencatat perencanaan</strong>. 
+              Dana nyata diolah melalui Dompet Nadnad secara resmi, sesuai 
+              ketentuan dan regulasi yang berlaku.
             </p>
           </div>
 
