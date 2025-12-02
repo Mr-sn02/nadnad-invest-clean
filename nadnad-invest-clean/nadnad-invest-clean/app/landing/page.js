@@ -3,6 +3,14 @@
 
 import Link from "next/link";
 
+const APP_URL = "https://dompet-nadnad.app"; // ganti ke domain final kalau sudah fix
+
+// Link share WhatsApp sederhana
+const waShareText = encodeURIComponent(
+  `Aku lagi pakai Dompet Nadnad buat rapihin tabungan & rencana dana.\nCek di ${APP_URL}/register kalau mau coba juga.`
+);
+const waShareLink = `https://wa.me/?text=${waShareText}`;
+
 export default function LandingPage() {
   return (
     <main className="nanad-landing-page">
@@ -14,17 +22,20 @@ export default function LandingPage() {
             <div>
               <p className="nanad-landing-brand-title">Dompet Nadnad</p>
               <p className="nanad-landing-brand-sub">
-                Dompet perencanaan &amp; simulasi dana
+                Dompet pintar &amp; ruang rencana dana
               </p>
             </div>
           </div>
 
           <nav className="nanad-landing-nav">
             <a href="#value" className="nanad-landing-nav-link">
-              Kenapa Nadnad?
+              Kenapa Dompet Nadnad?
             </a>
             <a href="#how-it-works" className="nanad-landing-nav-link">
               Cara kerja
+            </a>
+            <a href="#stories" className="nanad-landing-nav-link">
+              Cerita pengguna
             </a>
             <a href="#safety" className="nanad-landing-nav-link">
               Keamanan
@@ -44,16 +55,16 @@ export default function LandingPage() {
         {/* HERO */}
         <section className="nanad-landing-hero">
           <div className="nanad-landing-hero-left">
-            <p className="nanad-landing-eyebrow">PLAN FIRST, INVEST LATER</p>
+            <p className="nanad-landing-eyebrow">PLAN FIRST, MOVE MONEY LATER</p>
             <h1 className="nanad-landing-heading">
-              Satu ruang rapi untuk
+              Satu dompet rapi untuk
               <span> semua rencana keuanganmu.</span>
             </h1>
             <p className="nanad-landing-hero-text">
               Dompet Nadnad membantumu menyusun rencana dana darurat, rumah,
               liburan, sampai pensiun — dengan simulasi setoran yang jernih,
-              tanpa memindahkan uang dari rekening atau e-wallet yang kamu pakai
-              sekarang.
+              tanpa harus memindahkan uang dari rekening atau e-wallet yang kamu
+              pakai sekarang.
             </p>
 
             <div className="nanad-landing-hero-cta">
@@ -61,13 +72,13 @@ export default function LandingPage() {
                 Mulai susun rencana
               </Link>
               <Link href="/login" className="nanad-landing-cta-secondary">
-                Lihat dashboard
+                Lihat dashboard demo
               </Link>
             </div>
 
             <p className="nanad-landing-hero-note">
-              Tidak ada janji imbal hasil. Tidak ada jualan produk. Hanya ruang
-              untuk berpikir jernih tentang uangmu.
+              Tidak ada janji imbal hasil. Tidak ada jualan produk. Hanya dompet
+              &amp; ruang tenang untuk berpikir jernih tentang uangmu.
             </p>
           </div>
 
@@ -217,6 +228,48 @@ export default function LandingPage() {
           </ol>
         </section>
 
+        {/* USER STORIES */}
+        <section
+          id="stories"
+          className="nanad-landing-section nanad-landing-section-soft"
+        >
+          <div className="nanad-landing-section-header">
+            <p className="nanad-landing-eyebrow">Cerita pengguna</p>
+            <h2>
+              Bukan janji cuan, tapi cerita orang yang lebih tenang sama uangnya.
+            </h2>
+          </div>
+
+          <div className="nanad-landing-value-grid">
+            <article className="nanad-landing-value-card">
+              <h3>Pisah uang usaha &amp; uang pribadi</h3>
+              <p>
+                “Dulu uang orderan &amp; uang jajan nyampur di satu rekening.
+                Sekarang aku pakai Dompet Nadnad khusus buat catat arus usaha,
+                jadi kelihatan mana yang benar-benar laba.”
+              </p>
+            </article>
+
+            <article className="nanad-landing-value-card">
+              <h3>Nabung kecil tapi konsisten</h3>
+              <p>
+                “Aku bikin rencana dana darurat cuma 300 ribu per bulan. Kecil,
+                tapi waktu lihat progresnya jalan, rasanya macam punya teman
+                yang rajin ngingetin.”
+              </p>
+            </article>
+
+            <article className="nanad-landing-value-card">
+              <h3>Rencana keluarga lebih rapi</h3>
+              <p>
+                “Aku dan pasangan pakai satu Dompet Nadnad buat rencana sekolah
+                anak dan liburan. Semua catatan dan setoran ada di satu ruang,
+                nggak hilang di chat.”
+              </p>
+            </article>
+          </div>
+        </section>
+
         {/* SAFETY / DISCLAIMER SHORT */}
         <section
           id="safety"
@@ -252,6 +305,53 @@ export default function LandingPage() {
                 mengambil keputusan yang lebih sadar.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* SHARE / REFERRAL LIGHT SECTION */}
+        <section className="nanad-landing-section">
+          <div className="nanad-landing-section-header">
+            <p className="nanad-landing-eyebrow">Bagikan Dompet Nadnad</p>
+            <h2>
+              Biar nyebarnya pelan tapi pasti, dari mulut ke mulut yang saling percaya.
+            </h2>
+          </div>
+
+          <div className="nanad-landing-value-grid">
+            <article className="nanad-landing-value-card">
+              <h3>Kode referral Dompet Nadnad</h3>
+              <p>
+                Setiap akun punya kode unik (misalnya <strong>NAD603A1</strong>).
+                Kamu bisa bagikan link pendaftaran, dan nanti ada kesempatan
+                hadiah tambahan di event promo tertentu (bukan janji return).
+              </p>
+            </article>
+
+            <article className="nanad-landing-value-card">
+              <h3>Share cepat via WhatsApp</h3>
+              <p style={{ marginBottom: "0.6rem" }}>
+                Kirim pesan siap pakai ke teman atau keluarga yang lagi pengen
+                merapikan keuangan.
+              </p>
+              <a
+                href={waShareLink}
+                target="_blank"
+                rel="noreferrer"
+                className="nanad-landing-cta-secondary"
+                style={{ display: "inline-block" }}
+              >
+                Bagikan lewat WhatsApp
+              </a>
+            </article>
+
+            <article className="nanad-landing-value-card">
+              <h3>Screenshot progres</h3>
+              <p>
+                Kamu bebas screenshot progres dompetmu dan cerita versi kamu
+                sendiri di sosmed. Tidak perlu sebut angka saldo kalau tidak
+                nyaman — cukup cerita rasanya lebih tenang.
+              </p>
+            </article>
           </div>
         </section>
 
