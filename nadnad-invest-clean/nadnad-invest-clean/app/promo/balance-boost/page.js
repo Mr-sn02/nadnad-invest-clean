@@ -481,7 +481,7 @@ export default function BalanceBoostPromoPage() {
                   </div>
                   <div style={{ fontSize: "0.8rem" }}>
                     <p style={{ margin: 0 }}>
-                      👤 Kuota contoh:{" "}
+                      👤 Kuota contoh:{"unlimited"}
                       <strong>{t.winnersPerMonth} pemenang / bulan</strong>
                     </p>
                     <p style={{ margin: 0 }}>
