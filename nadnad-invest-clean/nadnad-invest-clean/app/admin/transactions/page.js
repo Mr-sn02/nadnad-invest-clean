@@ -941,7 +941,7 @@ export default function AdminTransactionsPage() {
                             onChange={(e) =>
                               setTransferNotes((prev) => ({
                                 ...prev,
-                                [tr.id] = e.target.value,
+                                [tr.id]: e.target.value,
                               }))
                             }
                             placeholder="contoh: saldo cukup, transfer ok · atau: data dompet tujuan dikonfirmasi via WhatsApp."
