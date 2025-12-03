@@ -265,7 +265,7 @@ export default function WalletPage() {
           balance_before: before,
           balance_after: after,
           status: "PENDING",
-          note: "Pengajuan deposit menunggu persetujuan admin.",
+          note: "Pengajuan deposit menunggu persetujuan Otomatis.",
           deposit_target: targetLabel,
           proof_image_url: proofImageUrl,
           sender_name: depositSenderName.trim(),
@@ -338,7 +338,7 @@ export default function WalletPage() {
           balance_before: before,
           balance_after: after,
           status: "PENDING",
-          note: "Pengajuan penarikan menunggu persetujuan admin.",
+          note: "Pengajuan penarikan menunggu persetujuan Otomatis.",
           withdraw_bank_name: withdrawBankName,
           withdraw_bank_account: withdrawBankAccount,
           withdraw_bank_holder: withdrawBankHolder,
@@ -355,7 +355,7 @@ export default function WalletPage() {
       setWithdrawUserNote("");
 
       await loadTransactions(wallet.id);
-      alert("Pengajuan penarikan terkirim dan menunggu persetujuan admin.");
+      alert("Pengajuan penarikan terkirim dan menunggu persetujuan Otomatis.");
     } catch (err) {
       console.error("Create withdraw error:", err);
       alert(
@@ -499,7 +499,7 @@ export default function WalletPage() {
           `Dari: ${wallet.account_number}\n` +
           `Ke: ${targetWallet.account_number}\n` +
           `Nominal: ${formatCurrency(amount)}\n\n` +
-          `Status masih PENDING dan menunggu persetujuan admin.`
+          `Status masih PENDING dan menunggu persetujuan Otomatis.`
       );
     } catch (err) {
       console.error("Unexpected internal transfer error:", err);
@@ -977,8 +977,8 @@ export default function WalletPage() {
                 style={{ fontSize: "0.75rem", marginTop: "0.75rem" }}
               >
                 Pastikan nomor Dompet Nadnad tujuan benar sebelum mengajukan.
-                Seperti fitur lain, admin akan melihat pengajuan ini sebelum
-                saldo antardompet benar-benar disesuaikan.
+                Seperti fitur lain, Secara otomatis akan melihat pengajuan 
+                ini sebelum saldo antardompet benar-benar disesuaikan.
               </p>
 
               <button
@@ -1001,7 +1001,7 @@ export default function WalletPage() {
               <h3>Riwayat transaksi dompet</h3>
               <p>
                 Termasuk pengajuan yang masih{" "}
-                <strong>menunggu persetujuan admin</strong>.
+                <strong>menunggu persetujuan Otomatis</strong>.
               </p>
             </div>
 
