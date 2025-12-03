@@ -63,7 +63,7 @@ export default function FaqPage() {
               masing-masing pengguna.
             </p>
 
-            <h4>6. Bagaimana cara melaporkan masalah?</h4>
+            <h4>5. Bagaimana cara melaporkan masalah?</h4>
             <p>
               Jika menemukan transaksi mencurigakan, data yang tidak sesuai, atau
               masalah teknis, gunakan tombol{" "}
@@ -123,15 +123,7 @@ export default function FaqPage() {
               financial decisions remain your own responsibility.
             </p>
 
-            <h4>5. Who is allowed to use the admin panel?</h4>
-            <p>
-              The admin panel is reserved for authorised internal users only.
-              Admin access is typically controlled via specific email addresses.
-              Admins review requests, approve or reject transactions, and help
-              maintain data quality.
-            </p>
-
-            <h4>6. How can I report an issue?</h4>
+            <h4>5. How can I report an issue?</h4>
             <p>
               If you notice suspicious activity, incorrect data, or technical
               problems, use the <strong>WhatsApp Complaint</strong> button in
