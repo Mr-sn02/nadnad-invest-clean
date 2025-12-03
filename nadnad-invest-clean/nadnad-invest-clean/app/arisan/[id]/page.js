@@ -679,7 +679,7 @@ export default function ArisanGroupDetailPage() {
                 style={{ marginTop: "0.6rem" }}
               >
                 Peran kamu di grup ini:{" "}
-                <strong>{membership.role || "MEMBER"}</strong>. Hanya anggota
+                <strong>{membership.role || "MEMBER"}</strong>. Anggota
                 yang bisa ikut setor iuran dari Dompet Nadnad dan mengirim
                 pesan di ruang chat.
               </p>
