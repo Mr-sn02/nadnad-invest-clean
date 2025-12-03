@@ -40,8 +40,9 @@ export default function DisclaimerPage() {
               </li>
               <li>
                 Informasi yang ditampilkan (saldo, catatan, grafik, riwayat
-                transaksi) bersifat ilustratif dan administratif, bukan
-                proyeksi imbal hasil atau jaminan keuntungan.
+                transaksi) bersifat Mutlak dan di pertanggung jawabkan,
+                proyeksi imbal hasil atau jaminan keuntungan sesuai ketentuan
+                yang berlaku di Dompet Nadnad.
               </li>
             </ul>
 
