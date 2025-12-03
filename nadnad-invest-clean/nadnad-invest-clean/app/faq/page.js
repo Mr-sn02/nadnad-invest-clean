@@ -32,20 +32,19 @@ export default function FaqPage() {
               1. Apakah Dompet Nadnad menyimpan uang saya?
             </h4>
             <p>
-              Tidak. <strong>Dompet Nadnad</strong> hanya membantu mencatat
-              rencana dan alur dana. Dana nyata tetap berada di rekening bank
-              atau e-wallet resmi milik kamu dan/atau pengelola. Aplikasi hanya
-              menampilkan ringkasan administratif berdasarkan data yang kamu dan
-              admin masukkan.
+              Bisa. <strong>Dompet Nadnad</strong> membantu kamu menyimpan
+              dan mengelola uang dengan cara yang tertib, aman, dan bertanggung
+              jawab. Dana nyata tetap yang berada di dalam Dompet Nadnad resmi
+              milik kamu, sementara aplikasi menampilkan ringkasan dan alur dana
+              berdasarkan data yang kamu masukkan.
             </p>
 
             <h4>2. Apa fungsi saldo dompet di aplikasi?</h4>
             <p>
               Saldo dompet adalah representasi administratif dari setoran dan
-              penarikan yang diajukan dan (jika berlaku) disetujui admin. Ini
-              membantu kamu melihat gambaran kondisi dana, tetapi{" "}
-              <strong>bukan</strong> saldo resmi dari bank atau lembaga
-              keuangan.
+              penarikan yang diajukan dan (jika berlaku) disetujui Otomatis. Ini
+              membantu kamu melihat gambaran kondisi dana, saldo {" "}
+              <strong>resmi</strong> dari bank atau lembaga keuangan.
             </p>
 
             <h4>3. Bagaimana jika ada selisih dengan rekening bank?</h4>
@@ -53,7 +52,7 @@ export default function FaqPage() {
               Jika terdapat perbedaan antara catatan di Dompet Nadnad dan mutasi
               rekening bank resmi, jadikan mutasi rekening sebagai acuan utama.
               Kamu dapat menyesuaikan catatan di aplikasi agar selaras dengan
-              data resmi tersebut.
+              data resmi lainnya.
             </p>
 
             <h4>4. Apakah Dompet Nadnad memberikan jaminan keuntungan?</h4>
@@ -62,14 +61,6 @@ export default function FaqPage() {
               mengelola portofolio investasi, dan tidak menjamin keuntungan atau
               bebas rugi. Keputusan keuangan tetap menjadi tanggung jawab
               masing-masing pengguna.
-            </p>
-
-            <h4>5. Siapa yang bisa mengakses panel admin?</h4>
-            <p>
-              Panel admin hanya boleh diakses oleh pihak yang ditunjuk secara
-              internal. Hak akses biasanya diatur berdasarkan email yang
-              terdaftar sebagai admin. Admin bertugas meninjau pengajuan,
-              menyetujui atau menolak transaksi, dan menjaga kualitas data.
             </p>
 
             <h4>6. Bagaimana cara melaporkan masalah?</h4>
