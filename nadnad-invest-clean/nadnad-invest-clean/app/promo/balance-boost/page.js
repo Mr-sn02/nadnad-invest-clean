@@ -491,7 +491,7 @@ export default function BalanceBoostPromoPage() {
                       <strong>{t.bonusPercent}%</strong> dari total setoran
                     </p>
                     <p style={{ margin: 0 }}>
-                      🔒 Batas bonus per user:{" "}
+                      🔒 Batas bonus:{" "}
                       <strong>{formatCurrency(t.bonusCap)}</strong>
                     </p>
                   </div>
