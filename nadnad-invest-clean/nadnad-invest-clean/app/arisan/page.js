@@ -506,8 +506,9 @@ export default function ArisanHomePage() {
               className="nanad-dashboard-body"
               style={{ fontSize: "0.75rem", marginTop: "0.75rem" }}
             >
-              Fitur arisan ini bersifat pencatatan & simulasi. Pengelolaan dana
-              nyata tetap mengikuti kesepakatan & regulasi di luar aplikasi.
+              Fitur arisan ini bersifat pencatatan & pengelola. Pengelolaan dana
+              nyata tetap mengikuti kesepakatan & regulasi yang berlaku di Dompet
+              Nadnad.
             </p>
           </div>
         </section>
@@ -518,8 +519,7 @@ export default function ArisanHomePage() {
           </span>
           <span>
             Fitur arisan tidak menggantikan perjanjian tertulis antar peserta.
-            Selalu pastikan komunikasi dan kesepakatan yang jelas di luar
-            aplikasi.
+            Selalu pastikan komunikasi dan kesepakatan yang jelas.
           </span>
         </footer>
       </div>
