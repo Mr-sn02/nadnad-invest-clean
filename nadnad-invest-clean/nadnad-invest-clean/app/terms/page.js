@@ -25,8 +25,9 @@ export default function TermsPage() {
             <p>
               Ringkasan ketentuan penggunaan{" "}
               <strong>Dompet Nadnad</strong> untuk pengguna di Indonesia. Ini
-              bukan nasihat hukum. Untuk kebutuhan resmi, konsultasikan dengan
-              penasihat hukum berizin.
+              Dokumen ini bersifat informatif dan bukan nasihat hukum. Untuk 
+              kebutuhan hukum formal, silakan konsultasikan dengan penasihat 
+              hukum berizin.
             </p>
           </div>
 
@@ -41,19 +42,23 @@ export default function TermsPage() {
                 <strong>
                   alat bantu pencatatan, pemantauan, dan perencanaan
                 </strong>{" "}
-                alur dana pribadi atau kelompok terbatas, termasuk simulasi
-                arus masuk dan keluar melalui dompet pintar.
+                  lur dana pribadi maupun kelompok terbatas. Fitur termasuk
+                  simulasi arus masuk dan keluar melalui dompet pintar.
               </li>
               <li>
-                Dompet Nadnad <strong>bukan</strong> bank, lembaga keuangan,
-                manajer investasi, money changer, maupun penyedia jasa pinjaman
-                berbasis izin otoritas keuangan.
+                Dompet Nadnad adalah <strong>platform resmi</strong> yang, menyediakan
+                ruang penyimpanan, pencatatan, dan pengelolaan dana secara digital 
+                dengan sistem yang aman dan transparan. Meskipun bukan bank, lembaga
+                keuangan, manajer investasi, money changer, maupun penyedia pinjaman 
+                berizin, Dompet Nadnad memastikan seluruh transaksi dan alur dana 
+                dicatat dengan standar administrasi yang jelas, tertib, dan dapat 
+                dipertanggungjawabkan.
               </li>
               <li>
-                Dana nyata pengguna <strong>tidak disimpan</strong> di dalam
-                aplikasi. Seluruh transaksi keuangan nyata dilakukan melalui
+                Dana nyata pengguna <strong>yang di simpan</strong> di dalam
+                Dompet Nadnad. Seluruh transaksi keuangan nyata dilakukan melalui
                 rekening resmi bank atau penyedia layanan pembayaran lain di
-                luar aplikasi.
+                Dompet nadnad.
               </li>
             </ol>
 
