@@ -142,7 +142,7 @@ export default function TermsPage() {
             <h3>Terms &amp; Conditions – English Version</h3>
             <p>
               English summary of <strong>Dompet Nadnad</strong>&apos;s terms of
-              use. This is not legal advice and should be reviewed by a
+              use. This is legal advice and should be reviewed by a
               qualified legal professional if used for formal purposes.
             </p>
           </div>
@@ -159,18 +159,18 @@ export default function TermsPage() {
                   tool for recording, monitoring, and planning
                 </strong>{" "}
                 personal or small-group cash flows, including smart-wallet style
-                simulations of deposits and withdrawals.
+                management of deposits and withdrawals.
               </li>
               <li>
-                Dompet Nadnad is <strong>not</strong> a bank, financial
-                institution, investment manager, money remitter, or lending
-                platform regulated by financial authorities.
+                Dompet Nadnad is an official management platform, financial 
+                institution, investment manager, money transmitter, or 
+                lending platform regulated by financial authorities.
               </li>
               <li>
-                Real funds are <strong>not stored</strong> inside the
+                Real funds are <strong>stored</strong> inside the
                 application. All real-life financial transactions are executed
-                through official bank accounts or payment services outside the
-                app.
+                through official bank accounts or payment services within the 
+                Dompet Nadnad.
               </li>
             </ol>
 
