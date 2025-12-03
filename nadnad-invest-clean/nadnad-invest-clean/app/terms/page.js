@@ -107,7 +107,7 @@ export default function TermsPage() {
               <li>
                 Informasi saldo, grafik, dan riwayat transaksi di dalam aplikasi
                 bersifat{" "}
-                <strong>pencatatan administratif, bukan bukti mutlak</strong>{" "}
+                <strong>pencatatan administratif, bukti mutlak</strong>{" "}
                 kepemilikan dana.
               </li>
               <li>
