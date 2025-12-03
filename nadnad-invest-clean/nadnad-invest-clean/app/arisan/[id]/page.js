@@ -1009,9 +1009,10 @@ export default function ArisanGroupDetailPage() {
             © {new Date().getFullYear()} Dompet Nadnad. Arisan module (beta).
           </span>
           <span>
-            Fitur arisan di aplikasi ini bersifat pencatatan &amp; simulasi.
-            Pengelolaan dana nyata tetap mengikuti kesepakatan dan regulasi di
-            luar aplikasi.
+            Fitur arisan di Dompet Nadnad ini dikelola secara resmi dan seluruh 
+            alur administrasinya dapat dipertanggungjawabkan. Setiap transaksi 
+            dan pengelolaan dana mengikuti ketentuan yang berlaku serta diawasi
+            melalui sistem pencatatan yang transparan.
           </span>
         </footer>
       </div>
