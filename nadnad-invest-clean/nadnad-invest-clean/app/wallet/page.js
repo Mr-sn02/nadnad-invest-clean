@@ -282,7 +282,7 @@ export default function WalletPage() {
 
       await loadTransactions(wallet.id);
       alert(
-        "Pengajuan deposit terkirim dan menunggu persetujuan admin.\nAdmin akan mengecek mutasi & bukti transfer."
+        "Pengajuan deposit terkirim dan menunggu persetujuan otomatis.\nSistem akan mengecek mutasi & bukti transfer."
       );
     } catch (err) {
       console.error("Create deposit error:", err);
@@ -603,9 +603,9 @@ export default function WalletPage() {
             Saldo Dompet Nadnad kamu.
           </h1>
           <p className="nanad-dashboard-body">
-            Pengajuan deposit, penarikan, dan transfer di halaman ini akan
-            berstatus <strong>PENDING</strong> dan menunggu persetujuan admin.
-            Saldo baru akan berubah setelah pengajuan disetujui secara manual.
+            Pengajuan Menabung, penarikan, dan transfer di halaman ini akan
+            berstatus <strong>PENDING</strong> dan menunggu persetujuan Otomatis.
+            Saldo baru akan berubah setelah pengajuan disetujui secara Otomatis.
           </p>
 
           <div className="nanad-dashboard-stat-grid">
@@ -689,7 +689,7 @@ export default function WalletPage() {
             {/* Nomor rekening Dompet Nadnad */}
             <div>
               <div style={{ opacity: 0.8 }}>
-                Nomor Dompet Nadnad (seperti no. rekening)
+                Nomor Dompet Nadnad (no. rekening dompet)
               </div>
               <div
                 style={{
@@ -705,9 +705,9 @@ export default function WalletPage() {
                 className="nanad-dashboard-body"
                 style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}
               >
-                Nomor ini bisa kamu bagikan ke pengguna lain Dompet Nadnad
-                untuk kirim saldo internal. Admin akan menyetujui sebelum saldo
-                benar-benar berpindah.
+                Nomor ini bisa kamu bagikan ke Nasabah lain Dompet Nadnad
+                untuk kirim saldo internal. Dan akan Disetujui Otomatis 
+                sebelum saldo benar-benar berpindah.
               </p>
             </div>
           </section>
@@ -718,12 +718,13 @@ export default function WalletPage() {
           {/* Form DEPOSIT */}
           <div className="nanad-dashboard-deposits">
             <div className="nanad-dashboard-deposits-header">
-              <h3>Ajukan deposit</h3>
+              <h3>Ajukan menabung</h3>
               <p>
-                Lakukan transfer ke salah satu rekening Dompet Nadnad di bawah
+                Lakukan transaksi ke salah satu rekening Dompet Nadnad di bawah
                 ini, lalu isi nominal, nama pengirim, dan (opsional) unggah
-                bukti transfer. Admin akan mengecek dan menyetujui secara
-                manual.
+                bukti transfer. Otomatis akan mengecek dan menyetujui secara
+                Otomatis (Jika nominal melebihi 20juta harap hubungi wahtsapp
+                Terlebih dahulu.
               </p>
             </div>
 
@@ -733,7 +734,7 @@ export default function WalletPage() {
             >
               {/* Nominal */}
               <label className="nanad-dashboard-deposit-amount">
-                Nominal deposit
+                Nominal Menabung
                 <input
                   type="number"
                   min="0"
@@ -845,8 +846,9 @@ export default function WalletPage() {
             <div className="nanad-dashboard-deposits-header">
               <h3>Ajukan penarikan</h3>
               <p>
-                Admin akan memproses penarikan ke rekening yang kamu isi di
-                bawah. Saldo hanya akan berkurang setelah pengajuan disetujui.
+                Penarikan akan diproses ke rekening yang kamu isi di bawah.
+                Saldo akan berkurang otomatis setelah pengajuan disetujui 
+                oleh sistem.
               </p>
             </div>
 
@@ -930,7 +932,7 @@ export default function WalletPage() {
                 Gunakan fitur ini untuk mengirim saldo internal ke Dompet
                 Nadnad lain menggunakan nomor Dompet Nadnad (seperti nomor
                 rekening). Sama seperti fitur lain, pengajuan ini{" "}
-                <strong>akan dicek dan disetujui admin terlebih dahulu</strong>.
+                <strong>akan dicek dan disetujui secara Otomatis</strong>.
               </p>
             </div>
 
