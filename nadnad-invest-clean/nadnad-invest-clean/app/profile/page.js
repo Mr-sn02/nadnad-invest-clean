@@ -322,7 +322,7 @@ export default function ProfilePage() {
                 Jangan pernah membagikan password atau kode OTP kepada siapa pun.
               </li>
               <li>
-                Selalu cek alamat website sebelum login. Pastikan domain resmi
+                Selalu cek alamat website sebelum login. Pastikan website resmi
                 Dompet Nadnad / Nanad kamu, bukan tiruan.
               </li>
               <li>
@@ -488,8 +488,7 @@ export default function ProfilePage() {
                 >
                   Bagikan kode ini ke temanmu. Jika mereka daftar dan aktif,
                   kamu bisa mendapat{" "}
-                  <strong>kesempatan hadiah tambahan</strong> di event promo
-                  (bukan janji keuntungan tetap).
+                  <strong>kesempatan hadiah tambahan</strong> di event promo.
                 </p>
               </div>
 
