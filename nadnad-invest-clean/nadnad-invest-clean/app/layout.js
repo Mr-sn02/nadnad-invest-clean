@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
 
         {/* TOMBOL PENGADUAN WHATSAPP DOMPET NADNAD */}
         <a
-          href="https://wa.me/6281234567890?text=Halo%20admin%20Dompet%20Nadnad%2C%20saya%20ingin%20mengkonfirmasi%20rekening%20tujuan%20atau%20pengajuan%20transaksi."
+          href="https://wa.me/6282160082473?text=Halo%20admin%20Dompet%20Nadnad%2C%20saya%20ingin%20mengkonfirmasi%20rekening%20tujuan%20atau%20pengajuan%20transaksi."
           target="_blank"
           rel="noreferrer"
           className="nanad-wa-fab"
